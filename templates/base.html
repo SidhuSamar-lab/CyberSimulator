@@ -3,16 +3,15 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>{% block title %}CyberShield Academy | Oakridge Collegiate Safety Portal{% endblock %}</title>
+    <title>{% block title %}CyberShield | Interactive Cybersecurity Threat Laboratory{% endblock %}</title>
     
-    <!-- Google Fonts: Material Symbols, Cinzel, Libre Caslon Text, Newsreader, Geist, JetBrains Mono -->
+    <!-- Nexus Studio Fonts: Clash Display, Cabinet Grotesk, JetBrains Mono, Material Symbols -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=cabinet-grotesk@400,500,700,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
     
-    <!-- Tailwind CSS CDN & Dark Academy Configuration -->
+    <!-- Tailwind CSS CDN & Nexus Studio Theme Configuration -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script id="tailwind-config">
         tailwind.config = {
@@ -20,51 +19,94 @@
             theme: {
                 extend: {
                     colors: {
-                        obsidian: "#0a0f18",
-                        "obsidian-deep": "#070b12",
-                        "obsidian-elevated": "#0e1626",
-                        "obsidian-card": "#111a2e",
-                        "obsidian-card-hover": "#16233a",
-                        "obsidian-container": "#121b2d",
-                        "obsidian-border": "#1e2d42",
-                        "obsidian-border-subtle": "#172335",
-                        gold: "#f59e0b",
-                        "gold-light": "#fbbf24",
-                        "gold-dim": "#ffc174",
-                        "gold-dark": "#d97706",
-                        "gold-bg": "rgba(245, 158, 11, 0.12)",
-                        emerald: "#10b981",
-                        "emerald-light": "#34d399",
-                        "emerald-dark": "#059669",
-                        "emerald-bg": "rgba(16, 185, 129, 0.12)",
-                        crimson: "#f43f5e",
-                        "crimson-bg": "rgba(244, 63, 94, 0.12)",
-                        "ivory-bright": "#f8fafc",
-                        "silver-body": "#cbd5e1",
-                        "muted-slate": "#8492a6",
-                        surface: "#0f131d",
-                        "surface-dim": "#0a0f18",
-                        "surface-container": "#111a2e",
-                        "surface-container-low": "#0d1422",
-                        "surface-container-high": "#162238",
-                        "surface-container-highest": "#1d2d4a",
-                        outline: "#273752",
-                        "outline-variant": "#1e293b",
-                        primary: "#f59e0b",
-                        "primary-container": "#d97706",
-                        secondary: "#10b981",
-                        tertiary: "#6366f1",
-                        error: "#fb7185"
+                        ink: {
+                            950: '#04040a',
+                            900: '#080812',
+                            850: '#0b0b18',
+                            800: '#0d0d1f',
+                            750: '#101026',
+                            700: '#12122e',
+                            600: '#1a1a3e',
+                            500: '#262654',
+                        },
+                        signal: {
+                            DEFAULT: '#e8ff47',   // electric lime — primary accent
+                            dim: '#b8cc38',
+                            glow: 'rgba(232, 255, 71, 0.15)',
+                        },
+                        ember: {
+                            DEFAULT: '#ff6b35',   // warm cyber orange — secondary accent
+                            dim: '#cc5529',
+                            glow: 'rgba(255, 107, 53, 0.15)',
+                        },
+                        mist: {
+                            900: '#9898b8',
+                            700: '#c4c4d8',
+                            500: '#dcdcec',
+                            100: '#f0f0f8',
+                        },
+                        // Semantic compatibility aliases
+                        obsidian: '#04040a',
+                        "obsidian-deep": '#04040a',
+                        "obsidian-card": '#0d0d1f',
+                        "obsidian-card-hover": '#12122e',
+                        "obsidian-container": '#080812',
+                        "obsidian-border": 'rgba(255, 255, 255, 0.08)',
+                        gold: '#e8ff47',
+                        "gold-light": '#f4ff9e',
+                        "gold-dim": '#b8cc38',
+                        "gold-dark": '#a3b825',
+                        "gold-bg": 'rgba(232, 255, 71, 0.10)',
+                        emerald: '#10b981',
+                        "emerald-light": '#34d399',
+                        "emerald-dark": '#059669',
+                        "emerald-bg": 'rgba(16, 185, 129, 0.12)',
+                        crimson: '#ff6b35',
+                        "crimson-bg": 'rgba(255, 107, 53, 0.12)',
+                        "ivory-bright": '#f0f0f8',
+                        "silver-body": '#c4c4d8',
+                        "muted-slate": '#9898b8',
+                        surface: '#080812',
+                        "surface-dim": '#04040a',
+                        "surface-container": '#0d0d1f',
+                        "surface-container-low": '#080812',
+                        "surface-container-high": '#12122e',
+                        "surface-container-highest": '#1a1a3e',
+                        outline: 'rgba(255, 255, 255, 0.1)',
+                        "outline-variant": 'rgba(255, 255, 255, 0.05)',
+                        primary: '#e8ff47',
+                        "primary-container": '#b8cc38',
+                        secondary: '#ff6b35',
+                        tertiary: '#6366f1',
+                        error: '#ff6b35'
                     },
                     fontFamily: {
-                        sans: ['"Geist"', '-apple-system', 'sans-serif'],
-                        serif: ['"Libre Caslon Text"', '"Newsreader"', 'Georgia', 'serif'],
-                        "serif-title": ['"Libre Caslon Text"', '"Newsreader"', 'Georgia', 'serif'],
-                        "serif-editorial": ['"Libre Caslon Text"', 'Georgia', 'serif'],
-                        cinzel: ['"Cinzel"', 'serif'],
-                        crest: ['"Cinzel"', 'Georgia', 'serif'],
-                        mono: ['"JetBrains Mono"', 'monospace']
-                    }
+                        display: ['"Clash Display"', '"Cabinet Grotesk"', 'sans-serif'],
+                        body: ['"Cabinet Grotesk"', '"Inter"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        sans: ['"Cabinet Grotesk"', '"Inter"', 'sans-serif'],
+                        serif: ['"Clash Display"', 'sans-serif'],
+                        "serif-title": ['"Clash Display"', 'sans-serif'],
+                        "serif-editorial": ['"Cabinet Grotesk"', 'sans-serif'],
+                        cinzel: ['"Clash Display"', 'sans-serif'],
+                        crest: ['"Clash Display"', 'sans-serif'],
+                    },
+                    animation: {
+                        'marquee': 'marquee 28s linear infinite',
+                        'marquee-reverse': 'marquee 28s linear infinite reverse',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-50%)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                    },
                 }
             }
         };
@@ -75,129 +117,178 @@
     
     <style>
         @layer base {
-            html, body { margin: 0; padding: 0; }
-            body { overscroll-behavior: none; }
+            html, body {
+                margin: 0;
+                padding: 0;
+                scroll-behavior: smooth;
+            }
+            body {
+                background-color: #04040a;
+                color: #f0f0f8;
+                overflow-x: hidden;
+                -webkit-font-smoothing: antialiased;
+            }
             main > :first-child { margin-top: 0 !important; }
             main > :last-child { margin-bottom: 0 !important; }
         }
-        ::-webkit-scrollbar { display: none; }
-        .font-serif-title { font-family: 'Libre Caslon Text', 'Newsreader', Georgia, serif; }
-        .font-crest { font-family: 'Cinzel', Georgia, serif; }
-        .font-cinzel { font-family: 'Cinzel', serif; }
+
+        ::selection {
+            background-color: #e8ff47;
+            color: #04040a;
+        }
+
+        /* Nexus Studio 4px Minimal Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080812;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e8ff47;
+            border-radius: 9999px;
+        }
+
+        /* Typography & Utilities */
+        .text-stroke {
+            -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.4);
+            color: transparent;
+        }
+        .text-stroke-signal {
+            -webkit-text-stroke: 1.5px #e8ff47;
+            color: transparent;
+        }
+
+        .grain {
+            position: relative;
+        }
+        .grain::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .grid-lines {
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        .font-serif-title { font-family: 'Clash Display', sans-serif; }
+        .font-crest { font-family: 'Clash Display', sans-serif; }
+        .font-cinzel { font-family: 'Clash Display', sans-serif; }
         .font-mono-dossier { font-family: 'JetBrains Mono', monospace; }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-obsidian font-sans text-silver-body antialiased selection:bg-gold/30 selection:text-gold-light min-h-screen flex flex-col">
+<body class="bg-ink-950 font-body text-mist-100 antialiased selection:bg-signal selection:text-ink-950 min-h-screen flex flex-col">
 
-    <!-- Header Chrome in Dark Obsidian / Gold Edition -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-[#070b12]/95 backdrop-blur-md border-b border-[#1e293b] shadow-xl">
-        <!-- Top Subtle Gold Foil Accent Line -->
-        <div class="h-0.5 w-full bg-gradient-to-r from-transparent via-gold to-transparent"></div>
-        <div class="h-16 w-full max-w-[1500px] mx-auto px-4 sm:px-8 flex items-center justify-between gap-4">
+    <!-- Header in Nexus Studio Style -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-ink-950/85 backdrop-blur-xl border-b border-white/5 shadow-2xl">
+        <div class="h-16 w-full max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between gap-4">
             
-            <!-- Left Branding -->
-            <div class="flex items-center gap-6 md:gap-8">
-                <a href="{% url 'home' %}" id="nav-brand-link" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
-                    <div class="w-9 h-9 rounded-md bg-[#111a2e] border border-gold/40 flex items-center justify-center text-gold shadow-sm shadow-gold/10 shrink-0">
-                        <span class="material-symbols-outlined text-2xl font-normal" style="font-variation-settings: 'FILL' 1;">shield</span>
+            <!-- Left Branding: CYBERSHIELD + Glowing Signal Dot -->
+            <div class="flex items-center gap-8">
+                <a href="{% url 'home' %}" id="nav-brand-link" class="flex items-center gap-2.5 group cursor-pointer">
+                    <div class="w-8 h-8 rounded-lg bg-ink-800 border border-white/10 flex items-center justify-center text-signal group-hover:border-signal/50 group-hover:shadow-[0_0_15px_rgba(232,255,71,0.25)] transition-all shrink-0">
+                        <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">shield</span>
                     </div>
-                    <div class="flex flex-col">
-                        <div class="flex items-center gap-2">
-                            <span class="font-cinzel text-xs sm:text-sm tracking-[0.16em] uppercase font-bold text-white">CyberShield Academy</span>
-                            <span class="hidden sm:inline-block text-[10px] uppercase font-semibold tracking-wider bg-gold/10 text-gold-light px-2 py-0.5 rounded border border-gold/30">Oakridge Collegiate</span>
-                        </div>
-                        <div class="flex items-center gap-1.5 mt-0.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-                            <span class="text-[11px] text-muted-slate font-medium tracking-wide">Michaelmas Term • Active Telemetry</span>
-                        </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-display text-lg font-bold tracking-tight text-white group-hover:text-signal transition-colors">CYBERSHIELD</span>
+                        <div class="w-2 h-2 rounded-full bg-signal animate-pulse-slow"></div>
                     </div>
                 </a>
 
-                <!-- Navigation Tabs -->
-                <nav class="hidden xl:flex items-center gap-1 p-1 bg-[#0b1320] rounded-md border border-[#1e293b]">
+                <!-- Navigation Tabs with Nexus Underline hover -->
+                <nav class="hidden md:flex items-center gap-6 lg:gap-8">
                     <a href="{% url 'student_dashboard' %}" 
                        id="nav-dashboard-link"
-                       class="px-3.5 py-1.5 rounded text-xs tracking-wider uppercase font-medium transition-all {% if request.resolver_match.url_name == 'student_dashboard' %}bg-[#162238] text-white border border-gold/50 shadow-inner font-bold{% else %}text-slate-400 hover:text-white hover:bg-[#162238]{% endif %}">
+                       class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if request.resolver_match.url_name == 'student_dashboard' %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
                         Dashboard
+                        <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if request.resolver_match.url_name == 'student_dashboard' %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
                     </a>
                     <a href="{% url 'home' %}" 
                        id="nav-home-link"
-                       class="px-3.5 py-1.5 rounded text-xs tracking-wider uppercase font-medium transition-all {% if request.resolver_match.url_name == 'home' %}bg-[#162238] text-white border border-gold/50 shadow-inner font-bold{% else %}text-slate-400 hover:text-white hover:bg-[#162238]{% endif %}">
-                        Curriculum Modules
+                       class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if request.resolver_match.url_name == 'home' %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
+                        Curriculum
+                        <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if request.resolver_match.url_name == 'home' %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
                     </a>
                     <a href="{% url 'phishing_sandbox' %}" 
                        id="nav-sandbox-link"
-                       class="px-3.5 py-1.5 rounded text-xs tracking-wider uppercase font-medium transition-all {% if request.resolver_match.url_name == 'phishing_sandbox' %}bg-[#162238] text-white border border-gold/50 shadow-inner font-bold{% else %}text-slate-400 hover:text-white hover:bg-[#162238]{% endif %}">
+                       class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if request.resolver_match.url_name == 'phishing_sandbox' %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
                         Defensive Lab
+                        <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if request.resolver_match.url_name == 'phishing_sandbox' %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
                     </a>
                     <a href="{% url 'leaderboard_view' %}" 
                        id="nav-leaderboard-link"
-                       class="px-3.5 py-1.5 rounded text-xs tracking-wider uppercase font-medium transition-all {% if request.resolver_match.url_name == 'leaderboard_view' %}bg-[#162238] text-white border border-gold/50 shadow-inner font-bold{% else %}text-slate-400 hover:text-white hover:bg-[#162238]{% endif %}">
-                        Class Roll
+                       class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if request.resolver_match.url_name == 'leaderboard_view' %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
+                        Leaderboard
+                        <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if request.resolver_match.url_name == 'leaderboard_view' %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
                     </a>
                     <a href="{% url 'teacher_dashboard' %}" 
                        id="nav-teacher-portal-link"
-                       class="px-3.5 py-1.5 rounded text-xs tracking-wider uppercase font-medium transition-all {% if 'teacher' in request.path %}bg-[#162238] text-white border border-gold/50 shadow-inner font-bold{% else %}text-slate-400 hover:text-white hover:bg-[#162238]{% endif %}">
-                        Faculty Analytics
+                       class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if 'teacher' in request.path %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
+                        Faculty Portal
+                        <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if 'teacher' in request.path %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
                     </a>
                 </nav>
             </div>
 
-            <!-- Right Controls & Authentication -->
+            <!-- Right Controls: Role Switch & Authentication -->
             <div class="flex items-center gap-3">
                 
-                <!-- Institutional Handbook Button -->
-                <button type="button" 
-                        onclick="alert('Oakridge Collegiate Cybersecurity Defense Charter: K-12 Student Safety Portal aligned with NIST SP 800-181.');"
-                        class="flex items-center justify-center w-8 h-8 rounded-md bg-[#111a2e] border border-[#1e293b] text-slate-300 hover:text-white hover:border-gold/40 transition-colors" 
-                        title="Institutional Charter">
-                    <span class="material-symbols-outlined text-lg">menu_book</span>
-                </button>
+                <!-- Status Pill -->
+                <div class="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-ink-800 border border-white/10 text-mist-900 font-mono text-xs">
+                    <span class="w-1.5 h-1.5 rounded-full bg-signal animate-pulse-slow"></span>
+                    <span>Live Lab</span>
+                </div>
 
                 <!-- Switch Role Button -->
                 {% if user.is_authenticated and user.is_staff %}
-                    <a href="{% url 'student_login' %}" class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#111a2e] border border-[#1e293b] text-slate-300 hover:text-white hover:border-slate-600 transition-colors" title="Switch Operational Role">
+                    <a href="{% url 'student_login' %}" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-ink-800 border border-white/10 text-mist-700 hover:text-white hover:border-white/20 transition-all text-xs font-mono" title="Switch Operational Role">
                         <span class="material-symbols-outlined text-sm">swap_horiz</span>
-                        <span class="text-xs uppercase tracking-wider font-semibold">Student Mode</span>
+                        <span>Student View</span>
                     </a>
                 {% else %}
-                    <a href="{% url 'teacher_login' %}" class="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#111a2e] border border-[#1e293b] text-slate-300 hover:text-white hover:border-slate-600 transition-colors" title="Switch Operational Role">
-                        <span class="material-symbols-outlined text-sm text-gold">swap_horiz</span>
-                        <span class="text-xs uppercase tracking-wider font-semibold">Faculty Mode</span>
+                    <a href="{% url 'teacher_login' %}" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-ink-800 border border-white/10 text-mist-700 hover:text-signal hover:border-signal/30 transition-all text-xs font-mono" title="Switch Operational Role">
+                        <span class="material-symbols-outlined text-sm text-signal">verified_user</span>
+                        <span>Faculty Access</span>
                     </a>
                 {% endif %}
 
-                <!-- Profile Badge -->
+                <!-- Profile / Sign In Pill Button -->
                 {% if current_student %}
-                    <div class="flex items-center gap-2.5 pl-2 pr-3 py-1 rounded-md bg-[#111a2e] border border-[#1e293b] hover:border-slate-600 transition-colors">
-                        <div class="w-7 h-7 rounded-full bg-gradient-to-b from-[#1c2a44] to-[#0e1626] border border-gold/50 flex items-center justify-center font-bold text-xs text-gold">
+                    <div class="flex items-center gap-2 pl-2 pr-3 py-1 rounded-full bg-ink-800 border border-white/10 hover:border-signal/40 transition-colors">
+                        <div class="w-6 h-6 rounded-full bg-signal text-ink-950 flex items-center justify-center font-bold text-xs font-mono">
                             {{ current_student.name|slice:":2"|upper }}
                         </div>
                         <div class="flex flex-col text-left">
-                            <span class="text-xs font-semibold text-white leading-tight font-serif">{{ current_student.name }}</span>
-                            <span class="text-[10px] font-semibold text-gold leading-tight">Cadet #{{ current_student.roll_number }} • {{ current_student.class_name }}</span>
+                            <span class="text-xs font-medium text-white leading-tight">{{ current_student.name }}</span>
+                            <span class="text-[10px] font-mono text-signal leading-tight">#{{ current_student.roll_number }} • {{ current_student.class_name }}</span>
                         </div>
-                        <a href="{% url 'student_logout' %}" id="btn-student-logout" class="ml-1 text-slate-400 hover:text-crimson transition-colors" title="Sign Out">
+                        <a href="{% url 'student_logout' %}" id="btn-student-logout" class="ml-1 text-mist-900 hover:text-ember transition-colors" title="Sign Out">
                             <span class="material-symbols-outlined text-sm">logout</span>
                         </a>
                     </div>
                 {% elif user.is_authenticated and user.is_staff %}
-                    <div class="flex items-center gap-2.5 pl-2 pr-3 py-1 rounded-md bg-[#111a2e] border border-[#1e293b] hover:border-slate-600 transition-colors">
-                        <div class="w-7 h-7 rounded-full bg-[#064e3b] border border-emerald/50 flex items-center justify-center font-bold text-xs text-emerald-light">
+                    <div class="flex items-center gap-2 pl-2 pr-3 py-1 rounded-full bg-ink-800 border border-white/10 hover:border-signal/40 transition-colors">
+                        <div class="w-6 h-6 rounded-full bg-emerald text-ink-950 flex items-center justify-center font-bold text-xs font-mono">
                             EDU
                         </div>
                         <div class="flex flex-col text-left">
-                            <span class="text-xs font-semibold text-white leading-tight font-serif">{{ user.username }}</span>
-                            <span class="text-[10px] font-semibold text-emerald leading-tight">Faculty Dean</span>
+                            <span class="text-xs font-medium text-white leading-tight">{{ user.username }}</span>
+                            <span class="text-[10px] font-mono text-emerald-light leading-tight">Faculty Dean</span>
                         </div>
-                        <a href="{% url 'teacher_logout' %}" id="btn-teacher-logout" class="ml-1 text-slate-400 hover:text-crimson transition-colors" title="Log Out">
+                        <a href="{% url 'teacher_logout' %}" id="btn-teacher-logout" class="ml-1 text-mist-900 hover:text-ember transition-colors" title="Log Out">
                             <span class="material-symbols-outlined text-sm">logout</span>
                         </a>
                     </div>
                 {% else %}
-                    <a href="{% url 'student_login' %}" class="px-3.5 py-1.5 rounded-md bg-gold hover:bg-gold-light text-[#090e17] font-crest text-xs uppercase tracking-wider font-bold transition-all shadow-sm">
-                        Admissions Sign-In
+                    <a href="{% url 'student_login' %}" class="px-5 py-2 rounded-full border border-signal text-signal text-xs font-mono uppercase tracking-wider hover:bg-signal hover:text-ink-950 transition-all font-bold shadow-[0_0_15px_rgba(232,255,71,0.15)]">
+                        Sign In &rarr;
                     </a>
                 {% endif %}
 
@@ -210,14 +301,14 @@
     <div class="max-w-4xl mx-auto px-4 mt-20 w-full z-40">
         {% if messages %}
             {% for message in messages %}
-                <div class="mb-3 px-4 py-2.5 rounded-lg text-xs flex items-center justify-between border shadow-lg backdrop-blur-md
-                    {% if message.tags == 'error' %}bg-rose-950/70 text-rose-300 border-rose-500/40
+                <div class="mb-3 px-4 py-2.5 rounded-xl text-xs flex items-center justify-between border shadow-xl backdrop-blur-md
+                    {% if message.tags == 'error' %}bg-ember/15 text-ember border-ember/30
                     {% elif message.tags == 'warning' %}bg-amber-950/70 text-amber-300 border-amber-500/40
-                    {% elif message.tags == 'success' %}bg-[#064e3b]/70 text-emerald-300 border-emerald-500/40
-                    {% else %}bg-[#111a2e] text-slate-200 border-[#273752]{% endif %}" role="alert">
+                    {% elif message.tags == 'success' %}bg-signal/15 text-signal border-signal/30
+                    {% else %}bg-ink-800 text-mist-100 border-white/10{% endif %}" role="alert">
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-base">info</span>
-                        <span class="font-medium font-serif">{{ message }}</span>
+                        <span class="font-medium font-body">{{ message }}</span>
                     </div>
                     <button type="button" onclick="this.parentElement.remove()" class="text-xs opacity-70 hover:opacity-100">&times;</button>
                 </div>
@@ -226,24 +317,25 @@
     </div>
 
     <!-- Main Content Canvas -->
-    <main class="w-full pt-16 bg-obsidian min-h-screen text-slate-100 flex-grow">
+    <main class="w-full pt-16 bg-ink-950 min-h-screen text-mist-100 flex-grow relative">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Institutional Footer (Obsidian Collegiate Edition) -->
-    <footer class="w-full bg-[#070b12] border-t border-[#1e293b] py-6 text-slate-400 mt-auto">
-        <div class="max-w-[1500px] mx-auto px-4 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+    <!-- Nexus Studio Minimal Footer -->
+    <footer class="w-full bg-ink-900 border-t border-white/5 py-12 text-mist-900 mt-auto">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="flex items-center gap-3 flex-wrap">
-                <span class="font-cinzel text-xs uppercase tracking-wider text-gold font-semibold">© 2025 CyberShield Academy</span>
-                <span class="text-slate-700">|</span>
-                <span class="text-xs text-slate-400">Dean's Institutional Division • NIST SP 800-181 Certified K-12 Charter</span>
-                <span class="text-slate-700">|</span>
-                <span class="text-xs text-gold/80 font-mono">CyberSimulator AI Engine</span>
+                <span class="font-display text-sm tracking-tight text-white font-bold">CYBERSHIELD</span>
+                <span class="text-white/20">/</span>
+                <span class="text-xs text-mist-900 font-mono">NIST SP 800-181 Certified K-12 Defense Platform</span>
+                <span class="text-white/20">/</span>
+                <span class="text-xs text-signal font-mono">GPT-5 AI Engine</span>
             </div>
-            <div class="flex items-center gap-6 text-xs text-slate-400">
-                <a class="hover:text-white transition-colors" href="{% url 'home' %}">Academic Safe Harbor</a>
-                <a class="hover:text-white transition-colors" href="{% url 'home' %}">Curriculum Protocol</a>
-                <a class="hover:text-white transition-colors" href="{% url 'health_check' %}">Telemetry Status</a>
+            <div class="flex items-center gap-6 text-xs font-mono text-mist-900">
+                <a class="hover:text-white transition-colors" href="{% url 'home' %}">Charter</a>
+                <a class="hover:text-white transition-colors" href="{% url 'phishing_sandbox' %}">Sandbox</a>
+                <a class="hover:text-white transition-colors" href="{% url 'health_check' %}">Status</a>
+                <span class="text-mist-900/60">© 2025 CyberShield</span>
             </div>
         </div>
     </footer>

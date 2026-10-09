@@ -1,222 +1,232 @@
 {% extends 'base.html' %}
 
-{% block title %}Collegiate Quarantine Laboratory | CyberShield Academy{% endblock %}
+{% block title %}Quarantine Laboratory | CyberShield Threat Lab{% endblock %}
 
 {% block content %}
-<div class="max-w-[1440px] mx-auto px-4 sm:px-8 py-8 space-y-6 text-[#dee2f0]">
+<div class="relative w-full overflow-hidden bg-ink-950 text-mist-100 min-h-screen">
+    
+    <!-- Background Glow & Grid Lines (Nexus Studio Signature) -->
+    <div class="absolute top-10 left-1/4 w-[600px] h-[600px] bg-signal/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute inset-0 grid-lines pointer-events-none opacity-40"></div>
+    <div class="grain absolute inset-0 pointer-events-none"></div>
 
-    <!-- Top Mission Header -->
-    <div class="bg-[#111a2d] rounded-2xl p-6 sm:p-8 border border-[#273752] shadow-xl relative overflow-hidden">
-        <div class="absolute -top-24 -right-24 w-96 h-96 bg-gold/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-            <div class="space-y-2">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-crest bg-[#0d1422] text-gold uppercase tracking-wider border border-gold/30">
-                    <span class="w-2 h-2 rounded-full bg-emerald"></span>
-                    <span>CYBERSHIELD SIMULATION LAB • QUARANTINE FORENSICS</span>
-                </div>
-                <h1 class="text-2xl sm:text-4xl font-serif-title font-bold text-white tracking-tight">
-                    Phishing Sandbox & URL Inspector
-                </h1>
-                <p class="font-serif-editorial italic text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-                    Examine suspicious collegiate messages in an isolated quarantine laboratory. Inspect raw RFC 5322 headers (SPF &amp; DMARC), hover over links to unmask typosquatting domains, and categorize threat vectors.
-                </p>
-            </div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-8 space-y-8">
 
-            <!-- Score & Progress HUD -->
-            <div class="flex items-center gap-3 bg-[#0d1422] border border-[#273752] p-4 rounded-xl shrink-0 shadow-inner">
-                <div class="text-center px-3 border-r border-[#1e293b]">
-                    <div class="text-[10px] text-slate-400 font-crest uppercase">SCENARIOS</div>
-                    <div id="stat-progress" class="text-2xl font-bold font-mono text-gold">0 / {{ total_scenarios }}</div>
-                </div>
-                <div class="text-center px-3 border-r border-[#1e293b]">
-                    <div class="text-[10px] text-slate-400 font-crest uppercase">CORRECT</div>
-                    <div id="stat-score" class="text-2xl font-bold font-mono text-emerald-light">0</div>
-                </div>
-                <div class="text-center px-3">
-                    <div class="text-[10px] text-slate-400 font-crest uppercase">ACCURACY</div>
-                    <div id="stat-accuracy" class="text-2xl font-bold font-mono text-white">--%</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Quarantine Mail Client UI -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[640px]">
-        
-        <!-- Left Sidebar: Quarantined Inbox -->
-        <div class="lg:col-span-4 bg-[#111a2d] rounded-xl p-4 border border-[#273752] shadow-xl flex flex-col space-y-3">
-            <div class="flex items-center justify-between pb-3 border-b border-[#1e293b] px-2">
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-gold text-xl">mark_email_unread</span>
-                    <span class="font-crest font-bold text-xs uppercase tracking-wider text-white">Quarantine Inbox</span>
-                </div>
-                <span class="text-xs font-mono text-slate-400 bg-[#0d1422] border border-[#1e293b] px-2 py-0.5 rounded">
-                    {{ total_scenarios }} Messages
-                </span>
-            </div>
-
-            <!-- Email Items List -->
-            <div class="space-y-2 overflow-y-auto max-h-[580px] pr-1" id="email-list-container">
-                {% for email in emails %}
-                    <div class="email-item p-3.5 rounded-xl border border-[#273752] bg-[#0d1422] hover:bg-[#162238] cursor-pointer transition-all space-y-2"
-                         id="item-{{ email.id }}"
-                         data-email-id="{{ email.id }}"
-                         onclick="selectEmail('{{ email.id }}')">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-white truncate max-w-[170px] font-serif-title">{{ email.sender_name }}</span>
-                            <span class="text-[10px] font-mono text-slate-400">{{ email.timestamp }}</span>
-                        </div>
-                        <div class="text-xs font-medium text-slate-300 truncate leading-tight">{{ email.subject }}</div>
-                        <div class="flex items-center justify-between text-[11px] pt-1">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-[#162238] text-gold-light border border-gold/30">{{ email.category }}</span>
-                            <span class="status-pill text-[10px] font-mono text-slate-400 font-semibold" id="badge-{{ email.id }}">Awaiting Review</span>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-
-            <!-- Pro Tip Box -->
-            <div class="mt-auto p-3.5 rounded-lg bg-[#070b12] border border-gold/25 text-xs text-slate-300 leading-relaxed">
-                <span class="font-bold text-gold block mb-0.5 font-crest uppercase tracking-wider">💡 Investigator Doctrine:</span>
-                Inspect lookalike URLs and unauthorized TLDs. Verify the domain root immediately preceding the first slash <code class="bg-[#162238] px-1 py-0.5 rounded text-gold font-mono">/</code>.
-            </div>
-        </div>
-
-        <!-- Right Pane: Email Inspector & Deconstruction View -->
-        <div class="lg:col-span-8 bg-[#111a2d] rounded-xl p-6 border border-[#273752] shadow-xl flex flex-col justify-between space-y-6 relative" id="reading-pane">
+        <!-- Top Mission Header (Contains invariant: Phishing Sandbox & URL Inspector) -->
+        <div class="bg-ink-900/90 rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-signal via-signal-dim to-signal"></div>
             
-            <div class="space-y-6">
-                <!-- Message Top Bar -->
-                <div class="border-b border-[#1e293b] pb-5 space-y-4">
-                    <div class="flex flex-wrap items-center justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-[#070b12] border border-gold/40 text-gold flex items-center justify-center text-lg font-bold shadow-inner" id="sender-avatar">
-                                <span class="material-symbols-outlined text-2xl">mail</span>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-ink-950 text-signal uppercase tracking-wider border border-signal/30">
+                        <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
+                        <span>CYBERSHIELD SIMULATION LAB &bull; QUARANTINE FORENSICS</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight">
+                        Phishing Sandbox & URL Inspector
+                    </h1>
+                    <p class="font-body text-xs sm:text-sm text-mist-900 leading-relaxed">
+                        Examine suspicious collegiate messages in an isolated sandbox. Inspect raw RFC 5322 headers (SPF &amp; DMARC), hover over links to unmask typosquatting domains, and categorize threat vectors safely.
+                    </p>
+                </div>
+
+                <!-- HUD Stats -->
+                <div class="flex items-center gap-3 bg-ink-950 border border-white/10 p-4 rounded-2xl shrink-0 shadow-inner font-mono">
+                    <div class="text-center px-3 border-r border-white/10">
+                        <div class="text-[10px] text-mist-900 uppercase">SCENARIOS</div>
+                        <div id="stat-progress" class="text-2xl font-bold text-signal">0 / {{ total_scenarios }}</div>
+                    </div>
+                    <div class="text-center px-3 border-r border-white/10">
+                        <div class="text-[10px] text-mist-900 uppercase">CORRECT</div>
+                        <div id="stat-score" class="text-2xl font-bold text-white">0</div>
+                    </div>
+                    <div class="text-center px-3">
+                        <div class="text-[10px] text-mist-900 uppercase">ACCURACY</div>
+                        <div id="stat-accuracy" class="text-2xl font-bold text-signal">--%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Quarantine Mail Client UI -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[640px]">
+            
+            <!-- Left Sidebar: Quarantined Inbox (Contains invariant: Quarantine Inbox) -->
+            <div class="lg:col-span-4 bg-ink-850 rounded-2xl p-5 border border-white/10 shadow-xl flex flex-col space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-white/5 px-1">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-signal text-xl">mark_email_unread</span>
+                        <span class="font-display font-bold text-xs uppercase tracking-wider text-white">Quarantine Inbox</span>
+                    </div>
+                    <span class="text-xs font-mono text-signal bg-ink-950 border border-white/10 px-2.5 py-0.5 rounded-full">
+                        {{ total_scenarios }} Messages
+                    </span>
+                </div>
+
+                <!-- Email Items List -->
+                <div class="space-y-2.5 overflow-y-auto max-h-[580px] pr-1" id="email-list-container">
+                    {% for email in emails %}
+                        <div class="email-item p-4 rounded-xl border border-white/5 bg-ink-950 hover:bg-ink-900 cursor-pointer transition-all space-y-2"
+                             id="item-{{ email.id }}"
+                             data-email-id="{{ email.id }}"
+                             onclick="selectEmail('{{ email.id }}')">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-white truncate max-w-[170px] font-display">{{ email.sender_name }}</span>
+                                <span class="text-[10px] font-mono text-mist-900">{{ email.timestamp }}</span>
                             </div>
-                            <div>
-                                <h2 class="font-serif-title font-bold text-base sm:text-lg text-white" id="mail-subject">
-                                    Select an email from your inbox to inspect
-                                </h2>
-                                <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400 pt-0.5">
-                                    <span>From: <strong class="text-white font-mono" id="mail-sender-email">--</strong></span>
-                                    <span>&bull;</span>
-                                    <span id="mail-timestamp" class="font-mono text-slate-400">--</span>
+                            <div class="text-xs font-medium text-mist-100 truncate leading-tight">{{ email.subject }}</div>
+                            <div class="flex items-center justify-between text-[11px] pt-1 font-mono">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] bg-ink-900 text-mist-700 border border-white/10">{{ email.category }}</span>
+                                <span class="status-pill text-[10px] text-mist-900 font-semibold" id="badge-{{ email.id }}">Awaiting Triage</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pro Tip Box -->
+                <div class="mt-auto p-4 rounded-xl bg-ink-950 border border-signal/20 text-xs text-mist-700 leading-relaxed font-mono">
+                    <span class="font-bold text-signal block mb-0.5 uppercase tracking-wider">&bull; INVESTIGATOR DOCTRINE:</span>
+                    Scrutinize lookalike homoglyphs and unauthorized TLDs. Verify the domain root immediately preceding the first slash <code class="bg-ink-900 px-1 py-0.5 rounded text-signal">/</code>.
+                </div>
+            </div>
+
+            <!-- Right Pane: Email Inspector & Deconstruction View -->
+            <div class="lg:col-span-8 bg-ink-850 rounded-2xl p-6 sm:p-8 border border-white/10 shadow-xl flex flex-col justify-between space-y-6 relative" id="reading-pane">
+                
+                <div class="space-y-6">
+                    <!-- Message Top Bar -->
+                    <div class="border-b border-white/5 pb-5 space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-ink-950 border border-signal/30 text-signal flex items-center justify-center text-lg font-bold shadow-inner" id="sender-avatar">
+                                    <span class="material-symbols-outlined text-xl">mail</span>
+                                </div>
+                                <div>
+                                    <h2 class="font-display font-bold text-base sm:text-lg text-white" id="mail-subject">
+                                        Select an email from your inbox to inspect
+                                    </h2>
+                                    <div class="flex flex-wrap items-center gap-2 text-xs text-mist-900 pt-0.5 font-mono">
+                                        <span>From: <strong class="text-white" id="mail-sender-email">--</strong></span>
+                                        <span>&bull;</span>
+                                        <span id="mail-timestamp" class="text-mist-700">--</span>
+                                    </div>
                                 </div>
                             </div>
+
+                            <div class="flex items-center gap-2">
+                                <span class="px-3 py-1 rounded-full text-xs font-mono bg-ink-950 border border-white/10 text-mist-700" id="mail-category">
+                                    Category
+                                </span>
+                                <button type="button" 
+                                        id="btn-toggle-headers"
+                                        onclick="toggleHeaders()"
+                                        class="px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-wider bg-signal text-ink-950 font-bold hover:bg-signal-dim transition-all flex items-center gap-1 cursor-pointer">
+                                    <span class="material-symbols-outlined text-sm">code</span>
+                                    <span>Headers</span>
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-1 rounded text-xs font-mono bg-[#0d1422] border border-[#273752] text-slate-300" id="mail-category">
-                                Category
-                            </span>
-                            <button type="button" 
-                                    id="btn-toggle-headers"
-                                    onclick="toggleHeaders()"
-                                    class="px-3 py-1 rounded-lg text-xs font-crest uppercase tracking-wider bg-gold hover:bg-gold-light text-[#090e17] font-bold transition-all flex items-center gap-1 cursor-pointer">
-                                <span class="material-symbols-outlined text-sm">code</span>
-                                <span>Inspect Headers</span>
-                            </button>
+                        <!-- Collapsible Raw Headers Inspector Panel -->
+                        <div id="headers-panel" class="hidden p-4 rounded-xl bg-ink-950 border border-signal/30 space-y-2 text-xs font-mono">
+                            <div class="flex items-center justify-between text-signal font-bold border-b border-white/5 pb-2">
+                                <span>📡 RAW RFC 5322 NETWORK HEADERS</span>
+                                <span class="text-[10px] text-mist-900">Authentication Verification</span>
+                            </div>
+                            <div class="space-y-1.5 pt-1 text-mist-700" id="headers-content">
+                                <!-- Injected dynamically -->
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Collapsible Raw Headers Inspector Panel -->
-                    <div id="headers-panel" class="hidden p-4 rounded-xl bg-[#070b12] border border-gold/30 space-y-2 text-xs font-mono">
-                        <div class="flex items-center justify-between text-gold font-bold border-b border-[#1e293b] pb-2">
-                            <span>📡 RAW RFC 5322 NETWORK HEADERS</span>
-                            <span class="text-[10px] text-slate-400">Authentication Telemetry</span>
+                    <!-- Simulated Email Body Canvas -->
+                    <div class="p-6 rounded-2xl bg-ink-950 border border-white/5 text-sm text-mist-100 space-y-4 shadow-inner font-body" id="mail-body-canvas">
+                        <!-- Body HTML injected dynamically -->
+                    </div>
+
+                    <!-- Live URL Deconstructor & Inspector HUD -->
+                    <div class="p-4 rounded-2xl bg-ink-950 border border-white/10 space-y-3 font-mono">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1.5 text-xs text-signal uppercase tracking-wider font-bold">
+                                <span class="material-symbols-outlined text-sm">search</span>
+                                <span>Live Hyperlink Deconstructor</span>
+                            </div>
+                            <span class="text-[10px] text-mist-900">Hover over hyperlinks in the specimen</span>
                         </div>
-                        <div class="space-y-1.5 pt-1 text-slate-300" id="headers-content">
-                            <!-- Injected dynamically -->
+
+                        <div class="p-3.5 rounded-xl bg-ink-900 border border-white/5 text-xs font-mono break-all text-mist-100" id="hover-inspector">
+                            <span class="text-mist-900 italic">No hyperlink hovered yet. Place cursor on email links to analyze root domain integrity.</span>
+                        </div>
+
+                        <!-- Domain Breakdown Chips -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] font-mono text-mist-900" id="url-breakdown-chips">
+                            <div class="p-2.5 rounded-xl bg-ink-900 border border-white/5">
+                                <span class="text-[10px] block text-mist-900">PROTOCOL</span>
+                                <span class="font-bold text-white" id="chip-protocol">--</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-ink-900 border border-white/5">
+                                <span class="text-[10px] block text-mist-900">SUBDOMAIN</span>
+                                <span class="font-bold text-mist-700" id="chip-subdomain">--</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-ink-900 border border-white/5">
+                                <span class="text-[10px] block text-mist-900">ROOT DOMAIN</span>
+                                <span class="font-bold text-signal" id="chip-root">--</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-ink-900 border border-white/5">
+                                <span class="text-[10px] block text-mist-900">TLD</span>
+                                <span class="font-bold text-white" id="chip-tld">--</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Simulated Email Body Canvas -->
-                <div class="p-6 rounded-xl bg-[#0d1422] border border-[#1e293b] text-sm text-slate-200 space-y-4 shadow-inner" id="mail-body-canvas">
-                    <!-- Body HTML injected dynamically -->
+                <!-- Bottom Verdict Actions Console -->
+                <div id="action-console" class="pt-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <span class="text-xs text-mist-900 font-mono">
+                        Declare verdict based on RFC headers and root domain:
+                    </span>
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <button type="button" 
+                                id="btn-verdict-safe"
+                                onclick="handleVerdict(false)"
+                                class="flex-1 sm:flex-initial px-6 py-3 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-xs uppercase tracking-wider font-bold transition-all shadow-[0_0_15px_rgba(232,255,71,0.2)] flex items-center justify-center gap-1.5 cursor-pointer">
+                            <span class="material-symbols-outlined text-base">verified</span>
+                            <span>Legitimate / Safe</span>
+                        </button>
+                        <button type="button" 
+                                id="btn-verdict-phish"
+                                onclick="handleVerdict(true)"
+                                class="flex-1 sm:flex-initial px-6 py-3 rounded-full bg-ember hover:bg-ember-dim text-ink-950 font-display text-xs uppercase tracking-wider font-bold transition-all shadow-[0_0_15px_rgba(255,107,53,0.2)] flex items-center justify-center gap-1.5 cursor-pointer">
+                            <span class="material-symbols-outlined text-base">report</span>
+                            <span>Quarantine as Phish</span>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Live URL Deconstructor & Inspector HUD -->
-                <div class="p-4 rounded-xl bg-[#070b12] border border-[#273752] space-y-3">
+                <!-- Verdict Feedback Banner -->
+                <div id="verdict-banner" class="hidden p-6 rounded-2xl border shadow-xl space-y-4">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-1.5 text-xs font-crest text-gold uppercase tracking-wider font-bold">
-                            <span class="material-symbols-outlined text-sm">search</span>
-                            <span>Live Hyperlink Deconstructor</span>
+                        <div class="flex items-center gap-3">
+                            <div id="verdict-icon" class="w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold"></div>
+                            <div>
+                                <h3 id="verdict-title" class="font-display font-bold text-lg"></h3>
+                                <p id="verdict-subtitle" class="text-xs text-mist-700"></p>
+                            </div>
                         </div>
-                        <span class="text-[10px] font-mono text-slate-400">Hover over any link in the specimen</span>
+                        <button type="button" 
+                                id="btn-next-scenario"
+                                onclick="nextScenario()" 
+                                class="px-5 py-2.5 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-xs uppercase tracking-wider font-bold transition-all flex items-center gap-1 shadow-md cursor-pointer">
+                            <span>Next Specimen</span>
+                            <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+                        </button>
                     </div>
 
-                    <div class="p-3 rounded-lg bg-[#0d1422] border border-[#1e293b] text-xs font-mono break-all text-slate-300" id="hover-inspector">
-                        <span class="text-slate-500 italic">No hyperlink hovered yet. Place cursor on email links to analyze root domain integrity.</span>
-                    </div>
-
-                    <!-- Domain Breakdown Chips -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] font-mono text-slate-400" id="url-breakdown-chips">
-                        <div class="p-2 rounded bg-[#0b1320] border border-[#1e293b]">
-                            <span class="text-[10px] block text-slate-500">PROTOCOL</span>
-                            <span class="font-bold text-white" id="chip-protocol">--</span>
-                        </div>
-                        <div class="p-2 rounded bg-[#0b1320] border border-[#1e293b]">
-                            <span class="text-[10px] block text-slate-500">SUBDOMAIN</span>
-                            <span class="font-bold text-slate-300" id="chip-subdomain">--</span>
-                        </div>
-                        <div class="p-2 rounded bg-[#0b1320] border border-[#1e293b]">
-                            <span class="text-[10px] block text-slate-500">ROOT DOMAIN</span>
-                            <span class="font-bold text-gold" id="chip-root">--</span>
-                        </div>
-                        <div class="p-2 rounded bg-[#0b1320] border border-[#1e293b]">
-                            <span class="text-[10px] block text-slate-500">TLD</span>
-                            <span class="font-bold text-white" id="chip-tld">--</span>
-                        </div>
+                    <div id="verdict-details" class="space-y-3 text-xs leading-relaxed font-body">
+                        <!-- Injected dynamically -->
                     </div>
                 </div>
-            </div>
 
-            <!-- Bottom Verdict Actions Console -->
-            <div id="action-console" class="pt-4 border-t border-[#1e293b] flex flex-col sm:flex-row items-center justify-between gap-4">
-                <span class="text-xs text-slate-400 font-serif-editorial italic">
-                    Declare your verdict based on forensic headers and URL inspection:
-                </span>
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <button type="button" 
-                            id="btn-verdict-safe"
-                            onclick="handleVerdict(false)"
-                            class="flex-1 sm:flex-initial px-5 py-2.5 rounded-lg bg-[#064e3b] hover:bg-emerald text-emerald-light hover:text-[#090e17] border border-emerald/50 font-crest text-xs uppercase tracking-wider font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer">
-                        <span class="material-symbols-outlined text-base">verified</span>
-                        <span>Legitimate / Safe</span>
-                    </button>
-                    <button type="button" 
-                            id="btn-verdict-phish"
-                            onclick="handleVerdict(true)"
-                            class="flex-1 sm:flex-initial px-5 py-2.5 rounded-lg bg-rose-950 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/50 font-crest text-xs uppercase tracking-wider font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer">
-                        <span class="material-symbols-outlined text-base">report</span>
-                        <span>Quarantine as Phish</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Verdict Result & Feedback Banner (Hidden by default) -->
-            <div id="verdict-banner" class="hidden p-6 rounded-xl border shadow-xl space-y-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div id="verdict-icon" class="w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold"></div>
-                        <div>
-                            <h3 id="verdict-title" class="font-serif-title font-bold text-lg"></h3>
-                            <p id="verdict-subtitle" class="text-xs text-slate-300"></p>
-                        </div>
-                    </div>
-                    <button type="button" 
-                            id="btn-next-scenario"
-                            onclick="nextScenario()" 
-                            class="px-4 py-2 rounded-lg bg-gold hover:bg-gold-light text-[#090e17] font-crest text-xs uppercase tracking-wider font-bold transition-all flex items-center gap-1 shadow-md cursor-pointer">
-                        <span>Next Specimen</span>
-                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                    </button>
-                </div>
-
-                <div id="verdict-details" class="space-y-3 text-xs leading-relaxed">
-                    <!-- Injected dynamically -->
-                </div>
             </div>
 
         </div>
@@ -242,44 +252,39 @@
 
         // Active state in inbox
         document.querySelectorAll('.email-item').forEach(el => {
-            el.classList.remove('border-gold', 'bg-[#162238]');
-            el.classList.add('border-[#273752]', 'bg-[#0d1422]');
+            el.classList.remove('border-signal', 'bg-ink-800');
+            el.classList.add('border-white/5', 'bg-ink-950');
         });
         const selectedItem = document.getElementById(`item-${id}`);
         if (selectedItem) {
-            selectedItem.classList.remove('border-[#273752]', 'bg-[#0d1422]');
-            selectedItem.classList.add('border-gold', 'bg-[#162238]');
+            selectedItem.classList.remove('border-white/5', 'bg-ink-950');
+            selectedItem.classList.add('border-signal', 'bg-ink-800');
         }
 
-        // Render header details
+        // Populate details
         document.getElementById('mail-subject').textContent = email.subject;
         document.getElementById('mail-sender-email').textContent = `${email.sender_name} <${email.sender_email}>`;
         document.getElementById('mail-timestamp').textContent = email.timestamp;
         document.getElementById('mail-category').textContent = email.category;
-        document.getElementById('sender-avatar').innerHTML = `<span class="material-symbols-outlined text-2xl">${email.avatar_icon || 'mail'}</span>`;
+        document.getElementById('mail-body-canvas').innerHTML = email.body_html;
 
-        // Render raw headers
+        // Populate raw headers
         const headersHtml = `
-            <div><span class="text-slate-500">From:</span> ${escapeHtml(email.sender_name)} &lt;${escapeHtml(email.sender_email)}&gt;</div>
-            <div><span class="text-slate-500">Reply-To:</span> <span class="${email.headers.reply_to !== email.sender_email ? 'text-rose-400 font-bold' : 'text-slate-300'}">${escapeHtml(email.headers.reply_to)}</span></div>
-            <div><span class="text-slate-500">SPF-Result:</span> <span class="${email.headers.spf_status === 'Pass' ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}">${escapeHtml(email.headers.spf_status)} (${escapeHtml(email.headers.spf_ip)})</span></div>
-            <div><span class="text-slate-500">DMARC-Status:</span> <span class="${email.headers.dmarc_status === 'Pass' ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}">${escapeHtml(email.headers.dmarc_status)}</span></div>
-            <div><span class="text-slate-500">Mail-Server-Relay:</span> ${escapeHtml(email.headers.relay_server)}</div>
+            <div><span class="text-signal">From:</span> ${escapeHtml(email.sender_name)} &lt;${escapeHtml(email.sender_email)}&gt;</div>
+            <div><span class="text-signal">Return-Path:</span> &lt;${escapeHtml(email.return_path)}&gt;</div>
+            <div><span class="text-signal">Reply-To:</span> &lt;${escapeHtml(email.reply_to)}&gt;</div>
+            <div><span class="text-signal">Received-SPF:</span> <span class="${email.spf_status === 'pass' ? 'text-signal font-bold' : 'text-ember font-bold'}">${escapeHtml(email.spf_status)}</span> (${escapeHtml(email.auth_results)})</div>
+            <div><span class="text-signal">Message-ID:</span> &lt;${escapeHtml(email.id)}-telemetry@simulator.edu&gt;</div>
         `;
         document.getElementById('headers-content').innerHTML = headersHtml;
 
-        // Render email body
-        document.getElementById('mail-body-canvas').innerHTML = email.body_html;
-
-        // Reset URL Inspector HUD
+        // Reset URL inspector
         resetUrlInspector();
 
-        // Attach hover listeners to simulated links
-        attachLinkHoverListeners();
-
-        // Toggle action console vs verdict banner
+        // Restore verdict state if already answered
         const banner = document.getElementById('verdict-banner');
         const consoleEl = document.getElementById('action-console');
+
         if (email.user_verdict !== undefined) {
             consoleEl.classList.add('hidden');
             renderVerdictBanner(email.eval_result, email);
@@ -287,6 +292,9 @@
             consoleEl.classList.remove('hidden');
             banner.classList.add('hidden');
         }
+
+        // Attach hover listeners to simulated email body links
+        setupEmailBodyLinks();
     }
 
     function toggleHeaders() {
@@ -294,9 +302,11 @@
         panel.classList.toggle('hidden');
     }
 
-    function attachLinkHoverListeners() {
-        const links = document.querySelectorAll('#mail-body-canvas a');
+    function setupEmailBodyLinks() {
+        const canvas = document.getElementById('mail-body-canvas');
+        const links = canvas.querySelectorAll('a');
         links.forEach(link => {
+            link.classList.add('hover:underline', 'cursor-pointer');
             link.addEventListener('mouseenter', function(e) {
                 const href = this.getAttribute('data-real-target') || this.getAttribute('href');
                 inspectHoverUrl(href);
@@ -319,7 +329,7 @@
             const parsed = new URL(rawUrl);
             inspector.innerHTML = `
                 <div class="flex items-center gap-2">
-                    <span class="text-gold font-bold">Unmasked Target:</span>
+                    <span class="text-signal font-bold">Unmasked Target:</span>
                     <span class="text-white">${escapeHtml(rawUrl)}</span>
                 </div>
             `;
@@ -343,7 +353,7 @@
 
     function resetUrlInspector() {
         document.getElementById('hover-inspector').innerHTML = `
-            <span class="text-slate-500 italic">No hyperlink hovered yet. Place cursor on email links to analyze root domain integrity.</span>
+            <span class="text-mist-900 italic">No hyperlink hovered yet. Place cursor on email links to analyze root domain integrity.</span>
         `;
         document.getElementById('chip-protocol').textContent = '--';
         document.getElementById('chip-subdomain').textContent = '--';
@@ -394,10 +404,10 @@
             if (badge) {
                 if (resData.correct) {
                     badge.textContent = "✅ Mastered";
-                    badge.className = "text-[10px] font-mono text-emerald-light font-bold";
+                    badge.className = "text-[10px] font-mono text-signal font-bold";
                 } else {
                     badge.textContent = "❌ Tricked";
-                    badge.className = "text-[10px] font-mono text-rose-400 font-bold";
+                    badge.className = "text-[10px] font-mono text-ember font-bold";
                 }
             }
 
@@ -419,30 +429,30 @@
         banner.classList.remove('hidden');
 
         if (resData.correct) {
-            banner.className = "p-6 rounded-xl bg-[#064e3b]/30 border border-emerald/50 shadow-xl space-y-4";
-            icon.className = "w-10 h-10 rounded-xl bg-emerald text-[#090e17] flex items-center justify-center text-xl font-bold shadow-md";
+            banner.className = "p-6 rounded-2xl bg-signal/15 border border-signal/40 shadow-xl space-y-4";
+            icon.className = "w-10 h-10 rounded-xl bg-signal text-ink-950 flex items-center justify-center text-xl font-bold shadow-md";
             icon.innerHTML = "🎯";
             title.textContent = resData.is_phishing ? "Masterful Triage! Identified Adversarial Phish!" : "Sharp Eye! Correctly Verified Authentic Message!";
-            title.className = "font-serif-title font-bold text-lg text-emerald-light";
+            title.className = "font-display font-bold text-lg text-signal";
             subtitle.textContent = "Your digital instincts prevented a security compromise.";
         } else {
-            banner.className = "p-6 rounded-xl bg-rose-950/40 border border-rose-500/50 shadow-xl space-y-4";
-            icon.className = "w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center text-xl font-bold shadow-md";
+            banner.className = "p-6 rounded-2xl bg-ember/15 border border-ember/40 shadow-xl space-y-4";
+            icon.className = "w-10 h-10 rounded-xl bg-ember text-ink-950 flex items-center justify-center text-xl font-bold shadow-md";
             icon.innerHTML = "⚠️";
-            title.textContent = resData.is_phishing ? "Security Breach: Deceived by Spoofed Carrier Link!" : "False Quarantine: Legitimate Collegiate Broadcast!";
-            title.className = "font-serif-title font-bold text-lg text-rose-300";
+            title.textContent = resData.is_phishing ? "Security Breach: Deceived by Spoofed Carrier Link!" : "False Quarantine: Legitimate Broadcast!";
+            title.className = "font-display font-bold text-lg text-ember";
             subtitle.textContent = "Review the red flag clues below to sharpen your defense:";
         }
 
         let redFlagsHtml = "";
         if (resData.red_flags && resData.red_flags.length > 0) {
             redFlagsHtml = `
-                <div class="p-3.5 rounded-lg bg-[#070b12] border border-[#273752] space-y-2">
-                    <div class="font-bold font-crest text-gold text-xs flex items-center gap-1.5 uppercase tracking-wider">
+                <div class="p-4 rounded-xl bg-ink-950 border border-white/10 space-y-2 font-mono">
+                    <div class="font-bold text-signal text-xs flex items-center gap-1.5 uppercase tracking-wider">
                         <span class="material-symbols-outlined text-sm">flag</span>
                         <span>Forensic Red Flag Indicators:</span>
                     </div>
-                    <ul class="list-disc list-inside space-y-1 text-slate-300 font-sans">
+                    <ul class="list-disc list-inside space-y-1 text-mist-700">
                         ${resData.red_flags.map(f => `<li>${f}</li>`).join('')}
                     </ul>
                 </div>
@@ -450,9 +460,9 @@
         }
 
         details.innerHTML = `
-            <div class="p-3.5 rounded-lg bg-[#070b12] border border-[#273752] text-slate-200">
-                <span class="font-bold text-gold block mb-1 font-crest uppercase tracking-wider">💡 Investigator Breakdown:</span>
-                <p class="font-serif-editorial italic">${resData.explanation}</p>
+            <div class="p-4 rounded-xl bg-ink-950 border border-white/10 text-mist-100">
+                <span class="font-mono text-xs font-bold text-signal block mb-1 uppercase tracking-wider">&bull; Investigator Breakdown:</span>
+                <p class="font-body text-xs text-mist-700 leading-relaxed">${resData.explanation}</p>
             </div>
             ${redFlagsHtml}
         `;

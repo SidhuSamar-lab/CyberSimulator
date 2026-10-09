@@ -1,360 +1,326 @@
 {% extends 'base.html' %}
 
-{% block title %}Cadet Dossier | {{ student.name }} | CyberShield Academy{% endblock %}
+{% block title %}Cadet Terminal | {{ student.name }} | CyberShield{% endblock %}
 
 {% block content %}
-<div class="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
+<div class="relative w-full overflow-hidden bg-ink-950 text-mist-100 min-h-screen">
     
-    <!-- Hero Academic Banner / Student Overview -->
-    <div class="relative overflow-hidden bg-obsidian-container border border-obsidian-border rounded-xl p-6 sm:p-9 shadow-[0_4px_30px_rgba(0,0,0,0.4)] flex flex-col lg:flex-row items-stretch justify-between gap-8">
-        <!-- Subtle Classical Background Watermark Crest -->
-        <div class="absolute -right-10 -bottom-10 opacity-[0.04] pointer-events-none text-gold">
-            <span class="material-symbols-outlined text-[320px]">military_tech</span>
-        </div>
+    <!-- Background Glow & Grid Lines (Nexus Studio Signature) -->
+    <div class="absolute top-10 left-1/3 w-[600px] h-[600px] bg-signal/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute inset-0 grid-lines pointer-events-none opacity-40"></div>
+    <div class="grain absolute inset-0 pointer-events-none"></div>
 
-        <!-- Left Column: Honors & Greeting -->
-        <div class="flex flex-col justify-between max-w-2xl relative z-10">
-            <div>
-                <!-- Scholastic Badges Row -->
-                <div class="flex flex-wrap items-center gap-2 mb-4">
-                    <span class="px-2.5 py-1 rounded bg-obsidian-elevated text-gold-light text-[11px] font-sans font-bold tracking-widest uppercase border border-gold/40 shadow-xs">
-                        CLASS OF 2029 • {{ student.class_name }} | ROLL #{{ student.roll_number }}
-                    </span>
-                    <span class="px-2.5 py-1 rounded bg-obsidian-card text-silver-body text-xs font-serif italic border border-obsidian-border flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-sm text-gold">account_balance</span>
-                        Oakridge Middle &amp; High School
-                    </span>
-                    <span class="px-2.5 py-1 rounded bg-gold-bg text-gold-light text-xs font-sans font-medium border border-gold/30 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm text-gold">event</span>
-                        Term Assessment: Nov 14
-                    </span>
-                </div>
-
-                <!-- Academic Headline -->
-                <h1 class="font-serif text-3xl sm:text-4xl text-ivory-bright font-bold tracking-tight leading-tight">
-                    Welcome back, {{ student.name }}
-                </h1>
-                <div class="h-0.5 w-16 bg-gradient-to-r from-gold to-transparent my-3"></div>
-                <p class="font-sans text-xs sm:text-sm text-silver-body max-w-xl leading-relaxed">
-                    Continue sharpening your digital defense radar. You have mastered <strong class="text-gold-light font-bold">{{ completed_count }}</strong> of {{ total_topics }} collegiate defense modules for Michaelmas Term.
-                </p>
-            </div>
-
-            <!-- Telemetry Indicators in Classic Dark Inset -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-6 pt-5 bg-obsidian-card/70 border border-obsidian-border rounded-lg p-4">
-                <div class="flex flex-col border-r border-obsidian-border pr-2">
-                    <span class="text-[10px] uppercase tracking-widest font-sans font-bold text-muted-slate">Academy Tier</span>
-                    <div class="flex items-center gap-1.5 mt-1">
-                        <span class="material-symbols-outlined text-gold text-lg" style="font-variation-settings: 'FILL' 1;">shield</span>
-                        <span class="font-serif text-base font-bold text-ivory-bright">{{ rank_title }}</span>
-                    </div>
-                </div>
-                <div class="flex flex-col sm:border-r border-obsidian-border sm:pr-2">
-                    <span class="text-[10px] uppercase tracking-widest font-sans font-bold text-muted-slate">Discipline Streak</span>
-                    <div class="flex items-center gap-1.5 mt-1">
-                        <span class="material-symbols-outlined text-gold text-lg" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
-                        <span class="font-serif text-base font-bold text-gold-light">4 Days Active</span>
-                    </div>
-                </div>
-                <div class="flex flex-col col-span-2 sm:col-span-1 pt-2 sm:pt-0">
-                    <span class="text-[10px] uppercase tracking-widest font-sans font-bold text-muted-slate">Cadet Rank</span>
-                    <div class="flex items-center gap-1.5 mt-1">
-                        <span class="material-symbols-outlined text-silver-body text-lg">workspace_premium</span>
-                        <span class="font-serif text-base font-bold text-ivory-bright">Top Honor Roll</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Column: Curricular Resilience Gauge -->
-        <div class="flex flex-col justify-between lg:w-96 p-6 rounded-xl bg-obsidian-card border border-obsidian-border relative z-10 shadow-lg">
-            <div>
-                <div class="flex items-center justify-between mb-1 pb-2 border-b border-obsidian-border">
-                    <span class="font-serif text-sm font-bold text-ivory-bright">Curricular Resilience</span>
-                    <span class="font-sans text-[11px] font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-emerald/20 text-emerald-light border border-emerald/30">
-                        {{ completed_count }} / {{ total_topics }} Modules
-                    </span>
-                </div>
-                <div class="flex items-baseline gap-2 mt-3">
-                    <span class="font-serif text-4xl font-bold text-emerald-light tracking-tight tabular-nums drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
-                        {{ completion_percentage }}%
-                    </span>
-                    <span class="font-sans text-xs text-muted-slate font-medium uppercase tracking-wider">Curriculum Mastery</span>
-                </div>
-                
-                <!-- Structured Segmented Emerald & Gold Bar -->
-                <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="{{ completion_percentage }}" class="w-full bg-obsidian-elevated h-2.5 rounded-full overflow-hidden mt-3 flex p-0.5 border border-obsidian-border" role="progressbar">
-                    <div class="h-full bg-emerald rounded-l-full shadow-[0_0_8px_rgba(16,185,129,0.6)]" style="width: {{ completion_percentage }}%"></div>
-                    <div class="h-full bg-gold/40 rounded-r-full" style="width: calc(100% - {{ completion_percentage }}%)"></div>
-                </div>
-                
-                <div class="flex items-center justify-between mt-2.5 text-silver-body font-sans text-xs">
-                    <span class="flex items-center gap-1 font-medium text-emerald-light">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald"></span> {{ completed_count }} Mastered
-                    </span>
-                    <span class="flex items-center gap-1 font-medium text-gold-light">
-                        <span class="w-1.5 h-1.5 rounded-full bg-gold"></span> {{ active_count }} Active
-                    </span>
-                    <span class="flex items-center gap-1 font-medium text-muted-slate">
-                        <span class="w-1.5 h-1.5 rounded-full bg-obsidian-border"></span> {{ pending_count }} Pending
-                    </span>
-                </div>
-            </div>
-
-            <!-- Cadet Certification Seal -->
-            <a href="{% url 'student_certificate' %}" class="mt-6 pt-3.5 bg-obsidian-container p-3.5 rounded-lg border border-obsidian-border hover:border-gold/50 flex items-center justify-between shadow-inner transition-colors group">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-gold-bg border border-gold/40 flex items-center justify-center text-gold shrink-0 group-hover:scale-105 transition-transform">
-                        <span class="material-symbols-outlined text-lg">verified</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-serif text-xs font-bold text-ivory-bright">Digital Cadet Certification</span>
-                        <span class="font-sans text-[11px] text-muted-slate">Inspect official graduation credential</span>
-                    </div>
-                </div>
-                <span class="material-symbols-outlined text-gold text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- Main Content Layout (Grid + Supplementary Side Column) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-10 flex flex-col gap-10">
         
-        <!-- Primary Modules Area (8 Columns) -->
-        <div class="lg:col-span-8 flex flex-col gap-6">
+        <!-- Hero Cadet Sentinel HUD Banner -->
+        <div class="relative overflow-hidden bg-ink-900/90 border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl flex flex-col lg:flex-row items-stretch justify-between gap-8">
             
-            <!-- Section Header with Classic Academy Typo & Tabs -->
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-1 border-b border-obsidian-border">
-                <div class="flex flex-col">
-                    <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-gold shadow-[0_0_8px_rgba(245,158,11,0.8)]"></span>
-                        <h2 class="font-serif text-2xl text-ivory-bright font-bold tracking-tight">Cyber Safety Curriculum</h2>
-                    </div>
-                    <p class="font-sans text-xs text-muted-slate mt-0.5">Interactive threat vector simulations aligned with National Collegiate Security Standards.</p>
-                </div>
-                
-                <!-- Filter Tabs -->
-                <div class="inline-flex p-1 bg-obsidian-card rounded-lg border border-obsidian-border gap-1 self-stretch sm:self-auto text-xs">
-                    <button class="px-3 py-1 rounded bg-gold/20 text-gold-light border border-gold/40 font-semibold shadow-xs">All ({{ total_topics }})</button>
-                    <button class="px-3 py-1 rounded hover:bg-obsidian-card-hover text-muted-slate hover:text-ivory-bright font-medium transition-colors">Active ({{ active_count }})</button>
-                    <button class="px-3 py-1 rounded hover:bg-obsidian-card-hover text-muted-slate hover:text-ivory-bright font-medium transition-colors">Mastered ({{ completed_count }})</button>
-                </div>
-            </div>
-
-            <!-- 8 Curriculum Cards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {% for topic in topics %}
-                <div class="flex flex-col justify-between bg-obsidian-card border {% if topic.is_completed %}border-obsidian-border hover:border-emerald/50{% else %}border-obsidian-border hover:border-gold/50{% endif %} rounded-xl p-5 shadow-[0_2px_12px_rgba(0,0,0,0.3)] hover:bg-obsidian-card-hover transition-all group">
-                    <div>
-                        <div class="flex items-start justify-between gap-2">
-                            {% if topic.is_completed %}
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-sans font-semibold bg-[#064e3b]/40 text-emerald-light border border-emerald/40">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald shadow-[0_0_6px_rgba(16,185,129,0.8)]"></span>
-                                    Mastered
-                                </span>
-                                <span class="font-serif text-xs font-semibold text-silver-body bg-obsidian-container border border-obsidian-border px-2 py-0.5 rounded font-mono">
-                                    Score: {{ topic.percentage }}%
-                                </span>
-                            {% else %}
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-sans font-semibold bg-gold-bg text-gold-light border border-gold/40">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
-                                    Ready to Start
-                                </span>
-                                <span class="font-sans text-[11px] text-muted-slate bg-obsidian-container px-2 py-0.5 rounded border border-obsidian-border">
-                                    {{ topic.time }}
-                                </span>
-                            {% endif %}
-                        </div>
-
-                        <div class="flex items-center gap-3 mt-4">
-                            <div class="w-10 h-10 rounded-lg bg-obsidian-container border border-obsidian-border flex items-center justify-center text-ivory-bright shrink-0 group-hover:border-gold/50 transition-colors">
-                                <span class="material-symbols-outlined text-xl {% if topic.is_completed %}text-emerald-light{% else %}text-gold{% endif %}">
-                                    {% if topic.id == 'phishing' %}mark_email_unread
-                                    {% elif topic.id == 'passwords' %}key
-                                    {% elif topic.id == 'social_media' %}visibility_off
-                                    {% elif topic.id == 'cyberbullying' %}favorite
-                                    {% elif topic.id == 'ai_deepfakes' %}psychology
-                                    {% elif topic.id == 'qr_scams' %}qr_code_scanner
-                                    {% elif topic.id == 'mfa' %}phonelink_lock
-                                    {% else %}travel_explore{% endif %}
-                                </span>
-                            </div>
-                            <div class="min-w-0">
-                                <h3 class="font-serif text-base text-ivory-bright font-bold truncate leading-tight">{{ topic.title }}</h3>
-                                <div class="flex items-center gap-2 mt-0.5">
-                                    <span class="font-sans text-[11px] text-muted-slate">⏱ {{ topic.time }}</span>
-                                    <span class="text-obsidian-border">•</span>
-                                    <span class="font-sans text-[11px] text-muted-slate">{{ topic.level }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {% if topic.is_completed %}
-                            <div class="mt-4 p-2 rounded-lg bg-gold-bg border border-gold/30 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-gold text-base" style="font-variation-settings: 'FILL' 1;">military_tech</span>
-                                <span class="font-sans text-xs font-semibold text-gold-light">Badge Awarded: {{ topic.badge_name }}</span>
-                            </div>
-                        {% else %}
-                            <div class="mt-4 p-2 rounded-lg bg-obsidian-container border border-obsidian-border flex items-center justify-between text-muted-slate font-sans text-xs">
-                                <span>Award: {{ topic.badge_name }}</span>
-                                <span class="material-symbols-outlined text-sm text-gold">shield</span>
-                            </div>
-                        {% endif %}
+            <!-- Left Column: Greeting & Telemetry HUD -->
+            <div class="flex flex-col justify-between max-w-2xl">
+                <div>
+                    <!-- Badge Row -->
+                    <div class="flex flex-wrap items-center gap-2 mb-4">
+                        <span class="px-3 py-1 rounded-full bg-ink-950 text-signal text-xs font-mono font-bold tracking-wider uppercase border border-signal/30 shadow-sm">
+                            CLASS OF 2029 &bull; {{ student.class_name }} | ROLL #{{ student.roll_number }}
+                        </span>
+                        <span class="px-3 py-1 rounded-full bg-ink-950 text-mist-700 text-xs font-mono border border-white/10 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
+                            Oakridge Defense Chapter
+                        </span>
+                        <span class="px-3 py-1 rounded-full bg-signal/10 text-signal text-xs font-mono border border-signal/20">
+                            Term Assessment: Nov 14
+                        </span>
                     </div>
 
-                    <div class="mt-5 pt-3 border-t border-obsidian-border flex items-center justify-between">
-                        {% if topic.is_completed %}
-                            <span class="font-sans text-[11px] text-muted-slate italic">Passed in Lab</span>
-                            <a href="{% url 'take_quiz' topic.id %}" class="px-3.5 py-1.5 rounded-md bg-obsidian-container hover:bg-obsidian-border border border-obsidian-border text-ivory-bright font-sans text-xs font-semibold transition-colors">
-                                Review Scenarios
-                            </a>
-                        {% else %}
-                            <span class="font-sans text-[11px] text-muted-slate">Michaelmas Syllabus</span>
-                            <a href="{% url 'take_quiz' topic.id %}" class="px-3.5 py-1.5 rounded-md bg-gold hover:bg-gold-light text-obsidian font-sans text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-gold/20">
-                                <span>Launch Drill</span>
-                                <span class="font-bold">→</span>
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-
-        </div>
-
-        <!-- Supplementary Sidebar Column (4 Columns) -->
-        <div class="lg:col-span-4 flex flex-col gap-6">
-            
-            <!-- Today's Academy Precept / Safety Rule Card -->
-            <div class="bg-obsidian-card border border-obsidian-border p-6 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] flex flex-col relative">
-                <div class="flex items-center justify-between pb-3 border-b border-obsidian-border">
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-gold text-xl">menu_book</span>
-                        <span class="font-serif text-sm font-bold text-ivory-bright uppercase tracking-wider">Academy Precept</span>
-                    </div>
-                    <span class="text-[10px] font-sans font-bold uppercase tracking-widest text-gold-light bg-gold-bg px-2 py-0.5 rounded border border-gold/30">Daily Canon</span>
-                </div>
-                
-                <div class="mt-4 p-3.5 bg-obsidian-container border border-obsidian-border rounded-lg">
-                    <span class="text-[10px] font-sans font-bold tracking-widest text-gold block mb-1">RULE #42 • URL INTEGRITY</span>
-                    <p class="font-serif text-sm text-ivory-bright font-medium leading-relaxed">
-                        “Verify root domain authenticity prior to credential submission.”
+                    <!-- Main Headline -->
+                    <h1 class="font-display text-3xl sm:text-5xl text-white font-bold tracking-tight leading-tight">
+                        Welcome back, {{ student.name }}
+                    </h1>
+                    <p class="font-body text-sm sm:text-base text-mist-900 max-w-xl leading-relaxed mt-2">
+                        Sharpen your adversarial detection radar. You have mastered <strong class="text-white font-bold">{{ completed_count }}</strong> of {{ total_topics }} threat vectors for Term II.
                     </p>
                 </div>
-                
-                <!-- Domain Inspection Example Box with High-Contrast Green vs Crimson Pills -->
-                <div class="mt-4 space-y-2">
-                    <div class="flex items-center justify-between text-xs p-2.5 rounded bg-[#064e3b]/30 border border-emerald/50">
-                        <span class="font-mono text-ivory-bright text-[11px]">portal.oakridge.edu</span>
-                        <span class="font-sans text-[11px] text-emerald-light font-bold flex items-center gap-1 bg-[#064e3b]/60 px-2 py-0.5 rounded border border-emerald/50 shadow-sm">
-                            <span class="material-symbols-outlined text-sm text-emerald">verified</span> Authentic
-                        </span>
+
+                <!-- Telemetry Indicators in Nexus Studio Inset Card -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-6 pt-5 bg-ink-950/80 border border-white/5 rounded-2xl p-4">
+                    <div class="flex flex-col border-r border-white/5 pr-2">
+                        <span class="text-[10px] uppercase tracking-widest font-mono text-mist-900">Sentinel Tier</span>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <span class="material-symbols-outlined text-signal text-lg">shield</span>
+                            <span class="font-display text-sm font-bold text-white">{{ rank_title }}</span>
+                        </div>
                     </div>
-                    <div class="flex items-center justify-between text-xs p-2.5 rounded bg-crimson-bg border border-crimson/50">
-                        <span class="font-mono text-ivory-bright text-[11px]">portal-oakridge-auth.cc</span>
-                        <span class="font-sans text-[11px] text-crimson font-bold flex items-center gap-1 bg-crimson/20 px-2 py-0.5 rounded border border-crimson/40 shadow-sm">
-                            <span class="material-symbols-outlined text-sm text-crimson">dangerous</span> Spoofed
-                        </span>
+                    <div class="flex flex-col sm:border-r border-white/5 sm:pr-2">
+                        <span class="text-[10px] uppercase tracking-widest font-mono text-mist-900">Drill Streak</span>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <span class="material-symbols-outlined text-ember text-lg">local_fire_department</span>
+                            <span class="font-display text-sm font-bold text-ember">4 Days Active</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col col-span-2 sm:col-span-1 pt-2 sm:pt-0">
+                        <span class="text-[10px] uppercase tracking-widest font-mono text-mist-900">Cadet Standings</span>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <span class="material-symbols-outlined text-white text-lg">workspace_premium</span>
+                            <span class="font-display text-sm font-bold text-white">Top Honor Roll</span>
+                        </div>
                     </div>
                 </div>
-
-                <a href="{% url 'phishing_sandbox' %}" class="mt-4 w-full py-2 bg-obsidian-container hover:bg-obsidian-card-hover border border-obsidian-border hover:border-gold/50 text-ivory-bright font-sans text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5">
-                    <span>Study Domain Syntax Primer</span>
-                    <span class="material-symbols-outlined text-sm text-gold">arrow_outward</span>
-                </a>
             </div>
 
-            <!-- Class Collective & Cadet Standings -->
-            <div class="bg-obsidian-card border border-obsidian-border p-6 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] flex flex-col">
-                <div class="flex items-center justify-between pb-3 border-b border-obsidian-border">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-obsidian-container border border-gold/40 text-gold flex items-center justify-center shadow-xs">
-                            <span class="material-symbols-outlined text-lg">shield</span>
-                        </div>
-                        <div>
-                            <h3 class="font-serif text-base text-ivory-bright font-bold leading-tight">Cadet Cohort</h3>
-                            <span class="font-sans text-[11px] text-muted-slate">{{ student.class_name }} Activity</span>
-                        </div>
+            <!-- Right Column: Curricular Resilience Gauge -->
+            <div class="flex flex-col justify-between lg:w-96 p-6 rounded-2xl bg-ink-950 border border-white/10 shadow-xl">
+                <div>
+                    <div class="flex items-center justify-between mb-2 pb-3 border-b border-white/5">
+                        <span class="font-display text-sm font-bold text-white">Curricular Resilience</span>
+                        <span class="font-mono text-xs font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-signal/15 text-signal border border-signal/30">
+                            {{ completed_count }} / {{ total_topics }} Vectors
+                        </span>
                     </div>
-                    <span class="px-2 py-0.5 rounded bg-gold-bg text-gold-light font-sans text-[10px] font-bold uppercase tracking-wider border border-gold/30">Weekly</span>
-                </div>
-                
-                <!-- Highlight Banner -->
-                <div class="mt-4 p-3.5 bg-obsidian-container border border-obsidian-border rounded-lg flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-obsidian-elevated text-gold flex items-center justify-center shrink-0 border border-gold/40 text-base">
-                        🎯
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-serif text-sm font-bold text-ivory-bright">184 Threat Labs Solved</span>
-                        <span class="font-sans text-xs text-silver-body">Section leads the district cyber safety standard.</span>
-                    </div>
-                </div>
 
-                <!-- Standings List -->
-                <div class="mt-5 space-y-2.5">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[10px] uppercase tracking-widest font-sans font-bold text-muted-slate">Honor Roll Standings</span>
-                        <span class="text-[10px] uppercase tracking-widest font-sans text-muted-slate">Points</span>
+                    <div class="flex items-baseline gap-2 mt-3">
+                        <span class="font-display text-4xl sm:text-5xl font-bold text-signal tracking-tight tabular-nums">
+                            {{ completion_percentage }}%
+                        </span>
+                        <span class="font-mono text-xs text-mist-900 uppercase tracking-wider">Mastery Rate</span>
                     </div>
                     
-                    {% for top in top_students|slice:":2" %}
-                    <div class="flex items-center justify-between p-2.5 rounded-lg bg-obsidian-container border border-obsidian-border">
-                        <div class="flex items-center gap-3">
-                            <span class="font-serif text-xs font-bold text-gold w-4">
-                                {% if forloop.counter == 1 %}I{% else %}II{% endif %}
-                            </span>
-                            <div class="w-7 h-7 rounded-full bg-gold/20 text-gold-light border border-gold/30 flex items-center justify-center font-sans text-[11px] font-bold">
-                                {{ top.name|slice:":2"|upper }}
+                    <!-- Electric Lime Progress Bar -->
+                    <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="{{ completion_percentage }}" class="w-full bg-ink-900 h-2.5 rounded-full overflow-hidden mt-4 flex border border-white/10" role="progressbar">
+                        <div class="h-full bg-signal rounded-full shadow-[0_0_12px_rgba(232,255,71,0.8)] transition-all duration-500" style="width: {{ completion_percentage }}%"></div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mt-3 text-mist-900 font-mono text-xs">
+                        <span class="flex items-center gap-1 text-signal font-semibold">
+                            <span class="w-1.5 h-1.5 rounded-full bg-signal"></span> {{ completed_count }} Mastered
+                        </span>
+                        <span class="flex items-center gap-1 text-mist-700">
+                            <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span> {{ active_count }} Active
+                        </span>
+                        <span class="flex items-center gap-1 text-mist-900">
+                            <span class="w-1.5 h-1.5 rounded-full bg-white/20"></span> {{ pending_count }} Pending
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Cadet Digital Certification Link -->
+                <a href="{% url 'student_certificate' %}" class="mt-6 p-4 rounded-xl bg-ink-900 border border-white/10 hover:border-signal/50 flex items-center justify-between shadow-inner transition-all group cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-signal/15 text-signal border border-signal/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <span class="material-symbols-outlined text-lg">verified</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-display text-xs font-bold text-white">Digital Honor Credential</span>
+                            <span class="font-mono text-[10px] text-mist-900">Inspect verified graduation seal</span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-signal text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Grid: Modules & Sidebar -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Left: 8 Threat Modules Area (8 Cols) -->
+            <div class="lg:col-span-8 flex flex-col gap-6">
+                
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-white/5">
+                    <div>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-white tracking-tight">Curriculum Vectors</h2>
+                        <p class="font-body text-xs text-mist-900 mt-0.5">8 interactive threat vector drills aligned with NIST standards.</p>
+                    </div>
+                    
+                    <div class="inline-flex p-1 bg-ink-900 rounded-full border border-white/10 gap-1 text-xs font-mono">
+                        <button class="px-3.5 py-1 rounded-full bg-signal text-ink-950 font-bold shadow-sm">All ({{ total_topics }})</button>
+                        <button class="px-3.5 py-1 rounded-full text-mist-900 hover:text-white transition-colors">Active ({{ active_count }})</button>
+                        <button class="px-3.5 py-1 rounded-full text-mist-900 hover:text-white transition-colors">Mastered ({{ completed_count }})</button>
+                    </div>
+                </div>
+
+                <!-- 8 Bento Grid Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for topic in topics %}
+                    <div class="flex flex-col justify-between bg-ink-850 border {% if topic.is_completed %}border-signal/30 bg-ink-850/90{% else %}border-white/5{% endif %} rounded-2xl p-6 shadow-xl hover:border-signal/40 hover:bg-ink-800 transition-all duration-300 group">
+                        <div>
+                            <div class="flex items-start justify-between gap-2">
+                                {% if topic.is_completed %}
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-signal/15 text-signal border border-signal/30">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
+                                        Mastered
+                                    </span>
+                                    <span class="font-mono text-xs text-white bg-ink-950 border border-white/10 px-2.5 py-0.5 rounded-full">
+                                        Score: {{ topic.percentage }}%
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-ink-950 text-mist-700 border border-white/10">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+                                        Ready to Start
+                                    </span>
+                                    <span class="font-mono text-xs text-mist-900">
+                                        ⏱ {{ topic.time }}
+                                    </span>
+                                {% endif %}
                             </div>
-                            <div class="flex flex-col">
-                                <span class="font-serif text-xs font-bold text-ivory-bright">{{ top.name }}</span>
-                                <span class="font-sans text-[10px] text-muted-slate">{{ top.badge_count }} of 8 Badges</span>
+
+                            <div class="flex items-center gap-3.5 mt-5">
+                                <div class="w-11 h-11 rounded-xl bg-ink-950 border border-white/10 flex items-center justify-center shrink-0 group-hover:border-signal/40 group-hover:scale-105 transition-all">
+                                    <span class="material-symbols-outlined text-xl {% if topic.is_completed %}text-signal{% else %}text-mist-700 group-hover:text-white{% endif %}">
+                                        {% if topic.id == 'phishing' %}mark_email_unread
+                                        {% elif topic.id == 'passwords' %}key
+                                        {% elif topic.id == 'social_media' %}visibility_off
+                                        {% elif topic.id == 'cyberbullying' %}favorite
+                                        {% elif topic.id == 'ai_deepfakes' %}psychology
+                                        {% elif topic.id == 'qr_scams' %}qr_code_scanner
+                                        {% elif topic.id == 'mfa' %}phonelink_lock
+                                        {% else %}travel_explore{% endif %}
+                                    </span>
+                                </div>
+                                <div class="min-w-0">
+                                    <h3 class="font-display text-base font-bold text-white truncate group-hover:text-signal transition-colors">{{ topic.title }}</h3>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <span class="font-mono text-[11px] text-mist-900">⏱ {{ topic.time }}</span>
+                                        <span class="text-white/20">&bull;</span>
+                                        <span class="font-mono text-[11px] text-mist-900 uppercase">{{ topic.level }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 p-2.5 rounded-xl bg-ink-950 border border-white/5 flex items-center justify-between text-xs font-mono">
+                                <span class="text-mist-900 text-[11px]">Badge: {{ topic.badge_name }}</span>
+                                <span class="material-symbols-outlined text-sm {% if topic.is_completed %}text-signal{% else %}text-mist-900{% endif %}">workspace_premium</span>
                             </div>
                         </div>
-                        <span class="font-serif text-xs font-bold text-gold-light">{{ top.total_score|default:"900" }} pts</span>
+
+                        <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
+                            {% if topic.is_completed %}
+                                <span class="font-mono text-[11px] text-mist-900">Passed</span>
+                                <a href="{% url 'take_quiz' topic.id %}" class="px-4 py-2 rounded-full bg-ink-950 hover:bg-ink-900 border border-white/10 text-white font-mono text-xs transition-colors">
+                                    Review
+                                </a>
+                            {% else %}
+                                <span class="font-mono text-[11px] text-mist-900">Term II</span>
+                                <a href="{% url 'take_quiz' topic.id %}" class="px-4 py-2 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-signal/20">
+                                    <span>Launch Drill</span>
+                                    <span>&rarr;</span>
+                                </a>
+                            {% endif %}
+                        </div>
                     </div>
                     {% endfor %}
-
-                    <!-- Current Student Row -->
-                    <div class="flex items-center justify-between p-2.5 rounded-lg bg-gold-bg border border-gold/40 shadow-xs">
-                        <div class="flex items-center gap-3">
-                            <span class="font-serif text-xs font-bold text-gold w-4">VI</span>
-                            <div class="w-7 h-7 rounded-full bg-gold text-obsidian flex items-center justify-center font-sans text-[11px] font-bold shadow-xs">
-                                {{ student.name|slice:":2"|upper }}
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="font-serif text-xs font-bold text-ivory-bright">{{ student.name }} (You)</span>
-                                <span class="font-sans text-[10px] text-gold-light/80">{{ completed_count }} of {{ total_topics }} Completed</span>
-                            </div>
-                        </div>
-                        <span class="font-serif text-xs font-bold text-gold-light">{{ student.total_score|default:"780" }} pts</span>
-                    </div>
                 </div>
 
-                <div class="mt-4 pt-3 border-t border-obsidian-border flex items-center justify-between text-xs">
-                    <span class="font-sans text-[11px] text-muted-slate">Class tournament in 2 days</span>
-                    <a class="font-serif font-bold text-gold hover:text-gold-light hover:underline flex items-center gap-1 transition-colors" href="{% url 'leaderboard_view' %}">
-                        View Full Roll →
-                    </a>
-                </div>
             </div>
 
-            <!-- Faculty Instructor Notes Widget -->
-            <div class="bg-obsidian-card border border-obsidian-border p-6 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.3)] flex flex-col">
-                <div class="flex items-center gap-3 mb-3 pb-2 border-b border-obsidian-border">
-                    <div class="w-8 h-8 rounded-full bg-obsidian-container border border-obsidian-border flex items-center justify-center text-ivory-bright">
-                        <span class="material-symbols-outlined text-base text-gold">school</span>
+            <!-- Right: Precept & Cohort Standings (4 Cols) -->
+            <div class="lg:col-span-4 flex flex-col gap-6">
+                
+                <!-- Daily Precept Box -->
+                <div class="bg-ink-900/90 border border-white/10 p-6 rounded-2xl shadow-xl flex flex-col backdrop-blur-xl">
+                    <div class="flex items-center justify-between pb-3 border-b border-white/5">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-signal text-lg">menu_book</span>
+                            <span class="font-display text-sm font-bold text-white uppercase tracking-wider">Academy Precept</span>
+                        </div>
+                        <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-signal bg-signal/10 px-2.5 py-0.5 rounded-full border border-signal/20">Daily Canon</span>
                     </div>
-                    <div>
-                        <span class="font-serif text-xs font-bold text-ivory-bright block">Ms. Vance • Lab Preceptor</span>
-                        <span class="font-sans text-[10px] text-muted-slate uppercase tracking-wider">Office Hours: Wed 3:30 PM</span>
+                    
+                    <div class="mt-4 p-4 bg-ink-950 border border-white/5 rounded-xl">
+                        <span class="text-[10px] font-mono font-bold tracking-widest text-signal block mb-1">RULE #42 &bull; URL INTEGRITY</span>
+                        <p class="font-body text-sm text-white font-medium leading-relaxed">
+                            “Always scrutinize the root domain before entering any login credentials.”
+                        </p>
+                    </div>
+
+                    <!-- Domain Comparison Box -->
+                    <div class="mt-4 space-y-2">
+                        <div class="flex items-center justify-between text-xs p-3 rounded-xl bg-ink-950 border border-signal/30">
+                            <span class="font-mono text-white text-[11px]">portal.oakridge.edu</span>
+                            <span class="font-mono text-[10px] text-signal font-bold flex items-center gap-1 bg-signal/15 px-2 py-0.5 rounded-full border border-signal/30">
+                                Authentic
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs p-3 rounded-xl bg-ink-950 border border-ember/30">
+                            <span class="font-mono text-white text-[11px]">portal-oakridge-auth.cc</span>
+                            <span class="font-mono text-[10px] text-ember font-bold flex items-center gap-1 bg-ember/15 px-2 py-0.5 rounded-full border border-ember/30">
+                                Spoofed
+                            </span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'phishing_sandbox' %}" class="mt-4 w-full py-2.5 bg-ink-950 hover:bg-ink-800 border border-white/10 hover:border-signal/50 text-white font-mono text-xs rounded-full transition-all flex items-center justify-center gap-2">
+                        <span>Launch Quarantine Sandbox</span>
+                        <span class="material-symbols-outlined text-sm text-signal">arrow_outward</span>
+                    </a>
+                </div>
+
+                <!-- Cadet Standings Widget -->
+                <div class="bg-ink-900/90 border border-white/10 p-6 rounded-2xl shadow-xl flex flex-col backdrop-blur-xl">
+                    <div class="flex items-center justify-between pb-3 border-b border-white/5">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-ink-950 border border-white/10 text-signal flex items-center justify-center">
+                                <span class="material-symbols-outlined text-base">shield</span>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-sm font-bold text-white leading-tight">Cadet Standings</h3>
+                                <span class="font-mono text-[10px] text-mist-900">{{ student.class_name }} Honor Roll</span>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full bg-signal/10 text-signal font-mono text-[10px] font-bold uppercase tracking-wider border border-signal/20">Weekly</span>
+                    </div>
+
+                    <!-- Highlight -->
+                    <div class="mt-4 p-3.5 bg-ink-950 border border-white/5 rounded-xl flex items-center gap-3">
+                        <span class="text-xl">🎯</span>
+                        <div class="flex flex-col">
+                            <span class="font-display text-xs font-bold text-white">184 Threat Labs Solved</span>
+                            <span class="font-body text-[11px] text-mist-900">Your homeroom leads district cyber defense rankings.</span>
+                        </div>
+                    </div>
+
+                    <!-- Standings Rows -->
+                    <div class="mt-4 space-y-2">
+                        {% for top in top_students|slice:":2" %}
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-ink-950 border border-white/5">
+                            <div class="flex items-center gap-3">
+                                <span class="font-mono text-xs font-bold text-signal w-4">
+                                    0{{ forloop.counter }}
+                                </span>
+                                <div class="w-7 h-7 rounded-full bg-signal/15 text-signal border border-signal/30 flex items-center justify-center font-mono text-xs font-bold">
+                                    {{ top.name|slice:":2"|upper }}
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="font-display text-xs font-bold text-white">{{ top.name }}</span>
+                                    <span class="font-mono text-[10px] text-mist-900">{{ top.badge_count }} Badges</span>
+                                </div>
+                            </div>
+                            <span class="font-mono text-xs font-bold text-signal">{{ top.total_score|default:"900" }} pts</span>
+                        </div>
+                        {% endfor %}
+
+                        <!-- You -->
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-signal/10 border border-signal/40 shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <span class="font-mono text-xs font-bold text-signal w-4">06</span>
+                                <div class="w-7 h-7 rounded-full bg-signal text-ink-950 flex items-center justify-center font-mono text-xs font-bold">
+                                    {{ student.name|slice:":2"|upper }}
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="font-display text-xs font-bold text-white">{{ student.name }} (You)</span>
+                                    <span class="font-mono text-[10px] text-signal">{{ completed_count }} / {{ total_topics }} Done</span>
+                                </div>
+                            </div>
+                            <span class="font-mono text-xs font-bold text-signal">{{ student.total_score|default:"780" }} pts</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs">
+                        <span class="font-mono text-[10px] text-mist-900">Tournament in 2 days</span>
+                        <a class="font-mono text-xs font-bold text-signal hover:underline flex items-center gap-1" href="{% url 'leaderboard_view' %}">
+                            Full Leaderboard &rarr;
+                        </a>
                     </div>
                 </div>
-                <div class="bg-obsidian-container border border-obsidian-border p-3.5 rounded-lg">
-                    <p class="font-serif italic text-xs text-silver-body leading-relaxed">
-                        Complete Modules 3 &amp; 7 before Tuesday’s live collegiate exercise.
-                    </p>
-                </div>
+
             </div>
 
         </div>

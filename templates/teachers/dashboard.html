@@ -1,138 +1,143 @@
 {% extends 'base.html' %}
 
-{% block title %}Faculty Briefing & Analytics | CyberShield Academy{% endblock %}
+{% block title %}Faculty Telemetry & Analytics | CyberShield{% endblock %}
 
 {% block content %}
-<div class="flex flex-col w-full min-h-screen text-slate-100">
+<div class="relative w-full overflow-hidden bg-ink-950 text-mist-100 min-h-screen">
 
-    <!-- Dean's Institutional Header Banner -->
-    <section class="w-full bg-[#0d1422] border-b border-[#1e293b] shadow-lg relative overflow-hidden">
-        <div class="absolute -top-24 -left-24 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 right-10 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
-        
-        <div class="max-w-[1440px] mx-auto px-6 md:px-12 py-7 flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6 relative z-10">
-            <div class="flex flex-col gap-1.5 max-w-3xl">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-amber-400 font-bold">Curriculum Telemetry Ledger</span>
-                    <span class="text-slate-600">•</span>
-                    <span class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">NIST K-12 SP 800-181 Standard</span>
-                    <span class="text-slate-600">•</span>
-                    <span class="text-[11px] tracking-wide text-slate-400">Fall Term Session</span>
+    <!-- Background Glow & Grid Lines (Nexus Studio Signature) -->
+    <div class="absolute top-10 right-1/4 w-[600px] h-[600px] bg-signal/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute top-1/2 left-10 w-[500px] h-[500px] bg-ember/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute inset-0 grid-lines pointer-events-none opacity-40"></div>
+    <div class="grain absolute inset-0 pointer-events-none"></div>
+
+    <!-- Top Faculty Header Banner -->
+    <section class="relative z-10 w-full bg-ink-900/90 border-b border-white/10 shadow-2xl backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 py-8 flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6">
+            <div class="flex flex-col gap-2 max-w-3xl">
+                <div class="flex items-center gap-2.5 flex-wrap">
+                    <span class="font-mono text-xs text-signal uppercase tracking-widest font-bold">Faculty Telemetry Ledger</span>
+                    <span class="text-white/20">&bull;</span>
+                    <span class="font-mono text-xs uppercase tracking-wider text-mist-700">NIST SP 800-181 Certified</span>
+                    <span class="text-white/20">&bull;</span>
+                    <span class="font-mono text-xs text-mist-900">Term II Active Session</span>
                 </div>
-                <h1 class="font-serif-title text-2xl md:text-3xl lg:text-[34px] font-bold text-white tracking-tight leading-tight">
-                    Classroom Cyber Safety Overview — {{ selected_class|default:"Grade 8 (All Sections)" }}
+                <h1 class="font-display text-2xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
+                    Classroom Defense Telemetry &bull; {{ selected_class|default:"All Cohorts" }}
                 </h1>
-                <p class="font-serif-editorial italic text-xs md:text-sm text-slate-400">
-                    Live telemetry, heuristic assessment logs, and automated vulnerability flags across {{ total_students }} enrolled scholars.
+                <p class="font-body text-xs md:text-sm text-mist-900 leading-relaxed">
+                    Automated heuristic telemetry, adversarial response logs, and remediation triggers across {{ total_students }} enrolled students.
                 </p>
             </div>
 
-            <!-- Institutional Filters & Export Control -->
-            <form method="GET" action="{% url 'teacher_dashboard' %}" class="flex flex-wrap items-center gap-2.5">
+            <!-- Filters & Export -->
+            <form method="GET" action="{% url 'teacher_dashboard' %}" class="flex flex-wrap items-center gap-3">
                 <div class="relative inline-flex items-center">
-                    <span class="absolute left-3 text-amber-400 pointer-events-none material-symbols-outlined text-[17px]">account_balance</span>
-                    <select name="class_name" onchange="this.form.submit()" class="appearance-none bg-[#111a2e] border border-[#273752] text-white text-xs font-medium pl-8 pr-7 py-2 rounded focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 shadow-sm cursor-pointer">
+                    <span class="absolute left-3.5 text-signal pointer-events-none material-symbols-outlined text-base">account_balance</span>
+                    <select name="class_name" onchange="this.form.submit()" class="appearance-none bg-ink-950 border border-white/10 text-white font-mono text-xs pl-9 pr-8 py-2.5 rounded-full focus:outline-none focus:border-signal cursor-pointer shadow-sm">
                         <option value="">All Cohorts ({{ unique_classes|length }} Classes)</option>
                         {% for c in unique_classes %}
                             <option value="{{ c }}" {% if selected_class == c %}selected{% endif %}>{{ c }}</option>
                         {% endfor %}
                     </select>
-                    <span class="absolute right-2 text-slate-400 pointer-events-none material-symbols-outlined text-sm">arrow_drop_down</span>
+                    <span class="absolute right-3 text-mist-900 pointer-events-none material-symbols-outlined text-sm">arrow_drop_down</span>
                 </div>
 
-                <a href="{% url 'teacher_export_csv' %}{% if selected_class %}?class_name={{ selected_class }}{% endif %}" id="btn-export-csv" class="inline-flex items-center gap-1.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white border border-[#6366f1]/50 text-xs font-semibold tracking-wide uppercase px-3.5 py-2 rounded shadow-md shadow-indigo-950/40 transition-all active:scale-[0.98]">
-                    <span class="material-symbols-outlined text-[16px] text-amber-300">description</span>
-                    <span>Export CSV Ledger</span>
+                <a href="{% url 'teacher_export_csv' %}{% if selected_class %}?class_name={{ selected_class }}{% endif %}" id="btn-export-csv" class="inline-flex items-center gap-2 bg-signal text-ink-950 font-display text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full shadow-[0_0_20px_rgba(232,255,71,0.2)] hover:bg-signal-dim transition-all">
+                    <span class="material-symbols-outlined text-base">description</span>
+                    <span>Export CSV</span>
                 </a>
 
-                <a href="{% url 'admin:index' %}" target="_blank" class="inline-flex items-center gap-1.5 bg-[#162238] hover:bg-[#1d2d4a] text-slate-200 border border-[#273752] text-xs font-semibold tracking-wide uppercase px-3.5 py-2 rounded shadow-sm transition-all">
-                    <span class="material-symbols-outlined text-[16px] text-slate-400">tune</span>
-                    <span>Admin Archive</span>
+                <a href="{% url 'admin:index' %}" target="_blank" class="inline-flex items-center gap-1.5 bg-ink-950 hover:bg-ink-800 text-mist-700 border border-white/10 font-mono text-xs px-4 py-2.5 rounded-full transition-all">
+                    <span class="material-symbols-outlined text-sm">tune</span>
+                    <span>Admin</span>
                 </a>
             </form>
         </div>
     </section>
 
-    <!-- Main Dossier Content -->
-    <div class="max-w-[1440px] w-full mx-auto px-6 md:px-12 py-8 flex flex-col gap-8">
+    <!-- Main Content Container -->
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-10 flex flex-col gap-8">
         
-        <!-- Top Metric Summary Cards (Classic Obsidian Scholastic Panels) -->
+        <!-- Top Metric Summary Cards (Nexus Studio Bento Style) -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <!-- Metric 1: Assessments Completed -->
-            <div class="bg-[#111a2e] border border-[#1e293b] p-6 rounded shadow-md hover:border-slate-600 transition-colors relative overflow-hidden flex flex-col justify-between">
-                <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+            <!-- Metric 1: Drills Recorded -->
+            <div class="bg-ink-850 border border-white/10 p-6 rounded-2xl shadow-xl hover:border-signal/40 transition-all flex flex-col justify-between relative overflow-hidden group">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-signal to-transparent"></div>
                 <div class="flex items-start justify-between">
                     <div class="flex flex-col">
-                        <span class="font-cinzel text-[11px] tracking-[0.15em] text-slate-400 uppercase font-bold">Assessments Recorded</span>
+                        <span class="font-mono text-xs text-mist-900 uppercase tracking-widest font-semibold">Assessments Recorded</span>
                         <div class="flex items-baseline gap-2.5 mt-2">
-                            <span class="font-serif-title text-4xl text-white font-bold tracking-tight">{{ total_attempts }}</span>
-                            <span class="text-xs uppercase font-medium text-slate-400 tracking-wider">Submissions</span>
+                            <span class="font-display text-4xl sm:text-5xl text-white font-bold tracking-tight">{{ total_attempts }}</span>
+                            <span class="font-mono text-xs uppercase text-mist-700 tracking-wider">Submissions</span>
                         </div>
                     </div>
-                    <div class="w-10 h-10 rounded border border-[#273752] bg-[#162238] flex items-center justify-center text-slate-200 shadow-inner">
+                    <div class="w-10 h-10 rounded-xl border border-white/10 bg-ink-950 flex items-center justify-center text-signal group-hover:scale-105 transition-transform">
                         <span class="material-symbols-outlined text-xl">fact_check</span>
                     </div>
                 </div>
-                <div class="mt-5 pt-3 border-t border-[#1e293b] flex items-center justify-between text-xs">
-                    <div class="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                        <span class="material-symbols-outlined text-base">north_east</span>
+                <div class="mt-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono">
+                    <div class="flex items-center gap-1.5 text-signal font-bold">
+                        <span class="material-symbols-outlined text-sm">north_east</span>
                         <span>+18% vs last week</span>
                     </div>
-                    <span class="text-slate-400 font-medium">94% Active Enrollment</span>
+                    <span class="text-mist-900">94% Active Enrollment</span>
                 </div>
             </div>
 
-            <!-- Metric 2: Class Average Mastery -->
-            <div class="bg-[#111a2e] border border-[#1e293b] p-6 rounded shadow-md hover:border-amber-500/50 transition-colors relative overflow-hidden flex flex-col justify-between">
-                <div class="absolute top-0 left-0 right-0 h-[3px] bg-amber-400"></div>
+            <!-- Metric 2: Cohort Benchmark -->
+            <div class="bg-ink-850 border border-white/10 p-6 rounded-2xl shadow-xl hover:border-signal/40 transition-all flex flex-col justify-between relative overflow-hidden group">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-signal"></div>
                 <div class="flex items-start justify-between">
                     <div class="flex flex-col">
-                        <span class="font-cinzel text-[11px] tracking-[0.15em] text-slate-400 uppercase font-bold">Cohort Mastery Benchmark</span>
+                        <span class="font-mono text-xs text-mist-900 uppercase tracking-widest font-semibold">Cohort Mastery Benchmark</span>
                         <div class="flex items-baseline gap-2.5 mt-2">
-                            <span class="font-serif-title text-4xl text-white font-bold tracking-tight">{{ overall_avg }}%</span>
-                            <span class="text-[11px] uppercase tracking-wider bg-[#064e3b]/70 text-emerald-300 border border-emerald-500/60 px-2 py-0.5 rounded font-bold">High Proficiency</span>
+                            <span class="font-display text-4xl sm:text-5xl text-white font-bold tracking-tight">{{ overall_avg }}%</span>
+                            <span class="font-mono text-[11px] uppercase tracking-wider bg-signal/15 text-signal border border-signal/30 px-2 py-0.5 rounded-full font-bold">
+                                High Proficiency
+                            </span>
                         </div>
                     </div>
-                    <div class="w-10 h-10 rounded border border-emerald-500/40 bg-[#064e3b]/50 text-emerald-300 flex items-center justify-center shadow-inner">
+                    <div class="w-10 h-10 rounded-xl border border-signal/30 bg-signal/10 text-signal flex items-center justify-center group-hover:scale-105 transition-transform">
                         <span class="material-symbols-outlined text-xl">workspace_premium</span>
                     </div>
                 </div>
-                <div class="mt-5 pt-3 border-t border-[#1e293b] flex items-center justify-between text-xs">
-                    <div class="flex items-center gap-1.5 text-slate-300">
-                        <span class="material-symbols-outlined text-sm text-amber-400">bookmark</span>
-                        <span>District Target: 75.0%</span>
+                <div class="mt-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono">
+                    <div class="flex items-center gap-1.5 text-mist-700">
+                        <span class="material-symbols-outlined text-sm text-signal">bookmark</span>
+                        <span>District Standard: 75.0%</span>
                     </div>
-                    <span class="text-emerald-400 font-bold tracking-tight">+9.6% Δ Surplus</span>
+                    <span class="text-signal font-bold">+9.6% Surplus</span>
                 </div>
             </div>
 
-            <!-- Metric 3: Most Vulnerable Topic Flag -->
-            <div class="bg-[#111a2e] border border-[#1e293b] p-6 rounded shadow-md hover:border-rose-500/40 transition-colors relative overflow-hidden flex flex-col justify-between">
-                <div class="absolute top-0 left-0 right-0 h-[3px] bg-rose-500"></div>
+            <!-- Metric 3: Critical Vulnerability Flag -->
+            <div class="bg-ink-850 border border-white/10 p-6 rounded-2xl shadow-xl hover:border-ember/40 transition-all flex flex-col justify-between relative overflow-hidden group">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-ember"></div>
                 <div class="flex items-start justify-between">
                     <div class="flex flex-col">
                         <div class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.8)]"></span>
-                            <span class="font-cinzel text-[11px] tracking-[0.15em] text-rose-400 uppercase font-bold">Critical Vulnerability Flag</span>
+                            <span class="w-2 h-2 rounded-full bg-ember animate-pulse-slow"></span>
+                            <span class="font-mono text-xs text-ember uppercase tracking-widest font-bold">Critical Remediation</span>
                         </div>
                         <div class="flex items-baseline gap-2 mt-2">
-                            <span class="font-serif-title text-2xl text-white font-bold truncate">
+                            <span class="font-display text-2xl text-white font-bold truncate">
                                 {{ weakest_topic.title|default:"QR Scams (Quishing)" }}
                             </span>
-                            <span class="text-[11px] uppercase tracking-wider bg-rose-950/70 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded font-bold font-mono">
+                            <span class="font-mono text-[11px] uppercase tracking-wider bg-ember/15 text-ember border border-ember/30 px-2 py-0.5 rounded-full font-bold">
                                 {{ weakest_topic.avg_score|default:"61" }}% Score
                             </span>
                         </div>
                     </div>
-                    <div class="w-10 h-10 rounded border border-rose-500/30 bg-rose-950/50 text-rose-400 flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-xl border border-ember/30 bg-ember/10 text-ember flex items-center justify-center group-hover:scale-105 transition-transform">
                         <span class="material-symbols-outlined text-xl">warning</span>
                     </div>
                 </div>
-                <div class="mt-5 pt-3 border-t border-[#1e293b] flex flex-col gap-1 text-xs">
-                    <span class="text-slate-400">34% of scholars failed the physical campus poster simulation</span>
-                    <span class="text-rose-400 font-semibold flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">schedule</span> Action: Scheduled in-class forensic lab triage
+                <div class="mt-6 pt-3 border-t border-white/5 flex flex-col gap-1 text-xs font-mono">
+                    <span class="text-mist-900">34% of scholars failed the spoofed physical poster simulation</span>
+                    <span class="text-ember font-semibold flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">schedule</span> Action: Forensic triage drill dispatched
                     </span>
                 </div>
             </div>
@@ -143,41 +148,43 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             <!-- Left Chart Card: 8 Modules Comprehension (8 Columns) -->
-            <div class="lg:col-span-8 bg-[#111a2e] border border-[#1e293b] p-6 rounded shadow-md flex flex-col justify-between">
+            <div class="lg:col-span-8 bg-ink-850 border border-white/10 p-6 sm:p-8 rounded-2xl shadow-xl flex flex-col justify-between">
                 <div>
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#1e293b] gap-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/5 gap-2">
                         <div>
-                            <h2 class="font-serif-title text-xl font-bold text-white">Curriculum Topic Comprehension</h2>
-                            <span class="text-[11px] text-slate-400 font-medium">Cybersecurity Topic Proficiency Across Mandatory Defense Units</span>
+                            <h2 class="font-display text-xl sm:text-2xl font-bold text-white">Curriculum Topic Comprehension</h2>
+                            <p class="font-mono text-xs text-mist-900 mt-1">
+                                Cybersecurity Topic Proficiency Across Mandatory Defense Units
+                            </p>
                         </div>
-                        <div class="flex items-center gap-3 text-xs">
-                            <span class="inline-flex items-center gap-1.5 text-slate-300">
-                                <span class="w-2.5 h-2.5 rounded-sm bg-indigo-500"></span> ≥ 75% Standard Met
+                        <div class="flex items-center gap-3 text-xs font-mono">
+                            <span class="inline-flex items-center gap-1.5 text-mist-700">
+                                <span class="w-2 h-2 rounded-full bg-signal"></span> &ge; 75% Standard Met
                             </span>
-                            <span class="inline-flex items-center gap-1.5 text-slate-300">
-                                <span class="w-2.5 h-2.5 rounded-sm bg-rose-500"></span> Remediation Alert
+                            <span class="inline-flex items-center gap-1.5 text-mist-700">
+                                <span class="w-2 h-2 rounded-full bg-ember"></span> Remediation Alert
                             </span>
                         </div>
                     </div>
 
                     <!-- Progress Bars (8 Modules) -->
-                    <div class="space-y-3.5 mt-5">
+                    <div class="space-y-3.5 mt-6">
                         {% for topic in topic_averages %}
-                        <div class="flex flex-col gap-1 {% if topic.avg < 75 %}p-2 bg-rose-950/30 border border-rose-500/30 rounded{% endif %}">
+                        <div class="flex flex-col gap-1.5 {% if topic.avg < 75 %}p-2.5 bg-ember/10 border border-ember/30 rounded-xl{% endif %}">
                             <div class="flex items-center justify-between text-xs">
-                                <span class="{% if topic.avg < 75 %}text-rose-300 font-bold{% else %}text-slate-200 font-medium{% endif %} flex items-center gap-2">
-                                    <span class="font-mono text-[11px] {% if topic.avg < 75 %}text-rose-400{% else %}text-amber-400{% endif %} font-bold">M{{ forloop.counter }}</span>
+                                <span class="{% if topic.avg < 75 %}text-ember font-bold{% else %}text-mist-100 font-medium{% endif %} flex items-center gap-2">
+                                    <span class="font-mono text-[11px] {% if topic.avg < 75 %}text-ember{% else %}text-signal{% endif %} font-bold">0{{ forloop.counter }}</span>
                                     {{ topic.title }}
                                     {% if topic.avg < 75 %}
-                                        <span class="material-symbols-outlined text-[15px] text-rose-400">crisis_alert</span>
+                                        <span class="material-symbols-outlined text-[15px] text-ember">crisis_alert</span>
                                     {% endif %}
                                 </span>
-                                <span class="font-mono text-xs font-bold {% if topic.avg < 75 %}text-rose-300{% else %}text-white{% endif %}">
-                                    {{ topic.avg }}% {% if topic.avg < 75 %}Remediation{% endif %}
+                                <span class="font-mono text-xs font-bold {% if topic.avg < 75 %}text-ember{% else %}text-white{% endif %}">
+                                    {{ topic.avg }}% {% if topic.avg < 75 %}Remediation Priority{% endif %}
                                 </span>
                             </div>
-                            <div class="w-full h-2 rounded bg-[#0b1320] overflow-hidden border border-[#1e293b]/60">
-                                <div class="{% if topic.avg < 75 %}bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.7)]{% elif topic.avg >= 90 %}bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]{% else %}bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]{% endif %} h-full transition-all duration-500" 
+                            <div class="w-full h-2 rounded-full bg-ink-950 overflow-hidden border border-white/5">
+                                <div class="{% if topic.avg < 75 %}bg-ember shadow-[0_0_10px_rgba(255,107,53,0.7)]{% else %}bg-signal shadow-[0_0_8px_rgba(232,255,71,0.6)]{% endif %} h-full transition-all duration-500 rounded-full" 
                                      style="width: {{ topic.avg }}%"></div>
                             </div>
                         </div>
@@ -185,164 +192,158 @@
                     </div>
                 </div>
 
-                <div class="mt-6 pt-3 border-t border-[#1e293b] flex items-center justify-between text-xs text-slate-400">
-                    <span>Institutional Sample: {{ total_attempts }} Sandbox Telemetry Sessions</span>
-                    <span class="text-amber-400 font-semibold hover:text-amber-300 hover:underline cursor-pointer flex items-center gap-1 transition-colors">
-                        Examine Academic Rubric
-                        <span class="material-symbols-outlined text-sm">east</span>
+                <div class="mt-8 pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-mist-900">
+                    <span>Institutional Sample: {{ total_attempts }} Simulation Telemetry Sessions</span>
+                    <span class="text-signal font-semibold hover:underline cursor-pointer flex items-center gap-1 transition-colors">
+                        Examine Diagnostic Matrix &rarr;
                     </span>
                 </div>
             </div>
 
-            <!-- Right Card: Risk Tier Distribution (4 Columns) -->
-            <div class="lg:col-span-4 bg-[#111a2e] border border-[#1e293b] p-6 rounded shadow-md flex flex-col justify-between">
+            <!-- Right Card: Risk Tier Census (4 Columns) -->
+            <div class="lg:col-span-4 bg-ink-850 border border-white/10 p-6 sm:p-8 rounded-2xl shadow-xl flex flex-col justify-between">
                 <div>
-                    <div class="pb-3 border-b border-[#1e293b]">
-                        <h2 class="font-serif-title text-xl font-bold text-white">Cohort Risk Census</h2>
-                        <p class="font-serif-editorial italic text-xs md:text-sm text-slate-400">Distribution based on heuristic adversarial vulnerability.</p>
+                    <div class="pb-3 border-b border-white/5">
+                        <h2 class="font-display text-xl font-bold text-white">Cohort Risk Census</h2>
+                        <p class="font-mono text-xs text-mist-900 mt-0.5">Distribution by heuristic vulnerability.</p>
                     </div>
 
-                    <!-- Inline Minimal SVG Donut Chart with Classic Obsidian Styling -->
+                    <!-- SVG Donut Chart in Nexus Studio Style -->
                     <div class="py-6 flex flex-col items-center justify-center relative">
                         <svg aria-label="Risk Distribution Chart" class="w-44 h-44 transform -rotate-90 drop-shadow-md" viewBox="0 0 100 100">
-                            <circle class="text-[#1a253a]" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-width="11"></circle>
+                            <circle class="text-ink-950" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-width="11"></circle>
                             <!-- Low Risk: 66% -> dasharray 157 239 -->
-                            <circle class="text-emerald-500" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-dasharray="157 239" stroke-dashoffset="0" stroke-width="11"></circle>
+                            <circle class="text-signal" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-dasharray="157 239" stroke-dashoffset="0" stroke-width="11"></circle>
                             <!-- Moderate Risk: 27% -> dasharray 65 239 -> offset -157 -->
-                            <circle class="text-amber-500" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-dasharray="65 239" stroke-dashoffset="-157" stroke-width="11"></circle>
+                            <circle class="text-white/40" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-dasharray="65 239" stroke-dashoffset="-157" stroke-width="11"></circle>
                             <!-- High Vulnerability: 7% -> dasharray 17 239 -> offset -222 -->
-                            <circle class="text-rose-500" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-dasharray="17 239" stroke-dashoffset="-222" stroke-width="11"></circle>
+                            <circle class="text-ember" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-dasharray="17 239" stroke-dashoffset="-222" stroke-width="11"></circle>
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <span class="font-serif-title text-3xl font-bold text-white leading-none">{{ total_students }}</span>
-                            <span class="font-cinzel text-[10px] text-slate-400 uppercase tracking-[0.16em] font-bold mt-1">Scholars</span>
+                            <span class="font-display text-4xl font-bold text-white leading-none">{{ total_students }}</span>
+                            <span class="font-mono text-[10px] text-mist-900 uppercase tracking-widest font-bold mt-1">Scholars</span>
                         </div>
                     </div>
 
-                    <!-- Census Ledger Stats -->
-                    <div class="space-y-2 mt-1">
-                        <div class="flex items-center justify-between p-2.5 rounded bg-[#162238] border border-[#273752]">
+                    <!-- Breakdown Rows -->
+                    <div class="space-y-2 mt-1 font-mono text-xs">
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-ink-950 border border-white/5">
                             <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]"></span>
-                                <span class="text-xs font-medium text-slate-200">Mastered / Resilient</span>
+                                <span class="w-2 h-2 rounded-full bg-signal shadow-[0_0_6px_rgba(232,255,71,0.8)]"></span>
+                                <span class="text-mist-100">Mastered / Resilient</span>
                             </div>
-                            <div class="flex items-center gap-1.5 font-mono text-xs">
-                                <span class="font-bold text-white">58</span>
-                                <span class="text-slate-400 text-[11px]">(66%)</span>
+                            <div class="flex items-center gap-1.5 font-bold">
+                                <span class="text-white">58</span>
+                                <span class="text-mist-900 text-[11px]">(66%)</span>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between p-2.5 rounded bg-[#162238] border border-[#273752]">
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-ink-950 border border-white/5">
                             <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.8)]"></span>
-                                <span class="text-xs font-medium text-slate-200">Moderate Awareness</span>
+                                <span class="w-2 h-2 rounded-full bg-white/40"></span>
+                                <span class="text-mist-100">Moderate Awareness</span>
                             </div>
-                            <div class="flex items-center gap-1.5 font-mono text-xs">
-                                <span class="font-bold text-white">24</span>
-                                <span class="text-slate-400 text-[11px]">(27%)</span>
+                            <div class="flex items-center gap-1.5 font-bold">
+                                <span class="text-white">24</span>
+                                <span class="text-mist-900 text-[11px]">(27%)</span>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between p-2.5 rounded bg-rose-950/40 border border-rose-500/30">
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-ember/15 border border-ember/30">
                             <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-[0_0_6px_rgba(251,113,133,0.8)]"></span>
-                                <span class="text-xs font-bold text-rose-300">Remediation Priority</span>
+                                <span class="w-2 h-2 rounded-full bg-ember shadow-[0_0_6px_rgba(255,107,53,0.8)]"></span>
+                                <span class="text-ember font-bold">Remediation Priority</span>
                             </div>
-                            <div class="flex items-center gap-1.5 font-mono text-xs">
-                                <span class="font-bold text-rose-300">6</span>
-                                <span class="text-rose-400 text-[11px] font-semibold">(7%)</span>
+                            <div class="flex items-center gap-1.5 font-bold text-ember">
+                                <span>6</span>
+                                <span class="text-[11px]">(7%)</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-6 pt-3 border-t border-[#1e293b] flex items-center justify-between text-xs">
-                    <span class="text-slate-400">Faculty Guidance:</span>
-                    <button class="text-rose-400 hover:text-rose-300 font-semibold hover:underline flex items-center gap-1 transition-colors" type="button">
-                        <span>Open Coaching Roster</span>
-                        <span class="material-symbols-outlined text-sm">east</span>
+                <div class="mt-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono">
+                    <span class="text-mist-900">Faculty Action:</span>
+                    <button class="text-ember hover:underline font-bold flex items-center gap-1 transition-colors" type="button">
+                        <span>Open Coaching Matrix &rarr;</span>
                     </button>
                 </div>
             </div>
 
         </div>
 
-        <!-- Student Performance Roster Table (Dean's Ledger Style) -->
-        <div class="bg-[#111a2e] border border-[#1e293b] rounded shadow-md overflow-hidden flex flex-col">
-            <!-- Table Header & Filter Tabs -->
-            <div class="p-6 border-b border-[#1e293b] flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0d1422]">
+        <!-- Student Roster Table in Nexus Studio Style -->
+        <div class="bg-ink-850 border border-white/10 rounded-2xl shadow-xl overflow-hidden flex flex-col">
+            
+            <div class="p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-ink-900">
                 <div>
-                    <h2 class="font-serif-title text-xl font-bold text-white">Scholar Evaluation Register</h2>
-                    <span class="text-xs text-slate-400">Granular assessment outputs and AI defensive heuristic evaluations</span>
+                    <h2 class="font-display text-xl font-bold text-white">Scholar Evaluation Register</h2>
+                    <p class="font-mono text-xs text-mist-900">Assessment outputs and GPT-5 heuristic critique records</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="relative">
-                        <span class="absolute left-3 top-2.5 text-slate-400 material-symbols-outlined text-base">search</span>
-                        <input class="bg-[#111a2e] border border-[#273752] text-white text-xs pl-8 pr-3 py-1.5 rounded focus:outline-none focus:ring-1 focus:ring-amber-500 w-56 placeholder:text-slate-500" placeholder="Search candidate, badge #..." type="text">
+                        <span class="absolute left-3 top-2.5 text-mist-900 material-symbols-outlined text-base">search</span>
+                        <input class="bg-ink-950 border border-white/10 text-white font-mono text-xs pl-8 pr-3 py-2 rounded-full focus:outline-none focus:border-signal w-56 placeholder:text-mist-900" placeholder="Search cadet, roll #..." type="text">
                     </div>
-                    <button class="bg-[#162238] border border-[#273752] text-slate-200 text-xs font-medium px-3 py-1.5 rounded flex items-center gap-1 hover:bg-[#1d2d4a] hover:text-white transition-colors" type="button">
-                        <span class="material-symbols-outlined text-sm text-slate-400">tune</span>
-                        <span>Filter Ledger</span>
-                    </button>
                 </div>
             </div>
 
-            <!-- Institutional Gradebook Table -->
+            <!-- Table -->
             <div class="w-full overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left border-collapse font-body text-xs">
                     <thead>
-                        <tr class="bg-[#0b1320] border-b border-[#1e293b] font-cinzel text-[11px] text-slate-400 tracking-[0.12em] uppercase">
-                            <th class="py-3 px-6 font-semibold">Scholar Cadet</th>
-                            <th class="py-3 px-4 font-semibold">Section &amp; Roll</th>
-                            <th class="py-3 px-4 font-semibold">Module Assessed</th>
-                            <th class="py-3 px-4 font-semibold">Mastery Grade</th>
-                            <th class="py-3 px-4 font-semibold">Timestamp</th>
-                            <th class="py-3 px-6 text-right font-semibold">Faculty Dossier</th>
+                        <tr class="bg-ink-950 border-b border-white/5 font-mono text-[11px] text-mist-900 uppercase tracking-wider">
+                            <th class="py-3.5 px-6 font-semibold">Scholar Cadet</th>
+                            <th class="py-3.5 px-4 font-semibold">Section &amp; Roll</th>
+                            <th class="py-3.5 px-4 font-semibold">Module Assessed</th>
+                            <th class="py-3.5 px-4 font-semibold">Mastery Grade</th>
+                            <th class="py-3.5 px-4 font-semibold">Timestamp</th>
+                            <th class="py-3.5 px-6 text-right font-semibold">Diagnostic Dossier</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-[#1e293b] text-xs text-slate-200">
+                    <tbody class="divide-y divide-white/5 text-mist-100">
                         {% for attempt in recent_attempts %}
-                        <tr class="{% if forloop.first %}bg-[#142036]{% endif %} hover:bg-[#182742] transition-colors">
-                            <td class="py-3.5 px-6">
+                        <tr class="{% if forloop.first %}bg-ink-800/60{% endif %} hover:bg-ink-800 transition-colors">
+                            <td class="py-4 px-6">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-9 h-9 rounded-full bg-[#162238] border border-[#273752] text-amber-400 flex items-center justify-center font-bold text-xs shadow-sm font-serif-title">
+                                    <div class="w-8 h-8 rounded-full bg-ink-950 border border-white/10 text-signal flex items-center justify-center font-bold text-xs font-mono">
                                         {{ attempt.student.name|slice:":2"|upper }}
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="font-serif-title text-sm font-bold text-white">{{ attempt.student.name }}</span>
-                                        <span class="text-[11px] text-slate-400">{{ attempt.student.roll_number }}@oakridge.edu</span>
+                                        <span class="font-display text-sm font-bold text-white">{{ attempt.student.name }}</span>
+                                        <span class="font-mono text-[10px] text-mist-900">{{ attempt.student.roll_number }}@oakridge.edu</span>
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-3.5 px-4 font-mono">
-                                <span class="bg-[#162238] text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded text-[11px] font-semibold">
-                                    #{{ attempt.student.roll_number }} • {{ attempt.student.class_name }}
+                            <td class="py-4 px-4 font-mono">
+                                <span class="bg-ink-950 text-signal border border-signal/30 px-2.5 py-0.5 rounded-full text-[11px] font-semibold">
+                                    #{{ attempt.student.roll_number }} &bull; {{ attempt.student.class_name }}
                                 </span>
                             </td>
-                            <td class="py-3.5 px-4">
-                                <span class="font-serif-editorial text-[13px] font-medium text-slate-200">{{ attempt.topic_title }}</span>
+                            <td class="py-4 px-4">
+                                <span class="text-sm font-medium text-white">{{ attempt.topic_title }}</span>
                             </td>
-                            <td class="py-3.5 px-4">
+                            <td class="py-4 px-4 font-mono">
                                 {% if attempt.percentage >= 80 %}
-                                    <span class="bg-[#064e3b]/70 text-emerald-300 border border-emerald-500/50 px-2 py-0.5 rounded font-bold text-[11px] inline-flex items-center gap-1 font-mono">
-                                        <span class="material-symbols-outlined text-[13px]">verified</span> {{ attempt.percentage|floatformat:0 }}% ({{ attempt.score }}/{{ attempt.total_questions }})
+                                    <span class="bg-signal/15 text-signal border border-signal/30 px-2.5 py-0.5 rounded-full font-bold text-[11px] inline-flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-signal"></span> {{ attempt.percentage|floatformat:0 }}% ({{ attempt.score }}/{{ attempt.total_questions }})
                                     </span>
                                 {% elif attempt.percentage >= 60 %}
-                                    <span class="bg-amber-950/70 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded font-bold text-[11px] inline-flex items-center gap-1 font-mono">
-                                        <span class="material-symbols-outlined text-[13px]">info</span> {{ attempt.percentage|floatformat:0 }}% ({{ attempt.score }}/{{ attempt.total_questions }})
+                                    <span class="bg-white/10 text-white border border-white/20 px-2.5 py-0.5 rounded-full font-bold text-[11px] inline-flex items-center gap-1">
+                                        {{ attempt.percentage|floatformat:0 }}% ({{ attempt.score }}/{{ attempt.total_questions }})
                                     </span>
                                 {% else %}
-                                    <span class="bg-rose-950/70 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded font-bold text-[11px] inline-flex items-center gap-1 font-mono">
+                                    <span class="bg-ember/15 text-ember border border-ember/30 px-2.5 py-0.5 rounded-full font-bold text-[11px] inline-flex items-center gap-1">
                                         <span class="material-symbols-outlined text-[13px]">warning</span> {{ attempt.percentage|floatformat:0 }}% ({{ attempt.score }}/{{ attempt.total_questions }})
                                     </span>
                                 {% endif %}
                             </td>
-                            <td class="py-3.5 px-4 font-mono text-[11px] text-slate-400">
+                            <td class="py-4 px-4 font-mono text-[11px] text-mist-900">
                                 {{ attempt.completed_at|date:"M d, H:i" }}
                             </td>
-                            <td class="py-3.5 px-6 text-right">
-                                <button class="text-xs text-amber-400 font-semibold inline-flex items-center gap-1 hover:text-amber-300 transition-colors cursor-pointer" onclick="toggleDetails('attempt-{{ attempt.id }}')" type="button">
-                                    <span class="font-cinzel tracking-wider text-[11px]">Academic Dossier</span>
+                            <td class="py-4 px-6 text-right">
+                                <button class="text-xs text-signal font-mono font-semibold inline-flex items-center gap-1 hover:underline cursor-pointer" onclick="toggleDetails('attempt-{{ attempt.id }}')" type="button">
+                                    <span>Academic Dossier</span>
                                     <span class="material-symbols-outlined text-sm" id="chevron-{{ attempt.id }}">
                                         {% if forloop.first %}expand_less{% else %}expand_more{% endif %}
                                     </span>
@@ -350,31 +351,31 @@
                             </td>
                         </tr>
 
-                        <!-- Expandable Dossier Row -->
-                        <tr class="bg-[#0d1422] border-y border-[#1e293b] {% if not forloop.first %}hidden{% endif %}" id="attempt-{{ attempt.id }}">
+                        <!-- Expandable Row -->
+                        <tr class="bg-ink-950 border-y border-white/5 {% if not forloop.first %}hidden{% endif %}" id="attempt-{{ attempt.id }}">
                             <td class="p-6" colspan="6">
-                                <div class="bg-[#111a2e] border border-[#273752] p-5 rounded shadow-inner flex flex-col md:flex-row items-start justify-between gap-6 relative overflow-hidden">
-                                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
+                                <div class="bg-ink-900 border border-white/10 p-5 rounded-2xl flex flex-col md:flex-row items-start justify-between gap-6 relative overflow-hidden">
+                                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-signal"></div>
                                     <div class="flex items-start gap-4 max-w-3xl pl-2">
-                                        <div class="w-9 h-9 rounded bg-[#162238] text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/40 shadow-sm">
+                                        <div class="w-9 h-9 rounded-xl bg-ink-950 text-signal flex items-center justify-center shrink-0 border border-signal/30 shadow-sm">
                                             <span class="material-symbols-outlined text-lg">psychology</span>
                                         </div>
                                         <div class="flex flex-col gap-1.5">
                                             <div class="flex items-center gap-2">
-                                                <span class="font-cinzel text-[11px] tracking-[0.16em] uppercase text-amber-400 font-bold">Faculty Critique • Heuristic Telemetry Brief</span>
-                                                <span class="text-slate-600">•</span>
-                                                <span class="text-[11px] font-mono text-slate-400">Evaluated by CyberQuizAgent GPT-5</span>
+                                                <span class="font-mono text-xs uppercase tracking-wider text-signal font-bold">Faculty Critique &bull; Telemetry Brief</span>
+                                                <span class="text-white/20">&bull;</span>
+                                                <span class="text-[11px] font-mono text-mist-900">Evaluated by CyberQuizAgent GPT-5</span>
                                             </div>
-                                            <p class="font-serif-editorial text-[14px] leading-relaxed text-slate-200">
+                                            <p class="font-body text-sm text-mist-100 leading-relaxed">
                                                 {{ attempt.ai_feedback|default:"Cadet demonstrated consistent evaluation of domain signatures. Continued drill recommended for simulated multi-factor authentication scenarios." }}
                                             </p>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2.5 shrink-0 self-start md:self-center">
-                                        <button class="text-xs font-semibold bg-[#162238] text-white border border-[#273752] px-3 py-1.5 rounded hover:bg-[#1d2d4a] hover:border-slate-500 transition-colors" type="button">
+                                        <button class="text-xs font-mono px-3.5 py-1.5 rounded-full bg-ink-950 text-white border border-white/10 hover:border-signal/50 transition-colors" type="button">
                                             Assign Target Drill
                                         </button>
-                                        <button class="text-xs font-semibold bg-amber-500 text-slate-950 px-3 py-1.5 rounded hover:bg-amber-400 transition-colors shadow-md shadow-amber-500/20 font-bold" type="button">
+                                        <button class="text-xs font-mono font-bold bg-signal text-ink-950 px-3.5 py-1.5 rounded-full hover:bg-signal-dim transition-colors shadow-md" type="button">
                                             Notify Guardian
                                         </button>
                                     </div>
@@ -386,22 +387,22 @@
                 </table>
             </div>
 
-            <!-- Table Footer Pagination & Summary -->
-            <div class="p-4 bg-[#0d1422] border-t border-[#1e293b] flex flex-col sm:flex-row items-center justify-between gap-4">
-                <span class="font-serif-editorial italic text-xs text-slate-400">
+            <div class="p-4 bg-ink-900 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-mist-900">
+                <span>
                     Cataloging <strong class="text-white">{{ recent_attempts|length }}</strong> recorded examinations in current cohort
                 </span>
                 <div class="flex items-center gap-1">
-                    <button class="w-7 h-7 rounded border border-[#273752] bg-[#111a2e] text-slate-500 flex items-center justify-center disabled:opacity-30 cursor-not-allowed" disabled="" type="button">
+                    <button class="w-7 h-7 rounded-full border border-white/10 bg-ink-950 text-mist-900 flex items-center justify-center disabled:opacity-30 cursor-not-allowed" disabled="" type="button">
                         <span class="material-symbols-outlined text-sm">chevron_left</span>
                     </button>
-                    <button class="w-7 h-7 rounded bg-amber-500 text-slate-950 font-mono font-bold text-xs shadow-sm" type="button">1</button>
-                    <button class="w-7 h-7 rounded border border-[#273752] bg-[#111a2e] text-slate-200 font-mono text-xs hover:bg-[#162238] transition-colors" type="button">2</button>
-                    <button class="w-7 h-7 rounded border border-[#273752] bg-[#111a2e] text-slate-300 flex items-center justify-center hover:bg-[#162238] transition-colors" type="button">
+                    <button class="w-7 h-7 rounded-full bg-signal text-ink-950 font-bold" type="button">1</button>
+                    <button class="w-7 h-7 rounded-full border border-white/10 bg-ink-950 text-white hover:border-signal/40" type="button">2</button>
+                    <button class="w-7 h-7 rounded-full border border-white/10 bg-ink-950 text-white hover:border-signal/40 flex items-center justify-center" type="button">
                         <span class="material-symbols-outlined text-sm">chevron_right</span>
                     </button>
                 </div>
             </div>
+
         </div>
 
     </div>

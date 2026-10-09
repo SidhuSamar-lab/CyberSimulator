@@ -1,259 +1,190 @@
 {% extends 'base.html' %}
 
-{% block title %}Provost Evaluation: {{ attempt.topic_title }} | CyberShield Academy{% endblock %}
+{% block title %}Provost Evaluation: {{ attempt.topic_title }} | CyberShield{% endblock %}
 
 {% block content %}
-<div class="w-full max-w-[1440px] mx-auto px-4 sm:px-8 py-6 text-[#dee2f0]">
+<div class="relative w-full overflow-hidden bg-ink-950 text-mist-100 min-h-screen">
     
-    <!-- Academic Breadcrumbs & Session Seal Navigation -->
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
-        <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-slate-400">
-            <a class="hover:text-gold transition-colors flex items-center gap-1 text-slate-300" href="{% url 'student_dashboard' %}">
-                <span class="material-symbols-outlined text-sm text-gold">account_balance</span>
-                Syllabus
-            </a>
-            <span class="text-slate-600">/</span>
-            <span class="hover:text-gold transition-colors text-slate-300">{{ attempt.topic_title }}</span>
-            <span class="text-slate-600">/</span>
-            <span class="text-gold-light font-bold">Provost Evaluation Dossier</span>
-        </nav>
+    <!-- Background Glow & Grid Lines (Nexus Studio Signature) -->
+    <div class="absolute top-10 left-1/3 w-[600px] h-[600px] bg-signal/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute inset-0 grid-lines pointer-events-none opacity-40"></div>
+    <div class="grain absolute inset-0 pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-8 flex flex-col gap-8">
         
-        <div class="flex items-center gap-2.5">
-            <div class="flex items-center gap-1.5 px-3 py-1 bg-[#111a2e] rounded border border-[#273752] text-slate-300 text-xs shadow-xs font-mono">
-                <span class="material-symbols-outlined text-sm text-emerald">verified</span>
-                <span>EVALUATION COMPLETE • AI AUDITED</span>
-            </div>
-            <div class="flex items-center gap-1 px-3 py-1 bg-[#064e3b]/50 rounded border border-emerald/50 text-emerald-light text-xs font-bold tracking-wide">
-                <span class="material-symbols-outlined text-sm text-emerald">workspace_premium</span>
-                <span>HONOR BADGE RECORDED</span>
+        <!-- Breadcrumbs -->
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-mist-900">
+                <a class="hover:text-signal transition-colors flex items-center gap-1.5" href="{% url 'student_dashboard' %}">
+                    <span class="material-symbols-outlined text-sm text-signal">space_dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <span class="text-white/20">/</span>
+                <span class="text-mist-700">{{ attempt.topic_title }}</span>
+                <span class="text-white/20">/</span>
+                <span class="text-signal font-bold">Evaluation Dossier</span>
+            </nav>
+            
+            <div class="flex items-center gap-2.5">
+                <div class="flex items-center gap-1.5 px-3 py-1 bg-ink-900 rounded-full border border-white/10 text-mist-700 text-xs font-mono">
+                    <span class="material-symbols-outlined text-xs text-signal">verified</span>
+                    <span>AI EVALUATION COMPLETE</span>
+                </div>
+                <div class="flex items-center gap-1.5 px-3 py-1 bg-signal/15 text-signal rounded-full border border-signal/30 text-xs font-mono font-bold">
+                    <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
+                    <span>HONOR BADGE LOGGED</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Stepper & Scenario Header Panel (Obsidian & Gold Style) -->
-    <div class="bg-[#111a2d] rounded-xl p-6 md:p-7 border border-[#273752] shadow-xl relative overflow-hidden mb-6">
-        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold via-amber-400 to-emerald"></div>
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
-            <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <span class="bg-[#070b12] text-gold font-crest text-[10px] tracking-widest px-2.5 py-0.5 rounded font-bold uppercase border border-gold/40">
-                        MODULE VERIFIED
-                    </span>
-                    <span class="bg-[#162238] text-slate-200 text-[11px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded border border-[#273752]">
-                        Collegiate Forensic Report
-                    </span>
+        <!-- Evaluation Header Panel -->
+        <div class="bg-ink-900/90 rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-signal via-signal-dim to-signal"></div>
+            
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-2">
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="bg-ink-950 text-signal font-mono text-[10px] tracking-widest px-3 py-1 rounded-full font-bold uppercase border border-signal/30">
+                            VERIFIED EVALUATION
+                        </span>
+                        <span class="bg-ink-950 text-mist-700 text-xs font-mono px-3 py-1 rounded-full border border-white/10">
+                            Forensic Telemetry Ledger
+                        </span>
+                    </div>
+                    <h1 class="font-display text-2xl sm:text-4xl text-white font-bold tracking-tight mt-1 leading-snug">
+                        {{ attempt.topic_title }}: Diagnostic Dossier
+                    </h1>
+                    <p class="font-body text-xs sm:text-sm text-mist-900">
+                        Cadet: <strong class="text-white">{{ attempt.student.name }}</strong> ({{ attempt.student.class_name }} &bull; Roll #{{ attempt.student.roll_number }})
+                    </p>
                 </div>
-                <h1 class="font-serif-academic text-2xl md:text-3xl text-white font-bold tracking-tight mt-1 leading-snug">
-                    {{ attempt.topic_title }}: Forensic Evaluation Ledger
-                </h1>
-                <p class="font-serif-editorial italic text-xs md:text-sm text-slate-300">
-                    Candidate: <strong class="text-white">{{ attempt.student.name }}</strong> ({{ attempt.student.class_name }} • Roll #{{ attempt.student.roll_number }})
-                </p>
-            </div>
 
-            <div class="flex items-center gap-4 bg-[#0d1422] px-4 py-2.5 rounded-lg border border-[#273752] shrink-0 shadow-inner">
-                <div class="text-right">
-                    <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 font-crest">Final Score</div>
-                    <div class="font-serif-academic text-xl md:text-2xl text-gold font-bold tracking-tight">
-                        {{ attempt.score }} / {{ attempt.total_questions }} <span class="text-xs font-sans text-slate-400 font-normal">PTS</span>
+                <div class="flex items-center gap-5 bg-ink-950 px-5 py-3 rounded-2xl border border-white/10 shrink-0 shadow-inner">
+                    <div class="text-right font-mono">
+                        <div class="text-[10px] uppercase tracking-widest text-mist-900">Final Score</div>
+                        <div class="font-display text-xl sm:text-2xl text-signal font-bold tracking-tight">
+                            {{ attempt.score }} / {{ attempt.total_questions }} <span class="text-xs text-mist-900 font-normal">PTS</span>
+                        </div>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl border-2 {% if attempt.score == attempt.total_questions %}border-signal text-signal bg-signal/15{% elif attempt.score >= 2 %}border-signal/50 text-signal bg-signal/10{% else %}border-ember text-ember bg-ember/15{% endif %} flex items-center justify-center font-display font-bold text-base shadow-[0_0_15px_rgba(232,255,71,0.2)]">
+                        {{ attempt.percentage|floatformat:0 }}%
                     </div>
                 </div>
-                <div class="w-14 h-14 rounded-full border-2 {% if attempt.score == attempt.total_questions %}border-emerald text-emerald-light bg-[#064e3b]/40{% elif attempt.score >= 2 %}border-gold text-gold bg-gold-bg{% else %}border-rose-500 text-rose-300 bg-rose-950/40{% endif %} flex items-center justify-center font-crest font-bold text-base shadow-[0_0_12px_rgba(245,158,11,0.25)]">
-                    {{ attempt.percentage|floatformat:0 }}%
-                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Main Split Grid: Left Question Review vs Right AI Mentor Analysis -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
-        <!-- LEFT COLUMN: Question Review Breakdown (7 cols) -->
-        <section class="lg:col-span-7 flex flex-col gap-5">
+        <!-- Main Split Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            {% for q in attempt.questions.all %}
-                <div class="bg-[#111a2d] rounded-xl p-6 border {% if q.is_correct %}border-emerald/40{% else %}border-rose-500/40{% endif %} shadow-xl space-y-4 relative overflow-hidden">
-                    <div class="absolute top-0 left-0 bottom-0 w-1 {% if q.is_correct %}bg-emerald{% else %}bg-rose-500{% endif %}"></div>
+            <!-- Left: Questions Breakdown (7 cols) -->
+            <section class="lg:col-span-7 flex flex-col gap-6">
+                
+                {% for q in attempt.questions.all %}
+                <div class="bg-ink-850 rounded-2xl p-6 sm:p-8 border {% if q.is_correct %}border-signal/30{% else %}border-ember/40{% endif %} shadow-xl space-y-4 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 bottom-0 w-1.5 {% if q.is_correct %}bg-signal{% else %}bg-ember{% endif %}"></div>
                     
-                    <!-- Question Review Header -->
                     <div class="flex items-center justify-between pl-2">
-                        <div class="flex items-center gap-2">
-                            <span class="font-crest text-xs font-bold {% if q.is_correct %}text-emerald-light{% else %}text-rose-400{% endif %} uppercase tracking-widest">
-                                Scenario {{ forloop.counter }} Verification
-                            </span>
-                        </div>
+                        <span class="font-mono text-xs font-bold {% if q.is_correct %}text-signal{% else %}text-ember{% endif %} uppercase tracking-widest">
+                            Scenario 0{{ forloop.counter }} Verification
+                        </span>
                         
                         {% if q.is_correct %}
-                            <span class="inline-flex items-center gap-1 text-emerald-light bg-[#064e3b]/70 border border-emerald/50 px-2.5 py-0.5 rounded-full font-crest text-xs font-bold">
+                            <span class="inline-flex items-center gap-1.5 text-signal bg-signal/15 border border-signal/30 px-3 py-1 rounded-full font-mono text-xs font-bold">
                                 <span class="material-symbols-outlined text-sm font-bold">check</span> Mastered (+1 Pt)
                             </span>
                         {% else %}
-                            <span class="inline-flex items-center gap-1 text-rose-300 bg-rose-950/70 border border-rose-500/50 px-2.5 py-0.5 rounded-full font-crest text-xs font-bold">
-                                <span class="material-symbols-outlined text-sm">close</span> Remediation Required
+                            <span class="inline-flex items-center gap-1.5 text-ember bg-ember/15 border border-ember/30 px-3 py-1 rounded-full font-mono text-xs font-bold">
+                                <span class="material-symbols-outlined text-sm">close</span> Remediation Alert
                             </span>
                         {% endif %}
                     </div>
 
-                    <!-- Prompt -->
-                    <h2 class="font-serif-academic text-lg md:text-xl text-white font-semibold leading-snug pl-2">
+                    <h2 class="font-display text-lg sm:text-xl text-white font-bold leading-snug pl-2">
                         {{ q.question_text }}
                     </h2>
 
                     <!-- Answer Breakdown Pills -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 pl-2">
-                        <div class="p-3 rounded-lg bg-[#0d1422] border border-[#273752] flex flex-col">
-                            <span class="text-[10px] font-crest uppercase tracking-wider text-slate-400">Your Answer:</span>
-                            <span class="font-serif-academic text-sm font-bold {% if q.is_correct %}text-emerald-light{% else %}text-rose-400{% endif %} mt-0.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 pl-2 font-mono text-xs">
+                        <div class="p-3.5 rounded-xl bg-ink-950 border border-white/5 flex flex-col">
+                            <span class="text-[10px] uppercase text-mist-900">Your Verdict:</span>
+                            <span class="font-bold {% if q.is_correct %}text-signal{% else %}text-ember{% endif %} mt-1 text-sm">
                                 Option {{ q.selected_option }}
                             </span>
                         </div>
-                        <div class="p-3 rounded-lg bg-[#0d1422] border border-[#273752] flex flex-col">
-                            <span class="text-[10px] font-crest uppercase tracking-wider text-slate-400">Accredited Solution:</span>
-                            <span class="font-serif-academic text-sm font-bold text-gold-light mt-0.5">
+                        <div class="p-3.5 rounded-xl bg-ink-950 border border-white/5 flex flex-col">
+                            <span class="text-[10px] uppercase text-mist-900">Accredited Solution:</span>
+                            <span class="font-bold text-white mt-1 text-sm">
                                 Option {{ q.correct_option }}
                             </span>
                         </div>
                     </div>
 
-                    <!-- Pedagogical Explanation -->
-                    <div class="p-4 rounded-lg bg-[#0b1320] border border-[#1e293b] text-xs text-slate-300 leading-relaxed ml-2 shadow-inner">
-                        <div class="flex items-center gap-1.5 font-crest font-bold text-gold text-xs mb-1">
+                    <!-- Explanation -->
+                    <div class="p-4 rounded-xl bg-ink-950 border border-white/5 text-xs text-mist-700 leading-relaxed ml-2 font-body">
+                        <div class="flex items-center gap-1.5 font-mono font-bold text-signal text-xs mb-1">
                             <span class="material-symbols-outlined text-sm">school</span>
                             <span>Provost Forensic Rationale:</span>
                         </div>
-                        <p class="font-serif-editorial italic text-slate-200">
+                        <p class="text-mist-100">
                             {{ q.explanation|default:"Official defensive protocol prioritizes root-domain inspection, multifactor authentication integrity, and eliminating urgency coercion." }}
                         </p>
                     </div>
 
                 </div>
-            {% endfor %}
+                {% endfor %}
 
-            <!-- Syllabus Context Card -->
-            <div class="flex items-center gap-3.5 p-4 bg-[#111a2d] rounded-xl border border-[#273752] shadow-sm">
-                <div class="w-10 h-10 rounded-lg bg-[#070b12] flex items-center justify-center text-gold shrink-0 border border-gold/40">
-                    <span class="material-symbols-outlined text-xl">auto_stories</span>
-                </div>
-                <div>
-                    <div class="font-crest text-xs font-bold text-white uppercase tracking-wider">Curriculum Reference: Module Standards</div>
-                    <div class="text-xs text-slate-400">Continuous drills enhance cognitive threat identification during authentic cyber incidents.</div>
-                </div>
-            </div>
+            </section>
 
-        </section>
-
-        <!-- RIGHT COLUMN: Dean's AI Pedagogical Critique & Live AI Provost (5 cols) -->
-        <aside class="lg:col-span-5 flex flex-col gap-4 sticky top-20">
-            
-            <!-- Main AI Critique Card -->
-            <div class="bg-[#0e1728] rounded-xl shadow-2xl overflow-hidden border border-gold/40 text-slate-100">
+            <!-- Right: Dean's AI Pedagogical Critique & Live Dialogue (5 cols) -->
+            <aside class="lg:col-span-5 flex flex-col gap-6 sticky top-20">
                 
-                <!-- AI Provost Header -->
-                <div class="p-5 md:p-6 bg-[#070b12] border-b border-[#1e293b] relative">
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex items-center gap-3.5">
-                            <div class="relative w-12 h-12 rounded-lg bg-[#0e1626] flex items-center justify-center text-gold border border-gold/40 shadow-inner">
-                                <span class="material-symbols-outlined text-2xl">school</span>
-                                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald border-2 border-[#070b12] shadow-[0_0_6px_rgba(16,185,129,0.8)]"></span>
-                            </div>
-                            <div class="flex flex-col">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-crest text-sm md:text-base font-bold text-white tracking-wider">Dean’s Pedagogical Critique</span>
-                                </div>
-                                <span class="text-[11px] font-mono text-gold-light tracking-wide">CyberShield AI Provost (GPT-5)</span>
-                            </div>
+                <div class="bg-ink-900/95 rounded-3xl border border-white/10 shadow-2xl p-6 sm:p-8 flex flex-col gap-6 backdrop-blur-xl">
+                    
+                    <div class="flex items-center gap-3.5 pb-4 border-b border-white/5">
+                        <div class="w-10 h-10 rounded-xl bg-ink-950 border border-signal/40 text-signal flex items-center justify-center">
+                            <span class="material-symbols-outlined text-xl">psychology</span>
                         </div>
-                        <div class="flex flex-col items-end">
-                            <span class="text-[10px] font-crest tracking-widest text-slate-400 uppercase">Status</span>
-                            <span class="font-crest text-sm font-bold {% if attempt.score == attempt.total_questions %}text-emerald-light{% else %}text-gold{% endif %}">
-                                {% if attempt.score == attempt.total_questions %}DISTINCTION{% else %}AUDITED{% endif %}
-                            </span>
+                        <div>
+                            <h3 class="font-display text-base font-bold text-white">Dean’s AI Critique</h3>
+                            <span class="font-mono text-[11px] text-signal">CyberQuizAgent &bull; GPT-5 Engine</span>
                         </div>
                     </div>
-                </div>
 
-                <!-- Critique Content Body -->
-                <div class="p-5 md:p-6 flex flex-col gap-5 bg-[#0e1728]">
-                    
-                    <!-- Result Badge & Points Pill -->
-                    <div class="p-3.5 bg-[#0b1424] rounded-lg border border-gold/30 flex items-center justify-between shadow-inner">
-                        <div class="flex items-center gap-2.5">
-                            <span class="material-symbols-outlined text-gold text-xl">workspace_premium</span>
-                            <span class="font-crest text-xs font-bold text-white tracking-wider">
+                    <!-- Points Pill -->
+                    <div class="p-3.5 bg-ink-950 rounded-2xl border border-white/5 flex items-center justify-between font-mono text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-signal text-lg">workspace_premium</span>
+                            <span class="text-white font-bold">
                                 {{ attempt.score }} / {{ attempt.total_questions }} Scenarios Mastered
                             </span>
                         </div>
-                        <span class="font-mono text-xs font-bold bg-gold text-[#090e17] px-2.5 py-1 rounded shadow-sm">
+                        <span class="bg-signal text-ink-950 font-bold px-3 py-1 rounded-full">
                             +{{ attempt.score|add:"10" }} Honor Pts
                         </span>
                     </div>
 
-                    <!-- AI Critique Text generated by GPT-5 -->
-                    <div class="p-4 rounded-lg bg-[#070b12] border border-[#273752]">
-                        <h4 class="font-crest text-xs font-bold text-gold uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                            <span class="material-symbols-outlined text-sm">psychology</span>
-                            Faculty Critique Report
-                        </h4>
-                        <p class="font-serif-editorial italic text-xs md:text-sm text-slate-200 leading-relaxed">
+                    <!-- AI Critique Text -->
+                    <div class="p-4 rounded-2xl bg-ink-950 border border-white/5 text-xs text-mist-700 leading-relaxed">
+                        <span class="font-mono text-xs font-bold text-signal block mb-2">CRITIQUE REPORT:</span>
+                        <p class="font-body text-mist-100 leading-relaxed">
                             {{ attempt.ai_feedback|default:"Cadet showed sound instincts identifying anomalous domain structures. Continued drills will reinforce resilience against secondary social engineering decoys." }}
                         </p>
                     </div>
 
-                    <!-- Stepped Roman-Numeral Breakdown -->
-                    <div class="flex flex-col gap-3">
-                        <div class="flex items-center justify-between border-b border-[#1e293b] pb-2">
-                            <h3 class="font-crest text-xs font-bold text-gold tracking-widest uppercase flex items-center gap-1.5">
-                                <span class="material-symbols-outlined text-sm">history_edu</span>
-                                Core Defense Axioms
-                            </h3>
-                            <span class="text-[10px] font-mono text-slate-400">REF: OSINT-72</span>
-                        </div>
-
-                        <div class="p-3 bg-[#0d1422] rounded-lg border border-[#273752] flex flex-col gap-1">
-                            <div class="flex items-center gap-2">
-                                <span class="w-5 h-5 rounded bg-gold/20 text-gold font-crest text-xs flex items-center justify-center font-bold border border-gold/50">I</span>
-                                <h4 class="font-serif-academic text-sm font-semibold text-slate-200">Visual Homoglyph Deception</h4>
-                            </div>
-                            <p class="text-xs text-slate-300 leading-snug pl-7 font-sans">
-                                Replaces letters with identical numerals to exploit mobile device skimming.
-                            </p>
-                        </div>
-
-                        <div class="p-3 bg-[#0d1422] rounded-lg border border-[#273752] flex flex-col gap-1">
-                            <div class="flex items-center gap-2">
-                                <span class="w-5 h-5 rounded bg-indigo-500/20 text-indigo-300 font-crest text-xs flex items-center justify-center font-bold border border-indigo-500/50">II</span>
-                                <h4 class="font-serif-academic text-sm font-semibold text-slate-200">Artificial Urgency Pressure</h4>
-                            </div>
-                            <p class="text-xs text-slate-300 leading-snug pl-7 font-sans">
-                                Strict deadlines induce cognitive anxiety, deterring students from verifying domains.
-                            </p>
-                        </div>
-
-                        <div class="p-3 bg-[#0d1422] rounded-lg border border-emerald/40 flex flex-col gap-1">
-                            <div class="flex items-center gap-2">
-                                <span class="w-5 h-5 rounded bg-emerald/20 text-emerald-light font-crest text-xs flex items-center justify-center font-bold border border-emerald/50">III</span>
-                                <h4 class="font-serif-academic text-sm font-semibold text-emerald-light">Oakridge Institutional Rule</h4>
-                            </div>
-                            <p class="text-xs text-slate-300 leading-snug pl-7 font-sans">
-                                School records are published strictly on <span class="text-white font-medium underline decoration-gold">portal.oakridge.edu</span>.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Live AI Provost Interactive Dialogue Box -->
-                    <div class="p-4 rounded-xl bg-[#070b12] border border-[#273752] space-y-3">
+                    <!-- Live AI Chat Drawer -->
+                    <div class="p-4 rounded-2xl bg-ink-950 border border-white/10 space-y-3 font-mono text-xs">
                         <div class="flex items-center justify-between">
-                            <span class="font-crest text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="font-mono text-xs font-bold text-signal uppercase tracking-wider flex items-center gap-1.5">
                                 <span class="material-symbols-outlined text-sm">forum</span>
                                 Consult AI Provost
                             </span>
-                            <span class="text-[10px] font-mono text-emerald-light">GPT-5 Active</span>
+                            <span class="text-[10px] text-signal font-bold">GPT-5 LIVE</span>
                         </div>
 
-                        <!-- Chat log -->
-                        <div id="chat-messages" class="max-h-40 overflow-y-auto space-y-2 text-xs font-serif-editorial">
-                            <div class="p-2.5 rounded bg-[#111a2e] border border-[#1e293b] text-slate-300">
-                                <strong>Provost:</strong> Have any questions regarding the forensic evidence or grading rubric? Enter your query below.
+                        <!-- Messages list -->
+                        <div id="chat-messages" class="max-h-44 overflow-y-auto space-y-2 text-xs font-body pr-1">
+                            <div class="p-3 rounded-xl bg-ink-900 border border-white/5 text-mist-700">
+                                <strong class="text-signal font-mono">Provost:</strong> Have any questions regarding the forensic exhibit or grading? Ask below.
                             </div>
                         </div>
 
@@ -262,32 +193,30 @@
                             <input type="text" 
                                    id="chat-input"
                                    placeholder="Ask the provost a question..." 
-                                   class="flex-1 bg-[#111a2e] border border-[#273752] rounded-lg px-3 py-2 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-gold">
+                                   class="flex-1 bg-ink-900 border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder:text-mist-900 focus:outline-none focus:border-signal font-body">
                             <button type="button" 
                                     id="chat-send"
-                                    class="px-3 py-2 rounded-lg bg-gold hover:bg-gold-light text-[#090e17] font-crest text-xs font-bold transition-all cursor-pointer">
+                                    class="px-4 py-2 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-mono text-xs font-bold transition-all cursor-pointer">
                                 <span>Ask</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Action Controls -->
-                    <div class="flex flex-col sm:flex-row items-center gap-2.5 pt-1">
-                        <a href="{% url 'student_dashboard' %}" class="w-full sm:flex-1 py-3 px-4 rounded-lg bg-gold hover:bg-gold-light text-[#090e17] font-crest text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.35)]">
-                            <span>Return to Academy Dashboard</span>
-                            <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+                    <!-- Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center gap-3 pt-1">
+                        <a href="{% url 'student_dashboard' %}" class="w-full sm:flex-1 py-3.5 px-4 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-xs font-bold uppercase tracking-wider text-center transition-all shadow-[0_0_20px_rgba(232,255,71,0.2)]">
+                            <span>Return to Dashboard</span>
                         </a>
-                        <a href="{% url 'take_quiz' attempt.topic_id %}" class="w-full sm:w-auto py-3 px-4 rounded-lg bg-[#111a2e] hover:bg-[#162238] border border-[#273752] text-slate-300 font-crest text-xs font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5">
-                            <span class="material-symbols-outlined text-sm text-gold">replay</span>
+                        <a href="{% url 'take_quiz' attempt.topic_id %}" class="w-full sm:w-auto py-3.5 px-5 rounded-full bg-ink-950 hover:bg-ink-800 border border-white/10 text-white font-mono text-xs text-center transition-colors">
                             <span>Retake</span>
                         </a>
                     </div>
 
                 </div>
 
-            </div>
+            </aside>
 
-        </aside>
+        </div>
 
     </div>
 
@@ -296,7 +225,6 @@
 
 {% block extra_js %}
 <script>
-    // Live AI Chat handling
     const chatInput = document.getElementById('chat-input');
     const chatSend = document.getElementById('chat-send');
     const chatMessages = document.getElementById('chat-messages');
@@ -306,17 +234,15 @@
             const query = chatInput.value.trim();
             if (!query) return;
 
-            // Append user bubble
             const userMsg = document.createElement('div');
-            userMsg.className = 'p-2.5 rounded bg-gold-bg border border-gold/40 text-gold-light text-right';
-            userMsg.innerHTML = `<strong>You:</strong> ${escapeHtml(query)}`;
+            userMsg.className = 'p-3 rounded-xl bg-signal/15 border border-signal/30 text-signal text-right';
+            userMsg.innerHTML = `<strong class="font-mono">You:</strong> ${escapeHtml(query)}`;
             chatMessages.appendChild(userMsg);
             chatInput.value = '';
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
-            // Loading bubble
             const loadingMsg = document.createElement('div');
-            loadingMsg.className = 'p-2.5 rounded bg-[#111a2e] border border-[#1e293b] text-slate-400 italic';
+            loadingMsg.className = 'p-3 rounded-xl bg-ink-900 border border-white/5 text-mist-900 italic font-mono';
             loadingMsg.textContent = 'Provost is reviewing institutional doctrine...';
             chatMessages.appendChild(loadingMsg);
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -338,8 +264,8 @@
                 loadingMsg.remove();
 
                 const botMsg = document.createElement('div');
-                botMsg.className = 'p-2.5 rounded bg-[#111a2e] border border-[#1e293b] text-slate-200';
-                botMsg.innerHTML = `<strong>Provost:</strong> ${data.reply || 'Remain vigilant against typosquatting and deceptive senders.'}`;
+                botMsg.className = 'p-3 rounded-xl bg-ink-900 border border-white/5 text-mist-100';
+                botMsg.innerHTML = `<strong class="text-signal font-mono">Provost:</strong> ${data.reply || 'Remain vigilant against typosquatting and deceptive senders.'}`;
                 chatMessages.appendChild(botMsg);
             } catch (err) {
                 loadingMsg.textContent = 'Provost: Network gateway timed out. Remember: never share credentials on untrusted domains.';

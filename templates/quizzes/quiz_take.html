@@ -1,346 +1,251 @@
 {% extends 'base.html' %}
 
-{% block title %}Examination Laboratory: {{ topic.title }} | CyberShield Academy{% endblock %}
+{% block title %}Scenario Challenge: {{ topic.title }} | CyberShield Threat Lab{% endblock %}
 
 {% block content %}
-<div class="w-full max-w-[1440px] mx-auto px-4 sm:px-8 py-6 text-[#dee2f0]">
+<div class="relative w-full overflow-hidden bg-ink-950 text-mist-100 min-h-screen">
     
-    <!-- Academic Breadcrumbs & Session Seal Navigation -->
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
-        <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-slate-400">
-            <a class="hover:text-gold transition-colors flex items-center gap-1 text-slate-300" href="{% url 'student_dashboard' %}">
-                <span class="material-symbols-outlined text-sm text-gold">account_balance</span>
-                Syllabus
-            </a>
-            <span class="text-slate-600">/</span>
-            <span class="hover:text-gold transition-colors text-slate-300">{{ topic.title }}</span>
-            <span class="text-slate-600">/</span>
-            <span class="text-gold-light font-bold">Scenario Challenge Laboratory</span>
-        </nav>
-        <div class="flex items-center gap-2.5">
-            <div class="flex items-center gap-1.5 px-3 py-1 bg-[#111a2e] rounded border border-[#273752] text-slate-300 text-xs shadow-xs font-mono">
-                <span class="material-symbols-outlined text-sm text-gold">hourglass_top</span>
-                <span>UNTIMED PROCTOR EXAMINATION</span>
-            </div>
-            <div class="flex items-center gap-1 px-3 py-1 bg-[#064e3b]/50 rounded border border-emerald/50 text-emerald-light text-xs font-bold tracking-wide">
-                <span class="material-symbols-outlined text-sm text-emerald">workspace_premium</span>
-                <span>NIST SP 800-181 ACCREDITED</span>
-            </div>
-        </div>
-    </div>
+    <!-- Background Glow & Grid Lines (Nexus Studio Signature) -->
+    <div class="absolute top-10 left-1/4 w-[600px] h-[600px] bg-signal/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute inset-0 grid-lines pointer-events-none opacity-40"></div>
+    <div class="grain absolute inset-0 pointer-events-none"></div>
 
-    <!-- Stepper & Scenario Header Panel (Deep Obsidian Style with Gold Trim) -->
-    <div class="bg-[#111a2d] rounded-xl p-6 md:p-7 border border-[#273752] shadow-xl relative overflow-hidden mb-6">
-        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold via-amber-400 to-emerald"></div>
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-5">
-            <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <span class="bg-[#070b12] text-gold font-crest text-[10px] tracking-widest px-2.5 py-0.5 rounded font-bold uppercase border border-gold/40">
-                        DISCIPLINE • {{ topic.category|default:"DIGITAL SAFETY"|upper }}
-                    </span>
-                    <span class="bg-[#162238] text-slate-200 text-[11px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded border border-[#273752]">
-                        Collegiate Vulnerability Assessment
-                    </span>
+    <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-8 flex flex-col gap-8">
+        
+        <!-- Breadcrumbs & Accreditation Pill -->
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-mist-900">
+                <a class="hover:text-signal transition-colors flex items-center gap-1.5" href="{% url 'student_dashboard' %}">
+                    <span class="material-symbols-outlined text-sm text-signal">space_dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <span class="text-white/20">/</span>
+                <span class="text-mist-700">{{ topic.title }}</span>
+                <span class="text-white/20">/</span>
+                <span class="text-signal font-bold">Scenario Challenge</span>
+            </nav>
+            <div class="flex items-center gap-2.5">
+                <div class="flex items-center gap-1.5 px-3 py-1 bg-ink-900 rounded-full border border-white/10 text-mist-700 text-xs font-mono">
+                    <span class="material-symbols-outlined text-xs text-signal">timer</span>
+                    <span>UNTIMED LAB DRILL</span>
                 </div>
-                <h1 class="font-serif-academic text-2xl md:text-3xl text-white font-bold tracking-tight mt-1 leading-snug">
-                    Scenario Challenge: {{ topic.title }}
-                </h1>
-                <p class="text-xs uppercase font-crest tracking-widest text-slate-400">
-                    LABORATORY EXAMINATION • SPECIMEN ANALYSIS: ADVERSARIAL DRILL ({{ questions|length }} SCENARIOS)
-                </p>
-            </div>
-            <div class="flex items-center gap-4 bg-[#0d1422] px-4 py-2.5 rounded-lg border border-[#273752] shrink-0 shadow-inner">
-                <div class="text-right">
-                    <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 font-crest">Examination Scope</div>
-                    <div class="font-serif-academic text-xl md:text-2xl text-gold font-bold tracking-tight">
-                        {{ questions|length }} / {{ questions|length }} <span class="text-xs font-sans text-slate-400 font-normal">UNITS</span>
-                    </div>
-                </div>
-                <div class="w-12 h-12 rounded-full border-2 border-gold bg-[#070b12] flex items-center justify-center text-white font-crest font-bold text-sm shadow-[0_0_12px_rgba(245,158,11,0.25)]">
-                    100%
+                <div class="flex items-center gap-1.5 px-3 py-1 bg-signal/10 rounded-full border border-signal/30 text-signal text-xs font-mono font-bold">
+                    <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
+                    <span>NIST SP 800-181</span>
                 </div>
             </div>
         </div>
 
-        <!-- Segmented Classical Step Indicator -->
-        <div class="space-y-1.5 pt-1">
-            <div class="grid grid-cols-3 gap-2">
-                {% for q in questions %}
-                <div class="flex flex-col gap-1">
-                    <div class="h-1.5 rounded-full bg-gold ring-1 ring-gold-light shadow-[0_0_8px_rgba(245,158,11,0.6)]"></div>
-                    <div class="flex items-center justify-between text-[11px] font-bold text-gold">
-                        <span class="flex items-center gap-1 font-crest text-[10px] tracking-wider uppercase text-gold font-bold">
-                            <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span> Scenario {{ forloop.counter }} Active
+        <!-- Scenario Header Panel (Nexus Studio Style) -->
+        <div class="bg-ink-900/90 rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-signal via-signal-dim to-signal"></div>
+            
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6">
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="bg-ink-950 text-signal font-mono text-[10px] tracking-widest px-3 py-1 rounded-full font-bold uppercase border border-signal/30">
+                            DRILL &bull; {{ topic.category|default:"DIGITAL SAFETY"|upper }}
+                        </span>
+                        <span class="bg-ink-950 text-mist-700 text-xs font-mono px-3 py-1 rounded-full border border-white/10">
+                            Adversarial Specimen Assessment
                         </span>
                     </div>
+                    <h1 class="font-display text-2xl sm:text-4xl text-white font-bold tracking-tight mt-1 leading-snug">
+                        Scenario Challenge: {{ topic.title }}
+                    </h1>
+                    <p class="font-mono text-xs text-mist-900 tracking-wider uppercase">
+                        LAB SPECIMEN ANALYSIS &bull; {{ questions|length }} ADVERSARIAL QUESTIONS
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-4 bg-ink-950 px-5 py-3 rounded-2xl border border-white/10 shrink-0 shadow-inner">
+                    <div class="text-right font-mono">
+                        <div class="text-[10px] uppercase tracking-widest text-mist-900">Drill Scope</div>
+                        <div class="font-display text-xl sm:text-2xl text-signal font-bold tracking-tight">
+                            {{ questions|length }} / {{ questions|length }} <span class="text-xs text-mist-900 font-normal">UNITS</span>
+                        </div>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl border border-signal/40 bg-signal/15 flex items-center justify-center text-signal font-mono font-bold text-sm">
+                        100%
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step Progress Indicator -->
+            <div class="grid grid-cols-3 gap-2 pt-2 border-t border-white/5">
+                {% for q in questions %}
+                <div class="flex flex-col gap-1.5">
+                    <div class="h-1 rounded-full bg-signal shadow-[0_0_8px_rgba(232,255,71,0.6)]"></div>
+                    <span class="font-mono text-[10px] uppercase text-signal font-bold flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-signal"></span> Scenario 0{{ forloop.counter }}
+                    </span>
                 </div>
                 {% endfor %}
             </div>
         </div>
-    </div>
 
-    <!-- Main Split Grid: Left Scenario & Options vs Right Provost Dossier -->
-    <form method="POST" action="{% url 'submit_quiz' %}" id="quiz-submission-form" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {% csrf_token %}
+        <!-- Form Layout: Questions & Aside -->
+        <form method="POST" action="{% url 'submit_quiz' %}" id="quiz-submission-form" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {% csrf_token %}
 
-        <!-- LEFT COLUMN: Scenario, Forensic Dossier & Options (7 cols) -->
-        <section class="lg:col-span-7 flex flex-col gap-5">
-            
-            {% for q in questions %}
-            <div class="bg-[#111a2d] rounded-xl p-6 border border-[#273752] shadow-xl space-y-4">
+            <!-- Left: Scenarios (7 cols) -->
+            <section class="lg:col-span-7 flex flex-col gap-6">
                 
-                <div class="flex items-center justify-between pb-3 border-b border-[#1e293b]">
-                    <div class="flex items-center gap-2 text-gold font-crest text-xs font-bold uppercase tracking-widest">
-                        <span class="material-symbols-outlined text-base">balance</span>
-                        <span>Scenario Challenge #{{ forloop.counter }} Exhibit</span>
-                    </div>
-
-                    <!-- AI Hint Button -->
-                    <button type="button" 
-                            class="btn-hint inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#162238] border border-gold/40 text-gold hover:bg-[#1d2d4a] hover:text-gold-light text-xs font-crest tracking-wider transition-colors cursor-pointer"
-                            data-q-num="{{ forloop.counter }}">
-                        <span class="material-symbols-outlined text-sm">lightbulb</span>
-                        <span>Request Provost Hint</span>
-                    </button>
-                </div>
-
-                <!-- AI Hint Box (Hidden by default) -->
-                <div id="hint-box-{{ forloop.counter }}" class="hidden p-3.5 rounded-lg bg-[#0d1422] border border-gold/40 text-xs text-slate-200 leading-relaxed shadow-inner">
-                    <div class="flex items-center gap-1.5 font-bold text-gold text-xs font-crest mb-1">
-                        <span class="material-symbols-outlined text-sm">psychology</span>
-                        <span>CyberQuizAgent (GPT-5) Guidance:</span>
-                    </div>
-                    <p class="hint-text text-slate-300 font-serif-editorial italic"></p>
-                </div>
-
-                <!-- Question Prompt -->
-                <h2 class="font-serif-academic text-xl md:text-2xl text-white font-semibold leading-snug">
-                    {{ q.question_text }}
-                </h2>
-
-                <!-- Forensic Evidence Dossier (Authentic Dark Slate Laboratory Card) -->
-                <div class="bg-[#152033] rounded-xl border border-[#273752] shadow-lg p-4 md:p-5 relative overflow-hidden">
-                    <div class="flex items-center justify-between pb-3 mb-3 border-b border-[#1e293b]">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded bg-[#070b12] text-gold flex items-center justify-center font-mono text-xs font-bold border border-gold/40">
-                                #{{ forloop.counter }}A
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="font-mono text-xs font-bold text-white tracking-tight">EXHIBIT: FORENSIC TELEMETRY SPECIMEN</span>
-                                <span class="text-[10px] uppercase font-mono text-slate-400">Classroom Security Sandbox • Simulated Origin</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-1.5 bg-[#0d1422] px-2.5 py-1 rounded border border-[#273752] text-[10px] font-mono text-gold font-semibold uppercase">
-                            <span>LAB LOGGED</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-[#0b1320] rounded-lg p-4 border border-[#1e293b] shadow-inner">
-                        <div class="flex items-start gap-2.5">
-                            <span class="material-symbols-outlined text-rose-400 text-xl mt-0.5">policy</span>
-                            <div class="text-slate-100 text-sm leading-relaxed">
-                                <p class="font-sans mb-1 font-medium">Examine the threat pattern and apply your defensive protocols:</p>
-                                <p class="font-serif-academic italic text-xs text-slate-300">
-                                    Assess the indicator below and choose the primary defensive verdict.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Multiple Choice Selection Options -->
-                <div class="flex flex-col gap-2.5 pt-2">
-                    <span class="font-crest text-xs font-bold text-gold uppercase tracking-widest px-1">
-                        Candidate Assessment Verdict:
-                    </span>
-
-                    <!-- Option A -->
-                    <label class="p-4 rounded-xl bg-[#0d1422] border border-[#273752] hover:border-gold hover:bg-[#142036] transition-all cursor-pointer flex items-start gap-3.5 group">
-                        <input type="radio" name="q_{{ forloop.counter }}" value="A" class="mt-1 accent-amber-500 w-4 h-4 cursor-pointer" required>
-                        <div class="flex flex-col flex-1">
-                            <span class="font-serif-academic text-base text-slate-100 font-medium group-hover:text-white transition-colors">
-                                <span class="font-crest text-gold font-bold mr-1.5">A.</span> {{ q.option_a }}
-                            </span>
-                        </div>
-                    </label>
-
-                    <!-- Option B -->
-                    <label class="p-4 rounded-xl bg-[#0d1422] border border-[#273752] hover:border-gold hover:bg-[#142036] transition-all cursor-pointer flex items-start gap-3.5 group">
-                        <input type="radio" name="q_{{ forloop.counter }}" value="B" class="mt-1 accent-amber-500 w-4 h-4 cursor-pointer" required>
-                        <div class="flex flex-col flex-1">
-                            <span class="font-serif-academic text-base text-slate-100 font-medium group-hover:text-white transition-colors">
-                                <span class="font-crest text-gold font-bold mr-1.5">B.</span> {{ q.option_b }}
-                            </span>
-                        </div>
-                    </label>
-
-                    <!-- Option C -->
-                    <label class="p-4 rounded-xl bg-[#0d1422] border border-[#273752] hover:border-gold hover:bg-[#142036] transition-all cursor-pointer flex items-start gap-3.5 group">
-                        <input type="radio" name="q_{{ forloop.counter }}" value="C" class="mt-1 accent-amber-500 w-4 h-4 cursor-pointer" required>
-                        <div class="flex flex-col flex-1">
-                            <span class="font-serif-academic text-base text-slate-100 font-medium group-hover:text-white transition-colors">
-                                <span class="font-crest text-gold font-bold mr-1.5">C.</span> {{ q.option_c }}
-                            </span>
-                        </div>
-                    </label>
-
-                    <!-- Option D -->
-                    <label class="p-4 rounded-xl bg-[#0d1422] border border-[#273752] hover:border-gold hover:bg-[#142036] transition-all cursor-pointer flex items-start gap-3.5 group">
-                        <input type="radio" name="q_{{ forloop.counter }}" value="D" class="mt-1 accent-amber-500 w-4 h-4 cursor-pointer" required>
-                        <div class="flex flex-col flex-1">
-                            <span class="font-serif-academic text-base text-slate-100 font-medium group-hover:text-white transition-colors">
-                                <span class="font-crest text-gold font-bold mr-1.5">D.</span> {{ q.option_d }}
-                            </span>
-                        </div>
-                    </label>
-                </div>
-
-            </div>
-            {% endfor %}
-
-            <!-- Academic Syllabus Reference Card -->
-            <div class="flex items-center gap-3.5 p-4 bg-[#111a2d] rounded-xl border border-[#273752] shadow-sm">
-                <div class="w-10 h-10 rounded-lg bg-[#070b12] flex items-center justify-center text-gold shrink-0 border border-gold/40">
-                    <span class="material-symbols-outlined text-xl">auto_stories</span>
-                </div>
-                <div>
-                    <div class="font-crest text-xs font-bold text-white uppercase tracking-wider">Curriculum Reference: NIST SP 800-181 Standard</div>
-                    <div class="text-xs text-slate-400">Institutional Defense Tactics, Domain Authentication &amp; Safe Netizen Habits.</div>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- RIGHT COLUMN: Dean's Pedagogical Critique & Safety Dossier (5 cols) -->
-        <aside class="lg:col-span-5 flex flex-col gap-4 sticky top-20">
-            
-            <!-- Main Dean's Critique Panel -->
-            <div class="bg-[#0e1728] rounded-xl shadow-2xl overflow-hidden border border-gold/40 text-slate-100">
-                
-                <!-- Dean / Provost Header -->
-                <div class="p-5 md:p-6 bg-[#070b12] border-b border-[#1e293b] relative">
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex items-center gap-3.5">
-                            <div class="relative w-12 h-12 rounded-lg bg-[#0e1626] flex items-center justify-center text-gold border border-gold/40 shadow-inner">
-                                <span class="material-symbols-outlined text-2xl">school</span>
-                                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald border-2 border-[#070b12] shadow-[0_0_6px_rgba(16,185,129,0.8)]"></span>
-                            </div>
-                            <div class="flex flex-col">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-crest text-sm md:text-base font-bold text-white tracking-wider">Dean’s Pedagogical Provost</span>
-                                </div>
-                                <span class="text-[11px] font-mono text-gold-light tracking-wide">CyberShield AI Evaluator • GPT-5</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-end">
-                            <span class="text-[10px] font-crest tracking-widest text-slate-400 uppercase">Assessment</span>
-                            <span class="font-crest text-base font-bold text-gold tracking-wide drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">ACTIVE</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Critique Content Body -->
-                <div class="p-5 md:p-6 flex flex-col gap-5 bg-[#0e1728]">
+                {% for q in questions %}
+                <div class="bg-ink-850 rounded-2xl p-6 sm:p-8 border border-white/10 shadow-xl space-y-5">
                     
-                    <div class="p-3.5 bg-[#0b1424] rounded-lg border border-gold/30 flex items-center justify-between shadow-inner">
-                        <div class="flex items-center gap-2.5">
-                            <span class="material-symbols-outlined text-gold text-xl">psychology</span>
-                            <span class="font-crest text-xs font-bold text-white tracking-wider">
-                                {{ topic.title }}
-                            </span>
+                    <div class="flex items-center justify-between pb-3 border-b border-white/5">
+                        <div class="flex items-center gap-2 text-signal font-mono text-xs font-bold uppercase tracking-widest">
+                            <span class="material-symbols-outlined text-base">balance</span>
+                            <span>Scenario Challenge #{{ forloop.counter }} Exhibit</span>
                         </div>
-                        <span class="font-mono text-xs font-bold bg-gold text-[#090e17] px-2.5 py-1 rounded shadow-sm">
-                            {{ questions|length }} Scenarios
-                        </span>
-                    </div>
 
-                    <p class="font-serif-editorial italic text-xs md:text-sm text-slate-300 leading-relaxed">
-                        Examine each scenario forensic indicator closely. Upon submission, the AI Provost evaluates your defense methodology, awards honor badges, and updates your collegiate standing.
-                    </p>
-
-                    <!-- Student Dossier Entry -->
-                    <div class="p-3.5 bg-[#070b12] rounded-lg border border-[#273752] flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-2.5">
-                            <span class="material-symbols-outlined text-gold text-lg">verified_user</span>
-                            <div class="flex flex-col">
-                                <span class="font-crest text-xs font-bold text-white tracking-wider">Institutional Safe Mode</span>
-                                <span class="text-[11px] text-slate-400">Zero real network exposure in sandbox</span>
-                            </div>
-                        </div>
-                        <span class="material-symbols-outlined text-emerald font-bold">done_all</span>
-                    </div>
-
-                    <!-- Action Controls: Radiant Gold CTA Button -->
-                    <div class="flex flex-col gap-2.5 pt-1">
-                        <button type="submit" 
-                                id="btn-submit-quiz"
-                                class="w-full py-3.5 px-4 rounded-lg bg-gold hover:bg-gold-light text-[#090e17] font-crest text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.35)] cursor-pointer">
-                            <span>Submit Verdict &amp; AI Evaluation</span>
-                            <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+                        <!-- AI Hint Button -->
+                        <button type="button" 
+                                class="btn-hint inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-ink-950 border border-signal/30 text-signal hover:bg-signal hover:text-ink-950 text-xs font-mono tracking-wider transition-all cursor-pointer"
+                                data-q-num="{{ forloop.counter }}">
+                            <span class="material-symbols-outlined text-sm">lightbulb</span>
+                            <span>Request Provost Hint</span>
                         </button>
+                    </div>
 
-                        <a href="{% url 'student_dashboard' %}" class="w-full py-2.5 px-4 rounded-lg bg-[#111a2e] hover:bg-[#162238] border border-[#273752] text-slate-300 font-crest text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5">
-                            <span>Return to Syllabus</span>
-                        </a>
+                    <!-- AI Hint Box (Hidden by default) -->
+                    <div id="hint-box-{{ forloop.counter }}" class="hidden p-4 rounded-xl bg-ink-950 border border-signal/40 text-xs text-mist-100 leading-relaxed shadow-inner font-body">
+                        <div class="flex items-center gap-1.5 font-bold text-signal text-xs font-mono mb-1">
+                            <span class="material-symbols-outlined text-sm">psychology</span>
+                            <span>CyberQuizAgent (GPT-5) Guidance:</span>
+                        </div>
+                        <p class="hint-text text-mist-700 font-mono text-[11px]"></p>
+                    </div>
+
+                    <!-- Question Prompt -->
+                    <h2 class="font-display text-xl sm:text-2xl text-white font-bold leading-snug">
+                        {{ q.question_text }}
+                    </h2>
+
+                    <!-- Specimen Container -->
+                    <div class="bg-ink-950 rounded-xl border border-white/10 p-5 space-y-3 font-mono text-xs">
+                        <div class="flex items-center justify-between pb-2 border-b border-white/5 text-mist-900">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded bg-ink-900 border border-white/10 text-signal font-bold">#0{{ forloop.counter }}A</span>
+                                <span class="text-white text-[11px]">FORENSIC TELEMETRY SPECIMEN</span>
+                            </div>
+                            <span class="text-signal text-[10px]">SANDBOX SIMULATION</span>
+                        </div>
+                        <div class="p-3.5 rounded-lg bg-ink-900 border border-white/5 text-mist-700 leading-relaxed">
+                            <p class="font-sans mb-1 text-white font-medium">Examine the threat pattern and apply your defense protocols:</p>
+                            <p class="text-[11px] font-mono text-mist-900">
+                                Scrutinize domain spelling, unexpected urgency, and authentication requirements before responding.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="flex flex-col gap-3 pt-2">
+                        <span class="font-mono text-xs font-bold text-signal uppercase tracking-widest px-1">
+                            Candidate Verdict Selection:
+                        </span>
+
+                        <label class="p-4 rounded-xl bg-ink-950 border border-white/10 hover:border-signal/50 hover:bg-ink-900 transition-all cursor-pointer flex items-start gap-3.5 group">
+                            <input type="radio" name="q_{{ forloop.counter }}" value="A" class="mt-1 accent-[#e8ff47] w-4 h-4 cursor-pointer" required>
+                            <div class="flex flex-col flex-1">
+                                <span class="font-body text-sm sm:text-base text-mist-100 group-hover:text-white transition-colors">
+                                    <span class="font-mono text-signal font-bold mr-2">A.</span> {{ q.option_a }}
+                                </span>
+                            </div>
+                        </label>
+
+                        <label class="p-4 rounded-xl bg-ink-950 border border-white/10 hover:border-signal/50 hover:bg-ink-900 transition-all cursor-pointer flex items-start gap-3.5 group">
+                            <input type="radio" name="q_{{ forloop.counter }}" value="B" class="mt-1 accent-[#e8ff47] w-4 h-4 cursor-pointer" required>
+                            <div class="flex flex-col flex-1">
+                                <span class="font-body text-sm sm:text-base text-mist-100 group-hover:text-white transition-colors">
+                                    <span class="font-mono text-signal font-bold mr-2">B.</span> {{ q.option_b }}
+                                </span>
+                            </div>
+                        </label>
+
+                        <label class="p-4 rounded-xl bg-ink-950 border border-white/10 hover:border-signal/50 hover:bg-ink-900 transition-all cursor-pointer flex items-start gap-3.5 group">
+                            <input type="radio" name="q_{{ forloop.counter }}" value="C" class="mt-1 accent-[#e8ff47] w-4 h-4 cursor-pointer" required>
+                            <div class="flex flex-col flex-1">
+                                <span class="font-body text-sm sm:text-base text-mist-100 group-hover:text-white transition-colors">
+                                    <span class="font-mono text-signal font-bold mr-2">C.</span> {{ q.option_c }}
+                                </span>
+                            </div>
+                        </label>
+
+                        <label class="p-4 rounded-xl bg-ink-950 border border-white/10 hover:border-signal/50 hover:bg-ink-900 transition-all cursor-pointer flex items-start gap-3.5 group">
+                            <input type="radio" name="q_{{ forloop.counter }}" value="D" class="mt-1 accent-[#e8ff47] w-4 h-4 cursor-pointer" required>
+                            <div class="flex flex-col flex-1">
+                                <span class="font-body text-sm sm:text-base text-mist-100 group-hover:text-white transition-colors">
+                                    <span class="font-mono text-signal font-bold mr-2">D.</span> {{ q.option_d }}
+                                </span>
+                            </div>
+                        </label>
                     </div>
 
                 </div>
+                {% endfor %}
 
-            </div>
+            </section>
 
-            <!-- Proctor Supervision Card -->
-            <div class="bg-[#111a2d] rounded-xl p-4 border border-[#273752] shadow-sm flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-md bg-[#070b12] text-gold font-crest font-bold text-xs flex items-center justify-center border border-gold/40 shadow-xs">
-                        EDU
+            <!-- Right: Provost AI Aside (5 cols) -->
+            <aside class="lg:col-span-5 flex flex-col gap-6 sticky top-20">
+                
+                <div class="bg-ink-900/95 rounded-3xl border border-white/10 shadow-2xl p-6 sm:p-8 flex flex-col gap-6 backdrop-blur-xl">
+                    
+                    <div class="flex items-center gap-3.5 pb-4 border-b border-white/5">
+                        <div class="w-10 h-10 rounded-xl bg-ink-950 border border-signal/40 text-signal flex items-center justify-center">
+                            <span class="material-symbols-outlined text-xl">psychology</span>
+                        </div>
+                        <div>
+                            <h3 class="font-display text-base font-bold text-white">AI Safety Provost</h3>
+                            <span class="font-mono text-[11px] text-signal">CyberQuizAgent &bull; GPT-5 Engine</span>
+                        </div>
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-white font-crest tracking-wide">Faculty Proctor Feed Active</span>
-                        <span class="text-[11px] text-slate-400">Collegiate Honor Ledger Synchronized</span>
+
+                    <div class="p-4 rounded-2xl bg-ink-950 border border-white/5 text-xs font-mono text-mist-700 leading-relaxed">
+                        <span class="text-signal font-bold block mb-1">PROVOST INSTRUCTIONS:</span>
+                        Examine each scenario carefully. Upon clicking submit, the GPT-5 agent evaluates your reasoning, flags typosquatting homoglyphs, and logs your response to your cadet record.
                     </div>
+
+                    <button type="submit" 
+                            id="btn-submit-quiz"
+                            class="w-full py-4 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-sm font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(232,255,71,0.25)] cursor-pointer">
+                        <span>Submit Verdict &amp; AI Analysis</span>
+                        <span class="material-symbols-outlined text-lg font-bold">arrow_forward</span>
+                    </button>
+
+                    <a href="{% url 'student_dashboard' %}" class="w-full py-2.5 rounded-full bg-ink-950 hover:bg-ink-800 border border-white/10 text-mist-700 font-mono text-xs text-center transition-colors">
+                        Return to Dashboard
+                    </a>
+
                 </div>
-                <span class="flex items-center gap-1.5 text-xs font-mono font-bold text-emerald uppercase">
-                    <span class="w-2 h-2 rounded-full bg-emerald animate-pulse"></span>
-                    Live Sync
-                </span>
-            </div>
 
-        </aside>
+                <div class="bg-ink-850 border border-white/5 rounded-2xl p-4 flex items-center justify-between text-xs font-mono text-mist-900">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-signal animate-pulse-slow"></span>
+                        <span>Isolated Sandbox Environment</span>
+                    </div>
+                    <span>Zero Network Risk</span>
+                </div>
 
-    </form>
+            </aside>
 
-    <!-- Collegiate Sandbox Protocol Notice -->
-    <div class="mt-8 p-4 md:p-5 bg-[#111a2d] rounded-xl border border-[#273752] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-3.5">
-            <div class="w-10 h-10 rounded-lg bg-[#070b12] text-gold flex items-center justify-center shrink-0 border border-gold/40">
-                <span class="material-symbols-outlined text-xl">shield</span>
-            </div>
-            <div class="flex flex-col">
-                <span class="font-crest text-xs font-bold text-white uppercase tracking-wider">Safety Lab Sandbox Protocol</span>
-                <span class="text-xs text-slate-300 leading-relaxed">All hyperlinks displayed within this simulation are rendered in an isolated sandbox environment. No actual network connections are initiated.</span>
-            </div>
-        </div>
-        <div class="flex items-center gap-2.5 shrink-0">
-            <button class="px-3.5 py-1.5 rounded bg-[#162238] hover:bg-[#1d2d4a] border border-[#273752] text-slate-200 text-xs font-semibold uppercase tracking-wider transition-colors font-crest" type="button">
-                Report Issue
-            </button>
-            <button class="px-3.5 py-1.5 rounded bg-[#070b12] hover:bg-[#0e1626] text-gold border border-gold/40 text-xs font-semibold uppercase tracking-wider transition-colors font-crest shadow-sm" type="button">
-                Classroom Manual
-            </button>
-        </div>
+        </form>
+
     </div>
 
 </div>
 
-<!-- Loading Overlay Modal -->
-<div id="loading-modal" class="hidden fixed inset-0 z-50 bg-[#070b12]/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-[#111a2e] rounded-2xl p-8 max-w-sm w-full border border-gold/40 shadow-2xl text-center space-y-4">
-        <div class="w-16 h-16 mx-auto rounded-2xl bg-gold/20 border border-gold/50 text-gold flex items-center justify-center">
-            <span class="material-symbols-outlined text-3xl animate-spin">sync</span>
+<!-- Loading Modal -->
+<div id="loading-modal" class="hidden fixed inset-0 z-50 bg-ink-950/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-ink-900 rounded-3xl p-8 max-w-sm w-full border border-signal/40 shadow-2xl text-center space-y-4">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-signal/15 border border-signal/40 text-signal flex items-center justify-center">
+            <span class="material-symbols-outlined text-2xl animate-spin">sync</span>
         </div>
-        <h3 class="font-serif-title text-xl font-bold text-white">Evaluating Forensic Reasoning...</h3>
-        <p class="text-xs text-slate-300 font-serif-editorial italic">
-            CyberQuizAgent (GPT-5) is analyzing your defense strategies and generating your collegiate feedback ledger.
+        <h3 class="font-display text-xl font-bold text-white">Analyzing Forensic Reasoning...</h3>
+        <p class="text-xs text-mist-700 font-body">
+            CyberQuizAgent (GPT-5) is evaluating your defense instincts and generating your educational critique ledger.
         </p>
     </div>
 </div>
@@ -348,7 +253,6 @@
 
 {% block extra_js %}
 <script>
-    // Handle Hint fetching
     document.querySelectorAll('.btn-hint').forEach(btn => {
         btn.addEventListener('click', async function() {
             const qNum = this.getAttribute('data-q-num');
@@ -378,7 +282,6 @@
         });
     });
 
-    // Form Submission Loader
     document.getElementById('quiz-submission-form').addEventListener('submit', function() {
         document.getElementById('loading-modal').classList.remove('hidden');
     });
