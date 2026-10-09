@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Teacher Portal Login | CyberSimulator{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto py-8">
+    <div class="glass-card rounded-2xl p-8 border border-purple-900/40 shadow-2xl relative overflow-hidden">
+        <!-- Ambient background lights -->
+        <div class="absolute -top-16 -right-16 w-36 h-36 bg-purple-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-16 -left-16 w-36 h-36 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <!-- Header -->
+        <div class="text-center space-y-2 mb-8">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center mx-auto shadow-lg shadow-purple-500/30">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
+            <h1 class="font-display font-bold text-2xl text-white">Teacher Portal</h1>
+            <p class="text-xs text-slate-400">
+                Log in to monitor class progress, view analytics, and inspect individual student answers.
+            </p>
+        </div>
+
+        <!-- Form -->
+        <form method="POST" action="{% url 'teacher_login' %}" class="space-y-5" id="teacher-login-form">
+            {% csrf_token %}
+
+            <div>
+                <label for="id_username" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                    Teacher Username
+                </label>
+                <input type="text" name="username" id="id_username" required autofocus
+                    placeholder="Enter teacher username"
+                    class="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-slate-700 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 text-white placeholder-slate-500 transition-all outline-none">
+            </div>
+
+            <div>
+                <label for="id_password" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                    Password
+                </label>
+                <input type="password" name="password" id="id_password" required
+                    placeholder="••••••••"
+                    class="w-full px-4 py-3 rounded-xl bg-slate-900/70 border border-slate-700 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 text-white placeholder-slate-500 transition-all outline-none">
+            </div>
+
+            <div class="pt-2">
+                <button type="submit" id="btn-submit-teacher-login" class="w-full py-3.5 px-4 rounded-xl font-bold text-white text-sm bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg shadow-purple-600/25 transition-all flex items-center justify-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span>Authenticate & Open Dashboard</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Footer / Student link -->
+        <div class="mt-8 pt-6 border-t border-slate-800 text-center space-y-2">
+            <p class="text-xs text-slate-500">
+                Looking for the student quiz area?
+            </p>
+            <a href="{% url 'student_login' %}" id="link-to-student-login" class="text-xs text-cyan-400 hover:text-cyan-300 font-semibold inline-flex items-center space-x-1">
+                <span>Go to Student Login (No Password)</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

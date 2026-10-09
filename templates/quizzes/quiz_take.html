@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz: {{ topic.title }} | CyberSimulator{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-4 space-y-8">
+
+    <!-- Topic Header Banner -->
+    <div class="glass-card rounded-2xl p-6 border border-cyan-500/30 shadow-xl relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-800 text-cyan-400 text-xs font-mono mb-2">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span>AI LIVE SCENARIO SIMULATION</span>
+                </div>
+                <h1 class="font-display font-bold text-2xl sm:text-3xl text-white">
+                    {{ topic.title }}
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-300 mt-1">
+                    {{ topic.tagline }}
+                </p>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-700/80 px-4 py-2.5 rounded-xl text-center self-stretch sm:self-auto">
+                <span class="block text-[10px] text-slate-400 uppercase tracking-wider font-mono">Questions</span>
+                <span class="text-xl font-display font-bold text-cyan-400">3 of 3</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Form -->
+    <form method="POST" action="{% url 'submit_quiz' %}" id="quiz-submission-form" class="space-y-8">
+        {% csrf_token %}
+
+        {% for q in questions %}
+            <div class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-lg space-y-5 question-card" data-question-num="{{ forloop.counter }}">
+                
+                <!-- Question Number & Prompt -->
+                <div class="flex items-start space-x-4">
+                    <span class="w-8 h-8 rounded-xl bg-cyan-950 border border-cyan-800 text-cyan-400 flex items-center justify-center font-bold text-sm font-mono flex-shrink-0 mt-0.5">
+                        0{{ forloop.counter }}
+                    </span>
+                    <div class="space-y-1">
+                        <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400">Scenario Challenge</span>
+                        <h2 class="text-base sm:text-lg font-semibold text-white leading-relaxed">
+                            {{ q.question_text }}
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- 4 Options Cards -->
+                <div class="grid grid-cols-1 gap-3 pt-2">
+                    
+                    <!-- Option A -->
+                    <label class="option-label flex items-start space-x-3.5 p-4 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 hover:bg-slate-900/90 cursor-pointer transition-all">
+                        <input type="radio" name="q_{{ forloop.counter }}" value="A" class="mt-1 accent-cyan-500 w-4 h-4 cursor-pointer" required>
+                        <div class="text-xs sm:text-sm text-slate-300">
+                            <span class="font-bold text-cyan-400 mr-2 font-mono">A.</span>
+                            <span>{{ q.option_a }}</span>
+                        </div>
+                    </label>
+
+                    <!-- Option B -->
+                    <label class="option-label flex items-start space-x-3.5 p-4 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 hover:bg-slate-900/90 cursor-pointer transition-all">
+                        <input type="radio" name="q_{{ forloop.counter }}" value="B" class="mt-1 accent-cyan-500 w-4 h-4 cursor-pointer" required>
+                        <div class="text-xs sm:text-sm text-slate-300">
+                            <span class="font-bold text-cyan-400 mr-2 font-mono">B.</span>
+                            <span>{{ q.option_b }}</span>
+                        </div>
+                    </label>
+
+                    <!-- Option C -->
+                    <label class="option-label flex items-start space-x-3.5 p-4 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 hover:bg-slate-900/90 cursor-pointer transition-all">
+                        <input type="radio" name="q_{{ forloop.counter }}" value="C" class="mt-1 accent-cyan-500 w-4 h-4 cursor-pointer" required>
+                        <div class="text-xs sm:text-sm text-slate-300">
+                            <span class="font-bold text-cyan-400 mr-2 font-mono">C.</span>
+                            <span>{{ q.option_c }}</span>
+                        </div>
+                    </label>
+
+                    <!-- Option D -->
+                    <label class="option-label flex items-start space-x-3.5 p-4 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 hover:bg-slate-900/90 cursor-pointer transition-all">
+                        <input type="radio" name="q_{{ forloop.counter }}" value="D" class="mt-1 accent-cyan-500 w-4 h-4 cursor-pointer" required>
+                        <div class="text-xs sm:text-sm text-slate-300">
+                            <span class="font-bold text-cyan-400 mr-2 font-mono">D.</span>
+                            <span>{{ q.option_d }}</span>
+                        </div>
+                    </label>
+
+                </div>
+
+            </div>
+        {% endfor %}
+
+        <!-- Bottom Actions -->
+        <div class="glass-card rounded-2xl p-6 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <a href="{% url 'student_dashboard' %}" class="text-xs text-slate-400 hover:text-white font-medium flex items-center space-x-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Cancel & Return to Dashboard</span>
+            </a>
+
+            <button type="submit" id="btn-submit-quiz" class="cyber-btn-primary w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-slate-950 text-sm shadow-lg shadow-cyan-500/25 flex items-center justify-center space-x-2">
+                <span>Submit Answers & Get AI Review</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+<!-- Loading Modal Overlay when Submitting -->
+<div id="loading-overlay" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-4">
+    <div class="glass-card rounded-3xl p-8 max-w-md w-full border border-cyan-500/40 text-center space-y-6 shadow-2xl">
+        <div class="relative w-16 h-16 mx-auto">
+            <div class="absolute inset-0 rounded-full border-4 border-cyan-500/20"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-cyan-400 border-t-transparent animate-spin"></div>
+        </div>
+        <div>
+            <h3 class="font-display font-bold text-xl text-white">AI Mentor is Evaluating...</h3>
+            <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
+                Analyzing your decisions and generating a supportive, personalized cybersecurity review.
+            </p>
+        </div>
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs font-mono text-cyan-400">
+            <span>Powered by Azure AI Foundry</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('quiz-submission-form');
+        const overlay = document.getElementById('loading-overlay');
+        const labels = document.querySelectorAll('.option-label');
+
+        // Highlight selected option nicely
+        labels.forEach(label => {
+            const radio = label.querySelector('input[type="radio"]');
+            radio.addEventListener('change', () => {
+                const groupName = radio.name;
+                document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+                    r.closest('.option-label').classList.remove('border-cyan-400', 'bg-cyan-950/30');
+                    r.closest('.option-label').classList.add('border-slate-800', 'bg-slate-900/60');
+                });
+                if (radio.checked) {
+                    label.classList.add('border-cyan-400', 'bg-cyan-950/30');
+                    label.classList.remove('border-slate-800', 'bg-slate-900/60');
+                }
+            });
+        });
+
+        // Show loading state on submit
+        form.addEventListener('submit', (e) => {
+            // Check all 3 questions
+            let allAnswered = true;
+            for (let i = 1; i <= 3; i++) {
+                const checked = form.querySelector(`input[name="q_${i}"]:checked`);
+                if (!checked) {
+                    allAnswered = false;
+                    alert(`Please select an answer for Question ${i} before submitting.`);
+                    e.preventDefault();
+                    return;
+                }
+            }
+
+            if (allAnswered) {
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+            }
+        });
+    });
+</script>
+{% endblock %}

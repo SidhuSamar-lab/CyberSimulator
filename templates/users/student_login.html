@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Login | CyberSimulator{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto py-8">
+    <div class="glass-card rounded-2xl p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
+        <!-- Ambient background lights -->
+        <div class="absolute -top-16 -right-16 w-36 h-36 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-16 -left-16 w-36 h-36 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <!-- Header -->
+        <div class="text-center space-y-2 mb-8">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center mx-auto shadow-lg shadow-cyan-500/30">
+                <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </div>
+            <h1 class="font-display font-bold text-2xl text-white">Student Sign-In</h1>
+            <p class="text-xs text-slate-400">
+                No password needed! Simply enter your details to launch your quiz lab.
+            </p>
+        </div>
+
+        <!-- Form -->
+        <form method="POST" action="{% url 'student_login' %}" class="space-y-5" id="student-login-form">
+            {% csrf_token %}
+            
+            <div>
+                <label for="{{ form.name.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                    {{ form.name.label }}
+                </label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <p class="text-xs text-rose-400 mt-1">{{ form.name.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="{{ form.class_name.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                        {{ form.class_name.label }}
+                    </label>
+                    {{ form.class_name }}
+                    {% if form.class_name.errors %}
+                        <p class="text-xs text-rose-400 mt-1">{{ form.class_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.roll_number.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                        {{ form.roll_number.label }}
+                    </label>
+                    {{ form.roll_number }}
+                    {% if form.roll_number.errors %}
+                        <p class="text-xs text-rose-400 mt-1">{{ form.roll_number.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button type="submit" id="btn-submit-student-login" class="cyber-btn-primary w-full py-3.5 px-4 rounded-xl font-bold text-slate-950 text-sm shadow-lg shadow-cyan-500/20 hover:scale-[1.01] transition-transform flex items-center justify-center space-x-2">
+                    <span>Enter Quiz Lab</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </button>
+            </div>
+        </form>
+
+        <!-- Footer / Teacher link -->
+        <div class="mt-8 pt-6 border-t border-slate-800 text-center space-y-2">
+            <p class="text-xs text-slate-500">
+                Are you an educator or school administrator?
+            </p>
+            <a href="{% url 'teacher_login' %}" id="link-to-teacher-login" class="text-xs text-purple-400 hover:text-purple-300 font-semibold inline-flex items-center space-x-1">
+                <span>Access Teacher Analytics Portal</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+
+{% block title %}Teacher Analytics Dashboard | CyberSimulator{% endblock %}
+
+{% block content %}
+<div class="space-y-10">
+
+    <!-- Header & Welcome -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+        <div>
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-950/80 border border-purple-800 text-purple-300 text-xs font-mono mb-2">
+                <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                <span>EDUCATOR ANALYTICS PORTAL</span>
+            </div>
+            <h1 class="text-3xl font-display font-bold text-white tracking-tight">Class Cybersecurity Overview</h1>
+            <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                Monitor student awareness benchmarks, analyze knowledge vulnerabilities, and review individual AI assessments.
+            </p>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'admin:index' %}" target="_blank" class="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-600 text-slate-300 text-xs font-semibold flex items-center space-x-2 transition-all">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>Django Admin</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 4 KPI Metrics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        <!-- Total Students -->
+        <div class="glass-card rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-mono uppercase tracking-wider text-slate-400">Total Students</span>
+                <div class="w-9 h-9 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-display font-extrabold text-white mt-3 font-mono">{{ total_students }}</p>
+            <p class="text-[11px] text-slate-500 mt-1">Enrolled across all classes</p>
+        </div>
+
+        <!-- Total Quizzes Taken -->
+        <div class="glass-card rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-mono uppercase tracking-wider text-slate-400">Total Attempts</span>
+                <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-display font-extrabold text-white mt-3 font-mono">{{ total_attempts }}</p>
+            <p class="text-[11px] text-slate-500 mt-1">Completed quiz sessions</p>
+        </div>
+
+        <!-- Class Average Score -->
+        <div class="glass-card rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-mono uppercase tracking-wider text-slate-400">Class Average</span>
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                </div>
+            </div>
+            <p class="text-3xl font-display font-extrabold text-emerald-400 mt-3 font-mono">{{ overall_avg }}%</p>
+            <p class="text-[11px] text-slate-500 mt-1">Overall test accuracy</p>
+        </div>
+
+        <!-- Weakest Topic Alert -->
+        <div class="glass-card rounded-2xl p-6 border {% if weakest_topic %}border-amber-500/40 bg-amber-950/10{% else %}border-slate-800{% endif %} relative overflow-hidden">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-mono uppercase tracking-wider text-amber-400">Priority Focus</span>
+                <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+            </div>
+            {% if weakest_topic %}
+                <p class="text-base font-display font-bold text-white mt-2 truncate" title="{{ weakest_topic.title }}">
+                    {{ weakest_topic.title }}
+                </p>
+                <p class="text-xs text-amber-300 font-mono mt-0.5">
+                    Avg {{ weakest_topic.average_percentage }}% (Needs Lesson)
+                </p>
+            {% else %}
+                <p class="text-sm font-semibold text-slate-400 mt-3">No attempts yet</p>
+                <p class="text-[11px] text-slate-500 mt-1">Awaiting student quizzes</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Chart.js Visualizations Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Performance by Topic Bar Chart -->
+        <div class="lg:col-span-8 glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="font-display font-bold text-lg text-white">Cybersecurity Topic Proficiency</h2>
+                    <p class="text-xs text-slate-400">Average student accuracy score percentage across the 8 threat categories</p>
+                </div>
+                <span class="text-xs font-mono text-cyan-400 bg-cyan-950 px-2.5 py-1 rounded-full border border-cyan-800">
+                    Live Telemetry
+                </span>
+            </div>
+
+            <div class="relative h-72 sm:h-80 w-full">
+                <canvas id="topicProficiencyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Topic Breakdown Summary List -->
+        <div class="lg:col-span-4 glass-card rounded-2xl p-6 border border-slate-800 flex flex-col justify-between">
+            <div>
+                <h3 class="font-display font-bold text-base text-white mb-4">Topic Mastery Breakdown</h3>
+                <div class="space-y-3.5 overflow-y-auto max-h-80 pr-1">
+                    {% for stat in topic_stats %}
+                        <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 space-y-1.5">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="font-semibold text-slate-200 truncate pr-2">{{ stat.title }}</span>
+                                <span class="font-mono font-bold {% if stat.average_percentage >= 75 %}text-emerald-400{% elif stat.average_percentage >= 50 %}text-amber-400{% elif stat.average_percentage %}text-rose-400{% else %}text-slate-500{% endif %}">
+                                    {% if stat.average_percentage != None %}{{ stat.average_percentage }}%{% else %}N/A{% endif %}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                                <span>{{ stat.attempts_count }} submissions</span>
+                                <span>3 questions/quiz</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Student Roster & Filters -->
+    <section class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
+        
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h2 class="font-display font-bold text-xl text-white">Student Roster</h2>
+                <p class="text-xs sm:text-sm text-slate-400">Filter students by class or search by name to view individualized scores and AI feedback.</p>
+            </div>
+
+            <!-- Search and Class Filter Form -->
+            <form method="GET" action="{% url 'teacher_dashboard' %}" class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                <select name="class_name" onchange="this.form.submit()" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:border-purple-400 outline-none">
+                    <option value="">All Classes</option>
+                    {% for cls in classes %}
+                        <option value="{{ cls }}" {% if selected_class == cls %}selected{% endif %}>{{ cls }}</option>
+                    {% endfor %}
+                </select>
+
+                <div class="relative flex-grow sm:flex-grow-0">
+                    <input type="text" name="q" value="{{ search_query }}" placeholder="Search name or roll..."
+                        class="w-full sm:w-56 px-3.5 py-2 pl-9 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder-slate-500 focus:border-purple-400 outline-none">
+                    <svg class="w-4 h-4 text-slate-500 absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+
+                {% if selected_class or search_query %}
+                    <a href="{% url 'teacher_dashboard' %}" class="text-xs text-slate-400 hover:text-rose-400 px-2 py-1">Clear</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Student Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs sm:text-sm">
+                <thead>
+                    <tr class="text-slate-400 border-b border-slate-800 uppercase text-[11px] font-mono">
+                        <th class="pb-3">Student Name</th>
+                        <th class="pb-3">Class</th>
+                        <th class="pb-3">Roll No</th>
+                        <th class="pb-3">Quizzes Taken</th>
+                        <th class="pb-3">Average Accuracy</th>
+                        <th class="pb-3 text-right">Inspect Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                    {% for st in students %}
+                        <tr class="hover:bg-slate-900/50 transition-colors">
+                            <td class="py-3.5 font-semibold text-white flex items-center space-x-2.5">
+                                <span class="w-7 h-7 rounded-lg bg-cyan-950 border border-cyan-800 text-cyan-400 flex items-center justify-center font-bold text-xs">
+                                    {{ st.name|slice:":1"|upper }}
+                                </span>
+                                <span>{{ st.name }}</span>
+                            </td>
+                            <td class="py-3.5 text-slate-300">{{ st.class_name }}</td>
+                            <td class="py-3.5 font-mono text-slate-400">#{{ st.roll_number }}</td>
+                            <td class="py-3.5 font-mono">{{ st.total_attempts }}</td>
+                            <td class="py-3.5">
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold
+                                    {% if st.average_score >= 80 %}bg-emerald-950 text-emerald-300 border border-emerald-800
+                                    {% elif st.average_score >= 50 %}bg-amber-950 text-amber-300 border border-amber-800
+                                    {% elif st.total_attempts > 0 %}bg-rose-950 text-rose-300 border border-rose-800
+                                    {% else %}bg-slate-900 text-slate-500 border border-slate-800{% endif %}">
+                                    {{ st.average_score }}%
+                                </span>
+                            </td>
+                            <td class="py-3.5 text-right">
+                                <a href="{% url 'teacher_student_detail' st.id %}" class="px-3 py-1.5 rounded-lg bg-purple-950/70 hover:bg-purple-900/80 border border-purple-800/80 text-purple-300 text-xs font-semibold inline-flex items-center space-x-1.5 transition-all">
+                                    <span>Inspect Student</span>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="py-8 text-center text-slate-500 text-sm">
+                                No students found matching the selected filter.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const ctx = document.getElementById('topicProficiencyChart').getContext('2d');
+        
+        // Topic data from Django
+        const labels = [
+            {% for stat in topic_stats %}
+                "{{ stat.title }}",
+            {% endfor %}
+        ];
+        
+        const dataValues = [
+            {% for stat in topic_stats %}
+                {{ stat.average_percentage|default:"0" }},
+            {% endfor %}
+        ];
+
+        // Custom cyber styling
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Class Average Score (%)',
+                    data: dataValues,
+                    backgroundColor: [
+                        'rgba(6, 182, 212, 0.7)',
+                        'rgba(245, 158, 11, 0.7)',
+                        'rgba(34, 211, 238, 0.7)',
+                        'rgba(168, 85, 247, 0.7)',
+                        'rgba(99, 102, 241, 0.7)',
+                        'rgba(16, 185, 129, 0.7)',
+                        'rgba(217, 70, 239, 0.7)',
+                        'rgba(59, 130, 246, 0.7)',
+                    ],
+                    borderColor: [
+                        '#06b6d4',
+                        '#f59e0b',
+                        '#22d3ee',
+                        '#a855f7',
+                        '#6366f1',
+                        '#10b981',
+                        '#d946ef',
+                        '#3b82f6',
+                    ],
+                    borderWidth: 1.5,
+                    borderRadius: 8,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: { family: 'JetBrains Mono', size: 11 },
+                            callback: function(value) { return value + "%"; }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            color: '#cbd5e1',
+                            font: { family: 'Inter', size: 10 },
+                            maxRotation: 35,
+                            minRotation: 20,
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#090d16',
+                        titleColor: '#22d3ee',
+                        bodyColor: '#ffffff',
+                        borderColor: '#1e293b',
+                        borderWidth: 1,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                return ` Average Accuracy: ${context.raw}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

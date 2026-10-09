@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Results: {{ attempt.topic_title }} | CyberSimulator{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-4 space-y-8">
+
+    <!-- Top Score Overview Card -->
+    <div class="glass-card rounded-3xl p-8 border 
+        {% if attempt.score == attempt.total_questions %}border-emerald-500/40 shadow-emerald-500/10
+        {% elif attempt.score >= 2 %}border-cyan-500/40 shadow-cyan-500/10
+        {% else %}border-amber-500/40 shadow-amber-500/10{% endif %} shadow-2xl relative overflow-hidden text-center">
+        
+        <div class="space-y-4 max-w-xl mx-auto">
+            <!-- Achievement Pill -->
+            <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full text-xs font-mono font-bold
+                {% if attempt.score == attempt.total_questions %}bg-emerald-950/80 border border-emerald-700 text-emerald-300
+                {% elif attempt.score >= 2 %}bg-cyan-950/80 border border-cyan-700 text-cyan-300
+                {% else %}bg-amber-950/80 border border-amber-700 text-amber-300{% endif %}">
+                <span>
+                    {% if attempt.score == 3 %}🏆 MASTER CYBER DEFENDER
+                    {% elif attempt.score == 2 %}🛡️ CYBER GUARDIAN
+                    {% elif attempt.score == 1 %}🌱 SAFETY APPRENTICE
+                    {% else %}🛠️ SECURITY TRAINEE{% endif %}
+                </span>
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl font-display font-extrabold text-white">
+                {{ attempt.topic_title }} Quiz Completed!
+            </h1>
+
+            <!-- Score Visual -->
+            <div class="py-4">
+                <div class="inline-block p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-inner">
+                    <span class="text-5xl sm:text-6xl font-display font-black text-cyan-400 font-mono">
+                        {{ attempt.score }}
+                    </span>
+                    <span class="text-2xl font-display text-slate-500 font-bold">
+                        / {{ attempt.total_questions }}
+                    </span>
+                    <p class="text-xs text-slate-400 mt-2 font-mono">
+                        {{ attempt.percentage }}% Accuracy
+                    </p>
+                </div>
+            </div>
+
+            <p class="text-xs sm:text-sm text-slate-300">
+                Attempt completed by <span class="font-bold text-white">{{ attempt.student.name }}</span> ({{ attempt.student.class_name }})
+            </p>
+        </div>
+    </div>
+
+    <!-- AI Personalized Teacher Feedback Section -->
+    <div class="glass-card rounded-2xl p-6 sm:p-8 border border-purple-500/30 shadow-xl space-y-4 bg-gradient-to-b from-purple-950/20 to-slate-900/60">
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">
+                    🤖
+                </div>
+                <div>
+                    <h2 class="font-display font-bold text-base text-white">Azure AI Teacher Review</h2>
+                    <p class="text-[11px] text-slate-400 font-mono">Personalized educational guidance on your choices</p>
+                </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-[10px] font-mono bg-purple-950 border border-purple-800 text-purple-300">
+                Azure AI Foundry
+            </span>
+        </div>
+
+        <div class="text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-line font-normal space-y-2">
+            {{ attempt.ai_feedback }}
+        </div>
+    </div>
+
+    <!-- Detailed Question Breakdown -->
+    <div class="space-y-4">
+        <h3 class="text-xl font-display font-bold text-white px-1">Question-by-Question Breakdown</h3>
+
+        {% for q in questions %}
+            <div class="glass-card rounded-2xl p-6 border 
+                {% if q.is_correct %}border-emerald-500/30 bg-slate-900/60{% else %}border-rose-500/30 bg-slate-900/60{% endif %} space-y-4">
+                
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex items-start space-x-3">
+                        <span class="w-7 h-7 rounded-lg font-mono text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5
+                            {% if q.is_correct %}bg-emerald-950 border border-emerald-800 text-emerald-400
+                            {% else %}bg-rose-950 border border-rose-800 text-rose-400{% endif %}">
+                            Q{{ q.question_number }}
+                        </span>
+                        <h4 class="text-sm font-semibold text-white leading-snug">
+                            {{ q.question_text }}
+                        </h4>
+                    </div>
+
+                    {% if q.is_correct %}
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center space-x-1 flex-shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span>Correct</span>
+                        </span>
+                    {% else %}
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-950 text-rose-300 border border-rose-800 flex items-center space-x-1 flex-shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span>Incorrect</span>
+                        </span>
+                    {% endif %}
+                </div>
+
+                <!-- Answer comparisons -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+                    <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800 space-y-1">
+                        <span class="text-slate-400 uppercase tracking-wider font-mono text-[10px]">Your Answer</span>
+                        <p class="font-medium {% if q.is_correct %}text-emerald-300{% else %}text-rose-300{% endif %}">
+                            Option {{ q.student_selected_option }}: {{ q.student_selected_text }}
+                        </p>
+                    </div>
+
+                    {% if not q.is_correct %}
+                        <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-900/60 space-y-1">
+                            <span class="text-emerald-400 uppercase tracking-wider font-mono text-[10px]">Correct Answer</span>
+                            <p class="font-medium text-emerald-300">
+                                Option {{ q.correct_option }}: {{ q.correct_option_text }}
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Explanation -->
+                {% if q.explanation %}
+                    <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800/80 text-xs text-slate-300 leading-relaxed">
+                        <span class="text-cyan-400 font-semibold font-mono">💡 Safety Takeaway:</span>
+                        <span>{{ q.explanation }}</span>
+                    </div>
+                {% endif %}
+
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Navigation Actions -->
+    <div class="glass-card rounded-2xl p-6 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <a href="{% url 'student_dashboard' %}" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs sm:text-sm font-semibold flex items-center justify-center space-x-2 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>Back to All Topics</span>
+        </a>
+
+        <a href="{% url 'take_quiz' attempt.topic_id %}" class="cyber-btn-primary w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-slate-950 text-xs sm:text-sm shadow-lg shadow-cyan-500/20 flex items-center justify-center space-x-2">
+            <span>Retake This Quiz</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+        </a>
+    </div>
+
+</div>
+{% endblock %}

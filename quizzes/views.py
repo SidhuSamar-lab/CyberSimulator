@@ -1,0 +1,341 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
+from django.http import JsonResponse
+from django.db.models import Avg, Count
+from users.models import Student
+from .models import QuizAttempt, AttemptQuestion
+from .topics import CYBER_TOPICS, get_topic_by_id
+from .ai_service import ai_client
+
+
+def is_teacher(user):
+    """Staff or superuser check for teacher routes."""
+    return user.is_authenticated and (user.is_staff or user.is_superuser)
+
+
+def home(request):
+    """Landing homepage presenting the platform to students and educators."""
+    total_students = Student.objects.count()
+    total_quizzes = QuizAttempt.objects.count()
+    return render(request, 'quizzes/home.html', {
+        'topics': CYBER_TOPICS,
+        'total_students': total_students,
+        'total_quizzes': total_quizzes,
+    })
+
+
+def student_dashboard(request):
+    """
+    Main student hub displaying the 8 cybersecurity topics,
+    along with student's personal completion history and badges.
+    """
+    student_id = request.session.get('student_id')
+    if not student_id:
+        messages.info(request, "Please enter your details to access your student dashboard.")
+        return redirect('student_login')
+
+    student = get_object_or_404(Student, id=student_id)
+    student_attempts = QuizAttempt.objects.filter(student=student)
+
+    # Compute per-topic progress
+    topics_with_progress = []
+    for topic in CYBER_TOPICS:
+        t_id = topic["id"]
+        topic_attempts = student_attempts.filter(topic_id=t_id)
+        has_completed = topic_attempts.exists()
+        best_score = 0
+        best_total = 3
+        if has_completed:
+            best_attempt = topic_attempts.order_by('-score').first()
+            best_score = best_attempt.score
+            best_total = best_attempt.total_questions
+
+        topics_with_progress.append({
+            **topic,
+            'completed': has_completed,
+            'best_score': best_score,
+            'best_total': best_total,
+            'attempts_count': topic_attempts.count(),
+        })
+
+    completed_count = sum(1 for t in topics_with_progress if t['completed'])
+    overall_percent = student.average_score
+
+    return render(request, 'quizzes/student_dashboard.html', {
+        'student': student,
+        'topics': topics_with_progress,
+        'completed_count': completed_count,
+        'total_topics': len(CYBER_TOPICS),
+        'overall_percent': overall_percent,
+        'recent_attempts': student_attempts[:5],
+    })
+
+
+def take_quiz(request, topic_id):
+    """
+    Renders the active quiz for the selected topic.
+    Generates 3 dynamic questions on the fly via Azure AI Foundry.
+    """
+    student_id = request.session.get('student_id')
+    if not student_id:
+        messages.warning(request, "Please log in before starting a quiz.")
+        return redirect('student_login')
+
+    student = get_object_or_404(Student, id=student_id)
+    topic = get_topic_by_id(topic_id)
+    if not topic:
+        messages.error(request, "Invalid cybersecurity topic selected.")
+        return redirect('student_dashboard')
+
+    # Dynamically generate questions from Azure AI Foundry
+    questions = ai_client.generate_quiz_questions(topic_id, count=3)
+
+    # Cache active quiz in student's session for secure submission evaluation
+    request.session['active_quiz'] = {
+        'topic_id': topic_id,
+        'topic_title': topic['title'],
+        'questions': questions,
+    }
+
+    return render(request, 'quizzes/quiz_take.html', {
+        'student': student,
+        'topic': topic,
+        'questions': questions,
+        'total_questions': len(questions),
+    })
+
+
+def submit_quiz(request):
+    """
+    Evaluates student quiz answers, queries Azure AI Foundry for personalized review,
+    and saves the attempt and questions to the database.
+    """
+    student_id = request.session.get('student_id')
+    if not student_id or request.method != 'POST':
+        return redirect('student_dashboard')
+
+    student = get_object_or_404(Student, id=student_id)
+    active_quiz = request.session.get('active_quiz')
+
+    if not active_quiz:
+        messages.error(request, "Quiz session expired or not found. Please restart the quiz.")
+        return redirect('student_dashboard')
+
+    topic_id = active_quiz['topic_id']
+    topic_title = active_quiz['topic_title']
+    questions = active_quiz['questions']
+
+    score = 0
+    total = len(questions)
+    items_review = []
+    question_records = []
+
+    for idx, q_data in enumerate(questions, start=1):
+        selected_option = request.POST.get(f'q_{idx}', '').strip().upper()
+        correct_option = q_data.get('correct_option', '').strip().upper()
+        is_correct = (selected_option == correct_option)
+
+        if is_correct:
+            score += 1
+
+        review_item = {
+            'question_text': q_data.get('question_text', ''),
+            'student_selected': selected_option,
+            'correct_option': correct_option,
+            'is_correct': is_correct,
+            'explanation': q_data.get('explanation', ''),
+        }
+        items_review.append(review_item)
+
+        question_records.append({
+            'question_number': idx,
+            'question_text': q_data.get('question_text', ''),
+            'option_a': q_data.get('option_a', ''),
+            'option_b': q_data.get('option_b', ''),
+            'option_c': q_data.get('option_c', ''),
+            'option_d': q_data.get('option_d', ''),
+            'correct_option': correct_option,
+            'student_selected_option': selected_option,
+            'is_correct': is_correct,
+            'explanation': q_data.get('explanation', ''),
+        })
+
+    # Call Azure AI Foundry for educational mentor review
+    ai_feedback = ai_client.generate_feedback(
+        student_name=student.name,
+        topic_title=topic_title,
+        score=score,
+        total=total,
+        items_review=items_review
+    )
+
+    # Save to database
+    attempt = QuizAttempt.objects.create(
+        student=student,
+        topic_id=topic_id,
+        topic_title=topic_title,
+        score=score,
+        total_questions=total,
+        ai_feedback=ai_feedback,
+    )
+
+    for q_rec in question_records:
+        AttemptQuestion.objects.create(
+            attempt=attempt,
+            **q_rec
+        )
+
+    # Clear cached quiz from session
+    request.session.pop('active_quiz', None)
+
+    return redirect('quiz_result', attempt_id=attempt.id)
+
+
+def quiz_result(request, attempt_id):
+    """
+    Renders detailed results for a quiz attempt, including AI mentor feedback.
+    """
+    student_id = request.session.get('student_id')
+    is_teacher_user = is_teacher(request.user)
+
+    attempt = get_object_or_404(QuizAttempt, id=attempt_id)
+
+    # Verify authorization: must be either the student who took it or a teacher
+    if not is_teacher_user and attempt.student.id != student_id:
+        messages.error(request, "You are not authorized to view this result.")
+        return redirect('student_dashboard')
+
+    topic = get_topic_by_id(attempt.topic_id)
+    questions = attempt.questions.all().order_by('question_number')
+
+    return render(request, 'quizzes/quiz_result.html', {
+        'attempt': attempt,
+        'topic': topic,
+        'questions': questions,
+        'is_teacher': is_teacher_user,
+    })
+
+
+@user_passes_test(is_teacher, login_url='teacher_login')
+def teacher_dashboard(request):
+    """
+    Teacher & Administrator Dashboard featuring class-wide Chart.js analytics,
+    weakest topic breakdown, and filterable student roster.
+    """
+    total_students = Student.objects.count()
+    total_attempts = QuizAttempt.objects.count()
+
+    overall_avg_raw = QuizAttempt.objects.aggregate(Avg('percentage'))['percentage__avg']
+    overall_avg = round(overall_avg_raw, 1) if overall_avg_raw is not None else 0.0
+
+    # Get distinct classes for filter dropdown
+    classes = Student.objects.values_list('class_name', flat=True).distinct().order_by('class_name')
+
+    # Topic performance statistics
+    topic_stats = []
+    for topic in CYBER_TOPICS:
+        t_attempts = QuizAttempt.objects.filter(topic_id=topic['id'])
+        t_count = t_attempts.count()
+        t_avg_raw = t_attempts.aggregate(Avg('percentage'))['percentage__avg']
+        t_avg = round(t_avg_raw, 1) if t_avg_raw is not None else None
+
+        topic_stats.append({
+            'id': topic['id'],
+            'title': topic['title'],
+            'attempts_count': t_count,
+            'average_percentage': t_avg,
+        })
+
+    # Identify weakest topic (among topics that have attempts)
+    attempted_topics = [t for t in topic_stats if t['average_percentage'] is not None]
+    weakest_topic = min(attempted_topics, key=lambda x: x['average_percentage']) if attempted_topics else None
+
+    # Search and Filter on Student Roster
+    search_query = request.GET.get('q', '').strip()
+    selected_class = request.GET.get('class_name', '').strip()
+
+    students_qs = Student.objects.all().prefetch_related('attempts')
+    if selected_class:
+        students_qs = students_qs.filter(class_name=selected_class)
+    if search_query:
+        students_qs = students_qs.filter(name__icontains=search_query) | students_qs.filter(roll_number__icontains=search_query)
+
+    students = list(students_qs)
+
+    # Recent attempts across all students
+    recent_attempts = QuizAttempt.objects.select_related('student').all()[:8]
+
+    return render(request, 'teachers/dashboard.html', {
+        'total_students': total_students,
+        'total_attempts': total_attempts,
+        'overall_avg': overall_avg,
+        'topic_stats': topic_stats,
+        'weakest_topic': weakest_topic,
+        'classes': classes,
+        'selected_class': selected_class,
+        'search_query': search_query,
+        'students': students,
+        'recent_attempts': recent_attempts,
+    })
+
+
+@user_passes_test(is_teacher, login_url='teacher_login')
+def teacher_student_detail(request, student_id):
+    """
+    Detailed inspection of a specific student:
+    all quiz attempts, average scores, and progress across the 8 topics.
+    """
+    student = get_object_or_404(Student, id=student_id)
+    attempts = student.attempts.all().order_by('-completed_at')
+
+    # Topic coverage for this student
+    topic_breakdown = []
+    for topic in CYBER_TOPICS:
+        t_attempts = attempts.filter(topic_id=topic['id'])
+        has_taken = t_attempts.exists()
+        best_score = 0
+        if has_taken:
+            best_score = t_attempts.order_by('-score').first().score
+
+        topic_breakdown.append({
+            'topic': topic,
+            'taken': has_taken,
+            'attempts_count': t_attempts.count(),
+            'best_score': best_score,
+        })
+
+    return render(request, 'teachers/student_detail.html', {
+        'student': student,
+        'attempts': attempts,
+        'topic_breakdown': topic_breakdown,
+    })
+
+
+@user_passes_test(is_teacher, login_url='teacher_login')
+def teacher_analytics_api(request):
+    """
+    API returning Chart.js ready JSON data, with optional class filter.
+    """
+    selected_class = request.GET.get('class_name', '').strip()
+    attempts_qs = QuizAttempt.objects.all()
+
+    if selected_class:
+        attempts_qs = attempts_qs.filter(student__class_name=selected_class)
+
+    labels = []
+    averages = []
+    attempt_counts = []
+
+    for topic in CYBER_TOPICS:
+        labels.append(topic['title'])
+        t_attempts = attempts_qs.filter(topic_id=topic['id'])
+        avg_val = t_attempts.aggregate(Avg('percentage'))['percentage__avg']
+        averages.append(round(avg_val, 1) if avg_val is not None else 0)
+        attempt_counts.append(t_attempts.count())
+
+    return JsonResponse({
+        'labels': labels,
+        'averages': averages,
+        'attempt_counts': attempt_counts,
+    })

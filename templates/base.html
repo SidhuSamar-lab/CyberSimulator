@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CyberSimulator | Cyber Safety Education Platform{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN with configuration -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            neon: '#00f2fe',
+                            accent: '#4facfe',
+                            purple: '#a855f7',
+                            dark: '#090d16',
+                            card: '#0e1626',
+                            border: '#1e293b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.35)',
+                        'neon-purple': '0 0 25px -5px rgba(168, 85, 247, 0.35)',
+                        'card-glow': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Chart.js for Teacher Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            background-color: #070b14;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%),
+                linear-gradient(rgba(14, 22, 38, 0.4) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(14, 22, 38, 0.4) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+        }
+
+        .glass-card {
+            background: rgba(14, 22, 38, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            transform: translateY(-4px);
+            border-color: rgba(6, 182, 212, 0.4);
+            box-shadow: 0 12px 30px -10px rgba(6, 182, 212, 0.2);
+        }
+
+        .cyber-gradient-text {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cyber-btn-primary {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            transition: all 0.25s ease;
+        }
+        .cyber-btn-primary:hover {
+            background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070b14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Brand Logo -->
+            <a href="{% url 'home' %}" id="nav-brand-link" class="flex items-center space-x-3 group">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="font-display font-extrabold text-2xl tracking-tight text-white group-hover:text-cyan-400 transition-colors">
+                        Cyber<span class="text-cyan-400">Simulator</span>
+                    </span>
+                    <span class="block text-[10px] tracking-widest text-slate-400 font-mono uppercase -mt-1">
+                        AI Safety Lab
+                    </span>
+                </div>
+            </a>
+
+            <!-- Center Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <a href="{% url 'home' %}" id="nav-home-link" class="text-slate-300 hover:text-cyan-400 transition-colors py-2">
+                    Home
+                </a>
+                {% if current_student %}
+                    <a href="{% url 'student_dashboard' %}" id="nav-dashboard-link" class="text-slate-300 hover:text-cyan-400 transition-colors flex items-center space-x-1 py-2">
+                        <span>Topics</span>
+                        <span class="px-2 py-0.5 text-xs rounded-full bg-cyan-950 border border-cyan-800 text-cyan-400 font-mono">8</span>
+                    </a>
+                {% endif %}
+                <a href="{% url 'teacher_dashboard' %}" id="nav-teacher-portal-link" class="text-slate-300 hover:text-purple-400 transition-colors flex items-center space-x-1.5 py-2">
+                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <span>Teacher Analytics</span>
+                </a>
+            </nav>
+
+            <!-- User Auth Controls -->
+            <div class="flex items-center space-x-3">
+                {% if current_student %}
+                    <!-- Student Pill Profile -->
+                    <div class="flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs">
+                        <div class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold font-mono">
+                            {{ current_student.name|slice:":1"|upper }}
+                        </div>
+                        <div class="hidden sm:block text-left">
+                            <p class="font-semibold text-slate-200 leading-tight">{{ current_student.name }}</p>
+                            <p class="text-[11px] text-slate-400">{{ current_student.class_name }} • Roll #{{ current_student.roll_number }}</p>
+                        </div>
+                        <a href="{% url 'student_logout' %}" id="btn-student-logout" class="ml-2 p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors" title="Exit Student Session">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                        </a>
+                    </div>
+                {% elif user.is_authenticated and user.is_staff %}
+                    <!-- Educator Pill Profile -->
+                    <div class="flex items-center space-x-2 bg-purple-950/40 border border-purple-800/80 rounded-xl px-3 py-1.5 text-xs">
+                        <div class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">
+                            T
+                        </div>
+                        <div class="hidden sm:block text-left">
+                            <p class="font-semibold text-purple-200 leading-tight">{{ user.username }}</p>
+                            <p class="text-[11px] text-purple-400">Teacher / Admin</p>
+                        </div>
+                        <a href="{% url 'teacher_logout' %}" id="btn-teacher-logout" class="ml-2 p-1.5 text-purple-300 hover:text-rose-400 hover:bg-purple-900/40 rounded-lg transition-colors" title="Log Out">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                        </a>
+                    </div>
+                {% else %}
+                    <!-- Guest Login Links -->
+                    <a href="{% url 'student_login' %}" id="nav-btn-student-login" class="cyber-btn-primary px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-950 shadow-md flex items-center space-x-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span>Student Login</span>
+                    </a>
+                    <a href="{% url 'teacher_login' %}" id="nav-btn-teacher-login" class="hidden sm:inline-flex px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-300 hover:text-white bg-slate-900 border border-slate-700/80 hover:border-slate-600 transition-all">
+                        Teacher Login
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Global Toast / Django Messages -->
+    <div class="max-w-4xl mx-auto px-4 mt-4 w-full">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-3 px-4 py-3 rounded-xl text-sm flex items-center justify-between border 
+                    {% if message.tags == 'error' %}bg-rose-950/60 border-rose-800 text-rose-200
+                    {% elif message.tags == 'warning' %}bg-amber-950/60 border-amber-800 text-amber-200
+                    {% elif message.tags == 'success' %}bg-emerald-950/60 border-emerald-800 text-emerald-200
+                    {% else %}bg-cyan-950/60 border-cyan-800 text-cyan-200{% endif %}" role="alert">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-xs opacity-70 hover:opacity-100">&times;</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Modern Dark Footer -->
+    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950/90 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-3 text-sm text-slate-400">
+                <div class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
+                    🛡️
+                </div>
+                <div>
+                    <p class="font-display font-semibold text-slate-200">CyberSimulator Platform</p>
+                    <p class="text-xs text-slate-500">Interactive Cybersecurity Education with Azure AI Foundry</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-6 text-xs text-slate-400">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-cyan-950/60 border border-cyan-800/50 text-cyan-300 font-mono">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-2"></span>
+                    Azure AI Agent Connected
+                </span>
+                <span>•</span>
+                <span>Designed for Students & Teachers</span>
+            </div>
+
+            <div class="text-xs text-slate-500">
+                &copy; 2026 CyberSimulator. Safe digital habits for everyone.
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

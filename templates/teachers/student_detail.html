@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ student.name }} | Student Performance Inspector{% endblock %}
+
+{% block content %}
+<div class="space-y-10">
+
+    <!-- Navigation Breadcrumbs -->
+    <div class="flex items-center space-x-2 text-xs font-mono text-slate-400">
+        <a href="{% url 'teacher_dashboard' %}" class="hover:text-purple-400 transition-colors">Teacher Dashboard</a>
+        <span>/</span>
+        <span class="text-slate-200">Student Profile: {{ student.name }}</span>
+    </div>
+
+    <!-- Student Summary Card -->
+    <section class="glass-card rounded-3xl p-6 sm:p-8 border border-purple-900/40 relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center font-display font-extrabold text-2xl text-white shadow-lg shadow-purple-600/30">
+                    {{ student.name|slice:":1"|upper }}
+                </div>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-display font-bold text-white">{{ student.name }}</h1>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                        Class: <span class="text-purple-300 font-semibold">{{ student.class_name }}</span> &bull; 
+                        Roll Number: <span class="text-purple-300 font-mono">#{{ student.roll_number }}</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wider font-mono">Total Tests</span>
+                    <p class="text-2xl font-display font-bold text-cyan-400 font-mono mt-0.5">{{ student.total_attempts }}</p>
+                </div>
+                <div class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 text-center">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wider font-mono">Overall Accuracy</span>
+                    <p class="text-2xl font-display font-bold text-purple-400 font-mono mt-0.5">{{ student.average_score }}%</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8 Topics Coverage Grid for this student -->
+    <section class="space-y-4">
+        <h2 class="font-display font-bold text-xl text-white">Topic Coverage Status</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {% for item in topic_breakdown %}
+                <div class="glass-card rounded-xl p-4 border 
+                    {% if item.taken %}border-cyan-500/30 bg-slate-900/70{% else %}border-slate-800/80 opacity-70{% endif %}">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-semibold text-white truncate pr-2">{{ item.topic.title }}</span>
+                        {% if item.taken %}
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-950 border border-emerald-800 text-emerald-300">
+                                {{ item.best_score }}/3 Best
+                            </span>
+                        {% else %}
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-800 text-slate-400">
+                                Unattempted
+                            </span>
+                        {% endif %}
+                    </div>
+                    <p class="text-[11px] text-slate-400">{{ item.attempts_count }} total attempts</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Detailed Attempt History Timeline -->
+    <section class="space-y-6">
+        <h2 class="font-display font-bold text-xl text-white">Full Quiz Attempt History</h2>
+
+        {% if attempts %}
+            <div class="space-y-6">
+                {% for att in attempts %}
+                    <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-5">
+                        
+                        <!-- Header of Attempt -->
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="font-display font-bold text-lg text-white">{{ att.topic_title }}</h3>
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+                                        {% if att.score == 3 %}bg-emerald-950 text-emerald-300 border border-emerald-800
+                                        {% elif att.score == 2 %}bg-cyan-950 text-cyan-300 border border-cyan-800
+                                        {% else %}bg-amber-950 text-amber-300 border border-amber-800{% endif %}">
+                                        Score: {{ att.score }} / {{ att.total_questions }} ({{ att.percentage }}%)
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-1 font-mono">
+                                    Submitted on {{ att.completed_at|date:"F d, Y @ H:i" }} UTC
+                                </p>
+                            </div>
+
+                            <a href="{% url 'quiz_result' att.id %}" target="_blank" class="text-xs text-cyan-400 hover:text-cyan-300 font-semibold inline-flex items-center space-x-1">
+                                <span>Open Full Result View</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </a>
+                        </div>
+
+                        <!-- AI Feedback Review -->
+                        <div class="p-4 rounded-xl bg-purple-950/20 border border-purple-800/40 space-y-2">
+                            <span class="text-[11px] font-mono uppercase tracking-wider text-purple-400 font-semibold flex items-center space-x-1.5">
+                                <span>🤖 Azure AI Evaluation Recorded:</span>
+                            </span>
+                            <p class="text-xs text-slate-300 leading-relaxed whitespace-pre-line">
+                                {{ att.ai_feedback }}
+                            </p>
+                        </div>
+
+                        <!-- Questions Accordion / List -->
+                        <div class="space-y-3 pt-2">
+                            <h4 class="text-xs font-mono uppercase tracking-wider text-slate-400">Student Question Responses:</h4>
+                            
+                            <div class="space-y-3">
+                                {% for q in att.questions.all %}
+                                    <div class="p-4 rounded-xl bg-slate-900/60 border 
+                                        {% if q.is_correct %}border-emerald-500/20{% else %}border-rose-500/20{% endif %} text-xs space-y-2">
+                                        <div class="flex items-start justify-between gap-2">
+                                            <p class="font-semibold text-slate-200">
+                                                <span class="text-slate-400 font-mono">Q{{ q.question_number }}:</span> {{ q.question_text }}
+                                            </p>
+                                            <span class="px-2 py-0.5 rounded text-[10px] font-mono flex-shrink-0
+                                                {% if q.is_correct %}bg-emerald-950 text-emerald-400 border border-emerald-800
+                                                {% else %}bg-rose-950 text-rose-400 border border-rose-800{% endif %}">
+                                                {% if q.is_correct %}Correct{% else %}Wrong{% endif %}
+                                            </span>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-400 pt-1">
+                                            <div>
+                                                <span class="text-slate-500">Student Choice:</span>
+                                                <span class="font-medium {% if q.is_correct %}text-emerald-300{% else %}text-rose-300{% endif %}">
+                                                    Option {{ q.student_selected_option }}: {{ q.student_selected_text }}
+                                                </span>
+                                            </div>
+                                            {% if not q.is_correct %}
+                                                <div>
+                                                    <span class="text-slate-500">Correct Choice:</span>
+                                                    <span class="font-medium text-emerald-300">
+                                                        Option {{ q.correct_option }}: {{ q.correct_option_text }}
+                                                    </span>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+
+                                        {% if q.explanation %}
+                                            <p class="text-[11px] text-slate-400 bg-slate-950/50 p-2 rounded-lg border border-slate-800">
+                                                <span class="text-cyan-400 font-mono">Explanation:</span> {{ q.explanation }}
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="glass-card rounded-2xl p-8 border border-slate-800 text-center text-slate-400 text-sm">
+                This student has not completed any quiz attempts yet.
+            </div>
+        {% endif %}
+    </section>
+
+</div>
+{% endblock %}
