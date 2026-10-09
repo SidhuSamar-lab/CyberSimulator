@@ -18,21 +18,44 @@ from dotenv import load_dotenv
 load_dotenv(BASE_DIR / '.env')
 
 # Inject Streamlit secrets into environment if running on Streamlit Community Cloud
-if hasattr(st, "secrets"):
-    for key, val in st.secrets.items():
-        if isinstance(val, str) and key not in os.environ:
-            os.environ[key] = val
+try:
+    if hasattr(st, "secrets"):
+        for key, val in st.secrets.items():
+            if isinstance(val, str):
+                os.environ[key] = val
+except Exception:
+    pass
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 import django
 django.setup()
 
+# Ensure database tables exist (auto-migrates on fresh cloud containers)
+try:
+    from django.core.management import call_command
+    call_command('migrate', interactive=False)
+except Exception as e:
+    pass
+
 from django.db import connection
 from users.models import Student
 from quizzes.models import QuizAttempt, AttemptQuestion
 from quizzes.topics import CYBER_TOPICS, get_topic_by_id
 from quizzes.ai_service import ai_client
+
+# Seed default student roster if table is empty
+try:
+    if Student.objects.count() == 0:
+        Student.objects.bulk_create([
+            Student(name="Alex Morgan", class_name="Grade 9-A", roll_number="101"),
+            Student(name="Jordan Lee", class_name="Grade 9-A", roll_number="102"),
+            Student(name="Sam Taylor", class_name="Grade 9-A", roll_number="103"),
+            Student(name="Riley Patel", class_name="Grade 9-B", roll_number="201"),
+            Student(name="Raman", class_name="Grade 11-A", roll_number="12"),
+        ])
+except Exception:
+    pass
 
 # Streamlit Page Config
 st.set_page_config(
@@ -208,12 +231,12 @@ if nav_choice == "🛡️ Student Hub & Quizzes":
         # 2. Choose Topic & Start Quiz
         st.markdown("### 📚 8 Cybersecurity Curriculum Topics")
         
-        topic_titles = [f"{t['icon']} {t['title']} ({t['level'].upper()})" for t in CYBER_TOPICS]
+        topic_titles = [f"🛡️ {t['title']}" for t in CYBER_TOPICS]
         chosen_topic_str = st.selectbox("Choose a topic to practice:", topic_titles, index=0)
         chosen_index = topic_titles.index(chosen_topic_str)
         topic = CYBER_TOPICS[chosen_index]
 
-        st.info(f"**Scenario Focus:** {topic['description']} • **Badge to unlock:** `{topic['badge_name']}`")
+        st.info(f"**Scenario Focus:** {topic['description']}")
 
         # Session state for active quiz
         quiz_key = f"quiz_{student.id}_{topic['id']}"
