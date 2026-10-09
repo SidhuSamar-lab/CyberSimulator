@@ -1,272 +1,339 @@
 {% extends 'base.html' %}
 
-{% block title %}Student Dashboard | CyberSimulator{% endblock %}
+{% block title %}Student Dashboard | {{ student.name }} | CyberShield Academy{% endblock %}
 
 {% block content %}
-<div class="space-y-10">
-
-    <!-- Student Welcome Profile Banner -->
-    <section class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl relative overflow-hidden">
-        <div class="absolute -right-20 -top-20 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            
-            <div class="flex items-center space-x-4">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-display font-extrabold text-2xl text-black shadow-lg shadow-cyan-500/30">
-                    {{ student.name|slice:":1"|upper }}
-                </div>
-                <div>
-                    <div class="flex items-center space-x-2">
-                        <h1 class="text-2xl sm:text-3xl font-display font-bold text-white">
-                            {{ student.name }}
-                        </h1>
-                        <span class="px-2.5 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-400 text-xs font-mono">
-                            {{ rank_title }}
-                        </span>
-                    </div>
-                    <p class="text-xs sm:text-sm text-slate-400 mt-1">
-                        Class: <span class="text-slate-200 font-semibold">{{ student.class_name }}</span> &bull; 
-                        Roll No: <span class="text-slate-200 font-mono">#{{ student.roll_number }}</span>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Stats Bar -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full lg:w-auto">
-                <div class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 text-center">
-                    <p class="text-xs text-slate-400 uppercase tracking-wider font-mono">Completed</p>
-                    <p class="text-2xl font-display font-bold text-cyan-400 mt-1">
-                        {{ completed_count }} <span class="text-xs text-slate-500 font-normal">/ {{ total_topics }}</span>
-                    </p>
-                </div>
-
-                <div class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 text-center">
-                    <p class="text-xs text-slate-400 uppercase tracking-wider font-mono">Avg Score</p>
-                    <p class="text-2xl font-display font-bold text-purple-400 mt-1">
-                        {{ overall_percent }}%
-                    </p>
-                </div>
-
-                <div class="col-span-2 sm:col-span-1 bg-slate-900/80 rounded-2xl p-4 border border-slate-800 text-center flex flex-col justify-center">
-                    <p class="text-xs text-slate-400 uppercase tracking-wider font-mono">AI Evaluations</p>
-                    <p class="text-2xl font-display font-bold text-emerald-400 mt-1">
-                        {{ student.total_attempts }}
-                    </p>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Visual Progress Bar -->
-        <div class="mt-8 pt-6 border-t border-slate-800/80 space-y-2">
-            <div class="flex items-center justify-between text-xs">
-                <span class="text-slate-400 font-medium">Platform Completion Progress</span>
-                <span class="text-cyan-400 font-mono font-bold">
-                    {% widthratio completed_count total_topics 100 %}% Completed
+<div class="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
+    
+    <!-- Top Welcome Section & Quick Metrics Ribbon -->
+    <div class="flex flex-col lg:flex-row items-stretch justify-between gap-6 bg-surface-container-lowest p-6 sm:p-8 rounded-xl shadow-sm border border-outline-variant/40">
+        <div class="flex flex-col justify-between max-w-2xl">
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+                <span class="px-2.5 py-1 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm font-semibold tracking-wide uppercase">
+                    {{ student.class_name }} | Roll #{{ student.roll_number }}
+                </span>
+                <span class="px-2.5 py-1 rounded bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm text-primary">school</span>
+                    Oakridge Middle & High School
+                </span>
+                <span class="px-2.5 py-1 rounded bg-surface-container-high text-on-primary-fixed-variant font-label-sm text-label-sm flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">event</span>
+                    Next Term Exam: Nov 14
                 </span>
             </div>
-            <div class="w-full h-2.5 rounded-full bg-slate-900 overflow-hidden border border-slate-800">
-                <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-700"
-                     style="width: {% widthratio completed_count total_topics 100 %}%;"></div>
+            
+            <div>
+                <h1 class="font-display-lg text-display-lg text-on-surface tracking-tight font-bold">
+                    Welcome back, {{ student.name }} 👋
+                </h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant mt-2 max-w-xl">
+                    Continue sharpening your digital defense radar. You have completed {{ completed_count }} of {{ total_topics }} curricular exercises for Term 2.
+                </p>
+            </div>
+
+            <!-- Telemetry Indicators -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 pt-6 bg-surface-container-low rounded-xl p-4 border border-outline-variant/30">
+                <div class="flex flex-col">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Defense Tier</span>
+                    <div class="flex items-center gap-1.5 mt-1">
+                        <span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">shield</span>
+                        <span class="font-headline-md text-headline-md text-on-surface font-bold">{{ rank_title }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Active Habit Streak</span>
+                    <div class="flex items-center gap-1.5 mt-1">
+                        <span class="material-symbols-outlined text-secondary text-xl" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+                        <span class="font-headline-md text-headline-md text-on-surface font-bold">4 Days Active</span>
+                    </div>
+                </div>
+                <div class="flex flex-col col-span-2 sm:col-span-1">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Classroom Standing</span>
+                    <div class="flex items-center gap-1.5 mt-1">
+                        <span class="material-symbols-outlined text-primary-container text-xl">social_leaderboard</span>
+                        <span class="font-headline-md text-headline-md text-on-surface font-bold">Top Roster</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
 
-    <!-- Gamified Badge Shelf -->
-    <section class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-800 space-y-5">
-        <div class="flex items-center justify-between">
+        <!-- Overall Resilience Progress Card -->
+        <div class="flex flex-col justify-between lg:w-96 p-6 rounded-xl bg-surface-container-low border border-outline-variant/30">
             <div>
-                <div class="flex items-center space-x-2">
-                    <h2 class="text-xl font-display font-bold text-white">Cyber Defense Badges</h2>
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-950/80 border border-amber-700/80 text-amber-300">
-                        {{ unlocked_badge_count }} / 8 Unlocked
+                <div class="flex items-center justify-between mb-2">
+                    <span class="font-label-md text-label-md font-semibold text-on-surface">Curricular Resilience</span>
+                    <span class="font-label-sm text-label-sm font-bold px-2 py-0.5 rounded bg-surface-container-highest text-primary">
+                        {{ completed_count }} / {{ total_topics }} Modules
                     </span>
                 </div>
-                <p class="text-xs text-slate-400 mt-1">Score 2+ on a topic quiz to earn its official mastery badge.</p>
-            </div>
-            <span class="hidden sm:inline-block px-3 py-1 rounded-xl bg-slate-900 border border-slate-700 text-xs text-cyan-300 font-mono">
-                Rank: {{ rank_title }}
-            </span>
-        </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-            {% for b in badges %}
-                <div class="p-3.5 rounded-2xl text-center border transition-all duration-300
-                    {% if b.earned %}bg-slate-900/90 border-amber-500/40 shadow-lg shadow-amber-500/10 scale-100{% else %}bg-slate-950/50 border-slate-800/80 opacity-50 grayscale hover:grayscale-0 hover:opacity-80{% endif %}">
-                    <div class="text-2xl mb-1.5">{{ b.icon }}</div>
-                    <p class="text-xs font-bold text-white leading-tight truncate" title="{{ b.title }}">{{ b.title }}</p>
-                    <span class="inline-block mt-1 text-[9px] font-mono uppercase px-1.5 py-0.5 rounded
-                        {% if b.earned %}bg-amber-950 text-amber-300 border border-amber-800{% else %}bg-slate-900 text-slate-500{% endif %}">
-                        {% if b.earned %}Earned{% else %}Locked{% endif %}
+                
+                <div class="flex items-baseline gap-2 mt-1">
+                    <span class="font-display-lg text-display-lg font-bold text-on-surface tabular-nums">
+                        {% widthratio completed_count total_topics 100 %}%
                     </span>
+                    <span class="font-label-md text-label-md text-on-surface-variant">Completed</span>
                 </div>
-            {% endfor %}
-        </div>
-    </section>
 
-    <!-- Advanced Cyber Defense Labs & Competitions Banner -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <!-- Phishing Sandbox Card -->
-        <div class="glass-card glass-card-hover rounded-2xl p-6 border border-cyan-500/40 bg-gradient-to-br from-cyan-950/30 to-slate-900/80 flex flex-col justify-between space-y-4">
-            <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                    <span class="text-2xl">📬</span>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">INTERACTIVE LAB</span>
+                <!-- Structured Segmented Bar -->
+                <div aria-valuemax="100" aria-valuemin="0" class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden mt-4 flex gap-0.5 p-0.5" role="progressbar">
+                    <div class="h-full bg-secondary rounded-full transition-all duration-700" style="width: {% widthratio completed_count total_topics 100 %}%;"></div>
                 </div>
-                <h3 class="text-lg font-display font-bold text-white">Phishing Sandbox</h3>
-                <p class="text-xs text-slate-300 leading-relaxed">
-                    Examine simulated school & gaming emails, inspect raw server headers, and deconstruct spoofed URLs.
-                </p>
+
+                <div class="flex items-center justify-between mt-3 text-on-surface-variant font-label-sm text-label-sm">
+                    <span>{{ completed_count }} Mastered</span>
+                    <span>{{ unlocked_badge_count }} Badges</span>
+                    <span>{{ total_topics }} Total</span>
+                </div>
             </div>
-            <a href="{% url 'phishing_sandbox' %}" class="cyber-btn-primary px-4 py-2.5 rounded-xl font-bold text-slate-950 text-xs flex items-center justify-center space-x-1 shadow-md shadow-cyan-500/20">
-                <span>Enter Sandbox &rarr;</span>
+
+            <!-- Certification Quick Link -->
+            <a href="{% url 'student_certificate' %}" class="mt-6 pt-4 bg-surface-container-lowest p-3.5 rounded-lg flex items-center justify-between hover:bg-surface-container-high transition-colors border border-outline-variant/30">
+                <div class="flex items-center gap-2.5">
+                    <span class="material-symbols-outlined text-secondary text-xl">verified</span>
+                    <div class="flex flex-col text-left">
+                        <span class="font-label-sm text-label-sm font-semibold text-on-surface">Digital Cadet Certification</span>
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Click to view & print certificate</span>
+                    </div>
+                </div>
+                <span class="material-symbols-outlined text-primary text-base">arrow_forward</span>
             </a>
         </div>
+    </div>
 
-        <!-- Leaderboard Arena Card -->
-        <div class="glass-card glass-card-hover rounded-2xl p-6 border border-purple-500/40 bg-gradient-to-br from-purple-950/30 to-slate-900/80 flex flex-col justify-between space-y-4">
-            <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                    <span class="text-2xl">🏆</span>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-purple-950 text-purple-300 border border-purple-800">COMPETITION</span>
+    <!-- Main Content Layout (Grid + Side Panels) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Primary Modules Area (8 Columns) -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            
+            <!-- Modules Header & Filter Chips -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2">
+                <div class="flex flex-col">
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">Cyber Safety Curriculum</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Master interactive real-world threat vectors designed for high school networks.</p>
                 </div>
-                <h3 class="text-lg font-display font-bold text-white">Classroom Arena</h3>
-                <p class="text-xs text-slate-300 leading-relaxed">
-                    See how your class ({{ student.class_name }}) ranks against other grade sections in overall defense accuracy.
-                </p>
-            </div>
-            <a href="{% url 'leaderboard_view' %}" class="px-4 py-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800 border border-purple-700 text-purple-200 font-bold text-xs flex items-center justify-center space-x-1 transition-all">
-                <span>View Leaderboard &rarr;</span>
-            </a>
-        </div>
-
-        <!-- Certificate Card -->
-        <div class="glass-card glass-card-hover rounded-2xl p-6 border border-amber-500/40 bg-gradient-to-br from-amber-950/30 to-slate-900/80 flex flex-col justify-between space-y-4">
-            <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                    <span class="text-2xl">🎓</span>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-950 text-amber-300 border border-amber-800">CREDENTIAL</span>
+                <div class="inline-flex p-1 bg-surface-container rounded-lg gap-1 self-stretch sm:self-auto">
+                    <a href="{% url 'phishing_sandbox' %}" class="px-3 py-1 rounded bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold shadow-sm flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">science</span>
+                        <span>Phishing Sandbox Lab</span>
+                    </a>
                 </div>
-                <h3 class="text-lg font-display font-bold text-white">Mastery Certificate</h3>
-                <p class="text-xs text-slate-300 leading-relaxed">
-                    Generate and print your official credential verifying your rank as {{ rank_title }} with security seal.
-                </p>
             </div>
-            <a href="{% url 'student_certificate' %}" class="px-4 py-2.5 rounded-xl bg-amber-950/60 hover:bg-amber-900 border border-amber-700 text-amber-300 font-bold text-xs flex items-center justify-center space-x-1 transition-all">
-                <span>Print Certificate &rarr;</span>
-            </a>
-        </div>
-    </section>
 
-    <!-- 8 Topics Cards Grid -->
-    <section class="space-y-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="text-2xl font-display font-bold text-white">Select a Cybersecurity Topic</h2>
-                <p class="text-xs sm:text-sm text-slate-400">Complete 3 scenario-based questions per topic to build your defenses.</p>
-            </div>
-        </div>
+            <!-- 8 Modules Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for topic in topics %}
+                    <div class="flex flex-col justify-between bg-surface-container-lowest rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow border border-outline-variant/40">
+                        <div>
+                            <div class="flex items-start justify-between gap-2">
+                                {% if topic.completed %}
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-label-sm text-label-sm font-semibold bg-secondary-container/40 text-on-secondary-container">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                        Completed
+                                    </span>
+                                    <span class="font-code-sm text-code-sm font-semibold text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded">
+                                        Score: {{ topic.best_score }}/{{ topic.best_total }}
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-label-sm text-label-sm font-semibold bg-surface-container text-on-surface-variant">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                        Ready to Start
+                                    </span>
+                                    <span class="font-code-sm text-code-sm font-medium text-on-surface-variant bg-surface-container-low px-2 py-0.5 rounded">
+                                        3 Questions
+                                    </span>
+                                {% endif %}
+                            </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {% for topic in topics %}
-                <div class="glass-card glass-card-hover rounded-2xl p-6 flex flex-col justify-between border 
-                    {% if topic.completed %}border-cyan-500/40 bg-slate-900/80{% else %}border-slate-800{% endif %}">
-                    
-                    <div>
-                        <!-- Header with index and status -->
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 text-cyan-400 flex items-center justify-center font-bold text-sm font-mono">
-                                0{{ forloop.counter }}
-                            </span>
-                            
-                            {% if topic.completed %}
-                                <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-950/80 border border-emerald-800/70 text-emerald-300 flex items-center space-x-1">
-                                    <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    <span>{{ topic.best_score }}/{{ topic.best_total }}</span>
-                                </span>
+                            <div class="flex items-center gap-3 mt-4">
+                                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+                                    <span class="material-symbols-outlined text-2xl">
+                                        {% if topic.id == 'phishing' %}mark_email_unread
+                                        {% elif topic.id == 'passwords_2fa' %}key
+                                        {% elif topic.id == 'fake_websites' %}travel_explore
+                                        {% elif topic.id == 'cyberbullying' %}favorite
+                                        {% elif topic.id == 'social_media' %}visibility_off
+                                        {% elif topic.id == 'qr_scams' %}qr_code_scanner
+                                        {% elif topic.id == 'ai_misinformation' %}psychology
+                                        {% else %}shield{% endif %}
+                                    </span>
+                                </div>
+                                <div class="min-w-0">
+                                    <h3 class="font-headline-md text-headline-md text-on-surface font-semibold truncate leading-tight">
+                                        {{ topic.title }}
+                                    </h3>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="font-label-sm text-label-sm text-on-surface-variant">⏱ 5 mins</span>
+                                        <span class="text-outline-variant">•</span>
+                                        <span class="font-label-sm text-label-sm text-on-surface-variant">{{ topic.category|default:"Curricular Lab" }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="font-body-md text-body-md text-on-surface-variant mt-3 line-clamp-2">
+                                {{ topic.description }}
+                            </p>
+
+                            {% if topic.completed and topic.best_score >= 2 %}
+                                <div class="mt-4 p-2 rounded-lg bg-surface-container-low flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-secondary text-lg" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+                                    <span class="font-label-sm text-label-sm font-semibold text-on-surface">Badge Earned: {{ topic.badge_name }}</span>
+                                </div>
                             {% else %}
-                                <span class="px-2.5 py-1 rounded-full text-[11px] font-mono bg-slate-800 text-slate-400">
-                                    Not Started
-                                </span>
+                                <div class="mt-4 p-2 rounded-lg bg-surface-container-low flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+                                    <span>Reward: {{ topic.badge_name }}</span>
+                                    <span class="material-symbols-outlined text-base">military_tech</span>
+                                </div>
                             {% endif %}
                         </div>
 
-                        <h3 class="font-display font-bold text-lg text-white mb-2 leading-snug">
-                            {{ topic.title }}
-                        </h3>
-
-                        <p class="text-xs text-slate-400 leading-relaxed mb-4">
-                            {{ topic.tagline }}
-                        </p>
+                        <div class="mt-6 pt-4 flex items-center justify-between border-t border-outline-variant/30">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">
+                                {% if topic.completed %}Score: {{ topic.best_score }}/{{ topic.best_total }}{% else %}AI Agent Powered{% endif %}
+                            </span>
+                            <a href="{% url 'take_quiz' topic.id %}" class="px-4 py-2 rounded-lg {% if topic.completed %}bg-surface-container-low hover:bg-surface-container text-on-surface{% else %}bg-primary text-on-primary hover:bg-primary-container{% endif %} font-label-md text-label-md font-semibold transition-colors flex items-center gap-1.5 shadow-sm">
+                                <span>{% if topic.completed %}Review Scenarios{% else %}Start Module →{% endif %}</span>
+                            </a>
+                        </div>
                     </div>
-
-                    <!-- Button Action -->
-                    <div class="pt-2">
-                        <a href="{% url 'take_quiz' topic.id %}" id="btn-quiz-{{ topic.id }}" 
-                           class="w-full py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center space-x-2 transition-all
-                                  {% if topic.completed %}
-                                    bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-800/80 hover:border-cyan-500
-                                  {% else %}
-                                    cyber-btn-primary text-slate-950 shadow-md shadow-cyan-500/20
-                                  {% endif %}">
-                            <span>{% if topic.completed %}Retake Quiz (3 Questions){% else %}Start Quiz (3 Questions){% endif %}</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                        </a>
-                    </div>
-
-                </div>
-            {% endfor %}
-        </div>
-    </section>
-
-    <!-- Recent Submissions History -->
-    {% if recent_attempts %}
-        <section class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-800">
-            <h3 class="font-display font-bold text-lg text-white mb-4">Your Recent Quiz Attempts</h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs sm:text-sm">
-                    <thead>
-                        <tr class="text-slate-400 border-b border-slate-800 uppercase text-[11px] font-mono">
-                            <th class="pb-3">Topic</th>
-                            <th class="pb-3">Score</th>
-                            <th class="pb-3">Percentage</th>
-                            <th class="pb-3">Date</th>
-                            <th class="pb-3 text-right">Review</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-800/60 text-slate-300">
-                        {% for att in recent_attempts %}
-                            <tr class="hover:bg-slate-900/40 transition-colors">
-                                <td class="py-3 font-semibold text-white">{{ att.topic_title }}</td>
-                                <td class="py-3 font-mono">{{ att.score }} / {{ att.total_questions }}</td>
-                                <td class="py-3">
-                                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold
-                                        {% if att.percentage >= 80 %}bg-emerald-950 text-emerald-300 border border-emerald-800
-                                        {% elif att.percentage >= 50 %}bg-amber-950 text-amber-300 border border-amber-800
-                                        {% else %}bg-rose-950 text-rose-300 border border-rose-800{% endif %}">
-                                        {{ att.percentage }}%
-                                    </span>
-                                </td>
-                                <td class="py-3 text-slate-400 font-mono text-xs">{{ att.completed_at|date:"M d, Y - H:i" }}</td>
-                                <td class="py-3 text-right">
-                                    <a href="{% url 'quiz_result' att.id %}" class="text-cyan-400 hover:text-cyan-300 font-semibold text-xs inline-flex items-center space-x-1">
-                                        <span>View AI Feedback</span>
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                        </svg>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                {% endfor %}
             </div>
-        </section>
-    {% endif %}
+
+            <!-- Gamified Badge Shelf (Horizontal strip) -->
+            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/40 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-headline-md text-headline-md font-bold text-on-surface">Unlocked Defense Badges</h3>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant">{{ unlocked_badge_count }} of {{ total_topics }} credentials verified on student roster.</p>
+                    </div>
+                    <span class="font-code-sm text-code-sm font-bold bg-secondary-container text-on-secondary-container px-2.5 py-1 rounded">
+                        {{ unlocked_badge_count }} / 8 Badges
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+                    {% for b in badges %}
+                        <div class="p-3 rounded-lg text-center border transition-all 
+                            {% if b.earned %}bg-surface-container-low border-secondary/40 shadow-xs{% else %}bg-surface-container-lowest border-outline-variant/40 opacity-40 grayscale{% endif %}">
+                            <div class="text-2xl mb-1">{{ b.icon }}</div>
+                            <div class="font-label-sm text-[11px] font-bold text-on-surface truncate" title="{{ b.title }}">{{ b.title }}</div>
+                            <span class="inline-block mt-1 text-[9px] font-mono uppercase px-1 py-0.2 rounded 
+                                {% if b.earned %}bg-secondary-container text-on-secondary-container font-bold{% else %}bg-surface-container text-on-surface-variant{% endif %}">
+                                {% if b.earned %}Earned{% else %}Locked{% endif %}
+                            </span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Supplementary Sidebar Widgets (4 Columns) -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Today's Quick Safety Rule Card -->
+            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col border border-outline-variant/40">
+                <div class="flex items-center justify-between pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+                        <span class="font-label-md text-label-md font-bold uppercase tracking-wider text-on-surface">Daily Safety Principle</span>
+                    </div>
+                    <span class="material-symbols-outlined text-primary text-xl">tips_and_updates</span>
+                </div>
+                
+                <div class="mt-3 p-4 bg-surface-container-low rounded-lg border border-outline-variant/30">
+                    <span class="font-label-sm text-label-sm font-semibold text-primary block mb-1">RULE #42 • URL INTEGRITY</span>
+                    <p class="font-body-md text-body-md text-on-surface font-medium leading-relaxed">
+                        Spotting lookalike URLs: Always inspect the root domain before entering any school login credentials.
+                    </p>
+                </div>
+
+                <div class="mt-4 space-y-2">
+                    <div class="flex items-center justify-between text-body-md font-body-md p-2 rounded bg-surface-container-highest/60">
+                        <span class="font-code-sm text-code-sm text-on-surface font-mono">portal.oakridge.edu</span>
+                        <span class="font-label-sm text-label-sm text-secondary font-bold flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">check_circle</span> Authentic
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between text-body-md font-body-md p-2 rounded bg-tertiary-fixed/30">
+                        <span class="font-code-sm text-code-sm text-on-surface font-mono">portal-oakridge-auth.cc</span>
+                        <span class="font-label-sm text-label-sm text-tertiary font-bold flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">cancel</span> Spoofed
+                        </span>
+                    </div>
+                </div>
+
+                <a href="{% url 'phishing_sandbox' %}" class="mt-4 w-full py-2 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md font-medium rounded-lg transition-colors flex items-center justify-center gap-1">
+                    <span>Enter Phishing Sandbox Lab</span>
+                    <span class="material-symbols-outlined text-sm">open_in_new</span>
+                </a>
+            </div>
+
+            <!-- Classroom Leaderboard & Collective Metric Card -->
+            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col border border-outline-variant/40">
+                <div class="flex items-center justify-between pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary text-2xl">groups</span>
+                        <div>
+                            <h3 class="font-headline-md text-headline-md text-on-surface font-bold">Class Collective</h3>
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ student.class_name }} Arena Standing</span>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded bg-secondary-container/40 text-on-secondary-container font-label-sm text-label-sm font-bold">Weekly</span>
+                </div>
+
+                <!-- Highlight Banner -->
+                <div class="mt-2 p-4 bg-surface-container-low rounded-lg flex items-center gap-3 border border-outline-variant/30">
+                    <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0 font-bold text-lg">
+                        🎯
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-body-md text-body-md font-semibold text-on-surface">Active Classroom Defense!</span>
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Your class section is actively completing cybersecurity challenges.</span>
+                    </div>
+                </div>
+
+                <!-- Current Student Quick Stats -->
+                <div class="mt-4 p-3 rounded-lg bg-primary-fixed/20 border border-primary/20 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-xs">
+                            {{ student.name|slice:":2"|upper }}
+                        </div>
+                        <div class="flex flex-col text-left">
+                            <span class="font-label-md text-label-md font-bold text-on-surface">{{ student.name }} (You)</span>
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">{{ completed_count }} of {{ total_topics }} Completed</span>
+                        </div>
+                    </div>
+                    <span class="font-code-sm text-code-sm font-bold text-primary">{{ overall_percent }}% Avg</span>
+                </div>
+
+                <div class="mt-5 pt-4 flex items-center justify-between border-t border-outline-variant/30">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Inter-Class Tournament</span>
+                    <a class="font-label-md text-label-md font-semibold text-primary hover:underline flex items-center gap-1" href="{% url 'leaderboard_view' %}">
+                        <span>View Class Board →</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Instructor Notes Widget -->
+            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col border border-outline-variant/40">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined text-lg">record_voice_over</span>
+                    </div>
+                    <div>
+                        <span class="font-label-md text-label-md font-semibold text-on-surface block">Ms. Vance (Lab Instructor)</span>
+                        <span class="font-label-sm text-label-sm text-on-surface-variant">Office Hour: Wed 3:30 PM</span>
+                    </div>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface-variant bg-surface-container-low p-3 rounded-lg italic border border-outline-variant/30 leading-relaxed">
+                    "Remember to complete the Phishing Sandbox and review fake URLs before our live simulation next Tuesday. Ask questions to our AI Mentor if you get stuck."
+                </p>
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 {% endblock %}

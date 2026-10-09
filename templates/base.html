@@ -1,237 +1,257 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CyberSimulator | Cyber Safety Education Platform{% endblock %}</title>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% block title %}CyberShield Academy | Oakridge High School Safety Portal{% endblock %}</title>
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Material Symbols & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
     
-    <!-- Tailwind CSS CDN with configuration -->
+    <!-- Tailwind CSS CDN & Institutional Design System Configuration -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
+    <script id="tailwind-config">
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        cyber: {
-                            50: '#ecfeff',
-                            100: '#cffafe',
-                            400: '#22d3ee',
-                            500: '#06b6d4',
-                            600: '#0891b2',
-                            neon: '#00f2fe',
-                            accent: '#4facfe',
-                            purple: '#a855f7',
-                            dark: '#090d16',
-                            card: '#0e1626',
-                            border: '#1e293b'
-                        }
+                        "on-secondary-fixed": "#002114",
+                        "on-background": "#131b2e",
+                        "surface-tint": "#5148d7",
+                        "on-primary-fixed-variant": "#372abf",
+                        "tertiary-fixed-dim": "#ffb3b6",
+                        "on-primary-container": "#c1beff",
+                        "surface-container-low": "#f2f3ff",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#e3dfff",
+                        "error": "#ba1a1a",
+                        "surface-container": "#eaedff",
+                        "surface-container-high": "#e2e7ff",
+                        "on-surface-variant": "#464554",
+                        "on-primary-fixed": "#100069",
+                        "primary-container": "#4338ca",
+                        "on-tertiary-container": "#ffb0b4",
+                        "outline": "#777586",
+                        "inverse-surface": "#283044",
+                        "inverse-on-surface": "#eef0ff",
+                        "background": "#faf8ff",
+                        "tertiary-fixed": "#ffdada",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#dae2fd",
+                        "on-surface": "#131b2e",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#dae2fd",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#40000c",
+                        "surface-dim": "#d2d9f4",
+                        "tertiary-container": "#a6002f",
+                        "secondary-fixed-dim": "#68dba9",
+                        "on-secondary-fixed-variant": "#005137",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "secondary-container": "#82f5c1",
+                        "tertiary": "#7b0020",
+                        "primary": "#2a14b4",
+                        "secondary-fixed": "#85f8c4",
+                        "secondary": "#006c4a",
+                        "on-tertiary-fixed-variant": "#920028",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#faf8ff",
+                        "on-secondary-container": "#00714e",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#c3c0ff",
+                        "surface": "#faf8ff",
+                        "outline-variant": "#c7c4d7",
+                        "on-secondary": "#ffffff"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.125rem",
+                        lg: "0.25rem",
+                        xl: "0.5rem",
+                        full: "0.75rem"
+                    },
+                    spacing: {
+                        "space-sm": "0.5rem",
+                        "space-lg": "1.5rem",
+                        "space-md": "1rem",
+                        "gutter-mobile": "1rem",
+                        "space-xs": "0.25rem",
+                        "margin": "2rem",
+                        "margin-mobile": "1rem",
+                        "space-xl": "2.5rem",
+                        "gutter": "1.5rem"
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Outfit', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "code-sm": ["Inter", "monospace"],
+                        "label-md": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"],
+                        "display-lg": ["Inter", "sans-serif"],
+                        "headline-lg": ["Inter", "sans-serif"],
+                        "display-lg-mobile": ["Inter", "sans-serif"]
                     },
-                    boxShadow: {
-                        'neon-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.35)',
-                        'neon-purple': '0 0 25px -5px rgba(168, 85, 247, 0.35)',
-                        'card-glow': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+                    fontSize: {
+                        "body-lg": ["1rem", { lineHeight: "1.5rem", fontWeight: "400" }],
+                        "headline-md": ["1.25rem", { lineHeight: "1.75rem", letterSpacing: "-0.015em", fontWeight: "600" }],
+                        "body-md": ["0.875rem", { lineHeight: "1.25rem", fontWeight: "400" }],
+                        "code-sm": ["0.8125rem", { lineHeight: "1.125rem", fontWeight: "500" }],
+                        "label-md": ["0.875rem", { lineHeight: "1.25rem", fontWeight: "500" }],
+                        "label-sm": ["0.75rem", { lineHeight: "1rem", letterSpacing: "0.025em", fontWeight: "600" }],
+                        "display-lg": ["2.25rem", { lineHeight: "2.75rem", letterSpacing: "-0.025em", fontWeight: "700" }],
+                        "headline-lg": ["1.5rem", { lineHeight: "2rem", letterSpacing: "-0.02em", fontWeight: "600" }],
+                        "display-lg-mobile": ["1.75rem", { lineHeight: "2.25rem", letterSpacing: "-0.02em", fontWeight: "700" }]
                     }
                 }
             }
-        }
+        };
     </script>
     
-    <!-- Chart.js for Teacher Analytics -->
+    <!-- Chart.js for Teacher Telemetry & Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        body {
-            background-color: #070b14;
-            color: #f1f5f9;
-            font-family: 'Inter', sans-serif;
-            background-image: 
-                radial-gradient(circle at 15% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%),
-                linear-gradient(rgba(14, 22, 38, 0.4) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(14, 22, 38, 0.4) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+        @layer base {
+            html, body { margin: 0; padding: 0; }
+            body { overscroll-behavior: none; }
+            main > :first-child { margin-top: 0 !important; }
+            main > :last-child { margin-bottom: 0 !important; }
         }
-
-        .glass-card {
-            background: rgba(14, 22, 38, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .glass-card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glass-card-hover:hover {
-            transform: translateY(-4px);
-            border-color: rgba(6, 182, 212, 0.4);
-            box-shadow: 0 12px 30px -10px rgba(6, 182, 212, 0.2);
-        }
-
-        .cyber-gradient-text {
-            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #a855f7 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .cyber-btn-primary {
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            transition: all 0.25s ease;
-        }
-        .cyber-btn-primary:hover {
-            background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #070b14;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #06b6d4;
-        }
+        ::-webkit-scrollbar { display: none; }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
+<body class="bg-background font-body-md text-on-surface antialiased">
 
-    <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-50 glass-card border-b border-slate-800/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <!-- Fixed Header Bar -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest border-b border-outline-variant">
+        <div class="h-16 w-full px-4 sm:px-8 flex items-center justify-between gap-space-md">
             
-            <!-- Brand Logo -->
-            <a href="{% url 'home' %}" id="nav-brand-link" class="flex items-center space-x-3 group">
-                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                </div>
-                <div>
-                    <span class="font-display font-extrabold text-2xl tracking-tight text-white group-hover:text-cyan-400 transition-colors">
-                        Cyber<span class="text-cyan-400">Simulator</span>
-                    </span>
-                    <span class="block text-[10px] tracking-widest text-slate-400 font-mono uppercase -mt-1">
-                        AI Safety Lab
-                    </span>
-                </div>
-            </a>
-
-            <!-- Center Navigation Links -->
-            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
-                <a href="{% url 'home' %}" id="nav-home-link" class="text-slate-300 hover:text-cyan-400 transition-colors py-2">
-                    Home
+            <!-- Left Branding -->
+            <div class="flex items-center gap-space-lg">
+                <a href="{% url 'home' %}" id="nav-brand-link" class="flex items-center gap-space-md hover:opacity-95 transition-opacity">
+                    <div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm shrink-0">
+                        <span class="material-symbols-outlined text-[22px]">verified_user</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-space-xs">
+                            <span class="font-label-md text-label-md font-bold text-on-surface tracking-tight">CyberShield Academy</span>
+                            <span class="hidden sm:inline-block font-label-sm text-label-sm bg-surface-container-high text-on-surface px-space-xs py-0.5 rounded border border-outline-variant">Oakridge High School Edition</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span class="w-2 h-2 rounded-full bg-secondary"></span>
+                            <span class="font-label-sm text-label-sm text-secondary font-medium">Term 2 • Active Session</span>
+                        </div>
+                    </div>
                 </a>
-                {% if current_student %}
-                    <a href="{% url 'student_dashboard' %}" id="nav-dashboard-link" class="text-slate-300 hover:text-cyan-400 transition-colors flex items-center space-x-1 py-2">
-                        <span>Topics</span>
-                        <span class="px-2 py-0.5 text-xs rounded-full bg-cyan-950 border border-cyan-800 text-cyan-400 font-mono">8</span>
+
+                <!-- Navigation Tabs -->
+                <nav class="hidden lg:flex items-center gap-1 p-1 bg-surface-container-low rounded-lg border border-outline-variant">
+                    <a href="{% url 'student_dashboard' %}" 
+                       id="nav-dashboard-link"
+                       class="px-space-md py-1.5 rounded font-label-md text-label-md transition-all {% if request.resolver_match.url_name == 'student_dashboard' %}bg-primary-container text-on-primary font-semibold shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container{% endif %}">
+                        Dashboard
+                    </a>
+                    <a href="{% url 'home' %}" 
+                       id="nav-home-link"
+                       class="px-space-md py-1.5 rounded font-label-md text-label-md transition-all {% if request.resolver_match.url_name == 'home' %}bg-primary-container text-on-primary font-semibold shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container{% endif %}">
+                        Modules
+                    </a>
+                    <a href="{% url 'phishing_sandbox' %}" 
+                       id="nav-sandbox-link"
+                       class="px-space-md py-1.5 rounded font-label-md text-label-md transition-all {% if request.resolver_match.url_name == 'phishing_sandbox' %}bg-primary-container text-on-primary font-semibold shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container{% endif %}">
+                        Safety Lab & AI Mentor
+                    </a>
+                    <a href="{% url 'leaderboard_view' %}" 
+                       id="nav-leaderboard-link"
+                       class="px-space-md py-1.5 rounded font-label-md text-label-md transition-all {% if request.resolver_match.url_name == 'leaderboard_view' %}bg-primary-container text-on-primary font-semibold shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container{% endif %}">
+                        Class Board
+                    </a>
+                    <a href="{% url 'teacher_dashboard' %}" 
+                       id="nav-teacher-portal-link"
+                       class="px-space-md py-1.5 rounded font-label-md text-label-md transition-all {% if 'teacher' in request.path %}bg-primary-container text-on-primary font-semibold shadow-sm{% else %}text-on-surface-variant hover:text-on-surface hover:bg-surface-container{% endif %}">
+                        Teacher Analytics
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Right Controls & Authentication -->
+            <div class="flex items-center gap-space-md">
+                
+                <!-- Quick Help / Roll Number Guide -->
+                <button type="button" 
+                        onclick="alert('Oakridge High School Cyber Defense Lab Protocol: Students sign in with Class and Roll ID. Need assistance? Contact your homeroom instructor.');"
+                        class="flex items-center justify-center w-9 h-9 rounded-lg bg-surface-container-low border border-outline-variant text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" 
+                        title="Quick Help & Emergency Protocol">
+                    <span class="material-symbols-outlined text-xl">help</span>
+                </button>
+
+                <!-- Switch Role Button -->
+                {% if user.is_authenticated and user.is_staff %}
+                    <a href="{% url 'student_login' %}" class="hidden sm:flex items-center gap-1.5 px-space-sm py-1.5 rounded-lg bg-surface-container-low border border-outline-variant text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Switch Operational Role">
+                        <span class="material-symbols-outlined text-lg">swap_horiz</span>
+                        <span class="font-label-sm text-label-sm">Student View</span>
+                    </a>
+                {% else %}
+                    <a href="{% url 'teacher_login' %}" class="hidden sm:flex items-center gap-1.5 px-space-sm py-1.5 rounded-lg bg-surface-container-low border border-outline-variant text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Switch Operational Role">
+                        <span class="material-symbols-outlined text-lg">swap_horiz</span>
+                        <span class="font-label-sm text-label-sm">Teacher Login</span>
                     </a>
                 {% endif %}
-                <a href="{% url 'phishing_sandbox' %}" id="nav-sandbox-link" class="text-slate-300 hover:text-cyan-400 transition-colors flex items-center space-x-1.5 py-2">
-                    <span>Phishing Sandbox</span>
-                    <span class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-rose-950 border border-rose-800 text-rose-300">LAB</span>
-                </a>
-                <a href="{% url 'leaderboard_view' %}" id="nav-leaderboard-link" class="text-slate-300 hover:text-amber-400 transition-colors flex items-center space-x-1 py-2">
-                    <span>Leaderboard</span>
-                </a>
-                <a href="{% url 'teacher_dashboard' %}" id="nav-teacher-portal-link" class="text-slate-300 hover:text-purple-400 transition-colors flex items-center space-x-1.5 py-2">
-                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                    <span>Teacher Analytics</span>
-                </a>
-            </nav>
 
-            <!-- User Auth Controls -->
-            <div class="flex items-center space-x-3">
+                <!-- Profile Badge -->
                 {% if current_student %}
-                    <!-- Certificate Quick Link -->
-                    <a href="{% url 'student_certificate' %}" id="nav-btn-certificate" class="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-950/60 border border-purple-800/80 text-purple-300 text-xs font-semibold hover:bg-purple-900/60 transition-colors" title="View Certificate of Cyber Mastery">
-                        <span>🎓</span>
-                        <span>Certificate</span>
-                    </a>
-
-                    <!-- Student Pill Profile -->
-                    <div class="flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs">
-                        <div class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold font-mono">
-                            {{ current_student.name|slice:":1"|upper }}
+                    <div class="flex items-center gap-space-sm pl-space-sm pr-space-md py-1 rounded-full bg-surface-container-lowest border border-outline-variant shadow-sm">
+                        <div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs">
+                            {{ current_student.name|slice:":2"|upper }}
                         </div>
-                        <div class="hidden sm:block text-left">
-                            <p class="font-semibold text-slate-200 leading-tight">{{ current_student.name }}</p>
-                            <p class="text-[11px] text-slate-400">{{ current_student.class_name }} • Roll #{{ current_student.roll_number }}</p>
+                        <div class="flex flex-col text-left">
+                            <span class="font-label-md text-label-md font-semibold text-on-surface leading-tight">{{ current_student.name }}</span>
+                            <span class="font-label-sm text-label-sm text-on-surface-variant leading-tight">{{ current_student.class_name }} • Cadet #{{ current_student.roll_number }}</span>
                         </div>
-                        <a href="{% url 'student_logout' %}" id="btn-student-logout" class="ml-2 p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors" title="Exit Student Session">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
+                        <a href="{% url 'student_logout' %}" id="btn-student-logout" class="ml-1 text-on-surface-variant hover:text-error transition-colors" title="Sign Out">
+                            <span class="material-symbols-outlined text-base">logout</span>
                         </a>
                     </div>
                 {% elif user.is_authenticated and user.is_staff %}
-                    <!-- Educator Pill Profile -->
-                    <div class="flex items-center space-x-2 bg-purple-950/40 border border-purple-800/80 rounded-xl px-3 py-1.5 text-xs">
-                        <div class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">
-                            T
+                    <div class="flex items-center gap-space-sm pl-space-sm pr-space-md py-1 rounded-full bg-surface-container-lowest border border-outline-variant shadow-sm">
+                        <div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xs">
+                            EDU
                         </div>
-                        <div class="hidden sm:block text-left">
-                            <p class="font-semibold text-purple-200 leading-tight">{{ user.username }}</p>
-                            <p class="text-[11px] text-purple-400">Teacher / Admin</p>
+                        <div class="flex flex-col text-left">
+                            <span class="font-label-md text-label-md font-semibold text-on-surface leading-tight">{{ user.username }}</span>
+                            <span class="font-label-sm text-label-sm text-secondary leading-tight">Teacher / Staff</span>
                         </div>
-                        <a href="{% url 'teacher_logout' %}" id="btn-teacher-logout" class="ml-2 p-1.5 text-purple-300 hover:text-rose-400 hover:bg-purple-900/40 rounded-lg transition-colors" title="Log Out">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
+                        <a href="{% url 'teacher_logout' %}" id="btn-teacher-logout" class="ml-1 text-on-surface-variant hover:text-error transition-colors" title="Log Out">
+                            <span class="material-symbols-outlined text-base">logout</span>
                         </a>
                     </div>
                 {% else %}
-                    <!-- Guest Login Links -->
-                    <a href="{% url 'student_login' %}" id="nav-btn-student-login" class="cyber-btn-primary px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-950 shadow-md flex items-center space-x-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                        <span>Student Login</span>
-                    </a>
-                    <a href="{% url 'teacher_login' %}" id="nav-btn-teacher-login" class="hidden sm:inline-flex px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-300 hover:text-white bg-slate-900 border border-slate-700/80 hover:border-slate-600 transition-all">
-                        Teacher Login
+                    <a href="{% url 'student_login' %}" class="px-space-md py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary-container transition-all shadow-sm">
+                        Student Sign-In
                     </a>
                 {% endif %}
+
             </div>
 
         </div>
     </header>
 
-    <!-- Global Toast / Django Messages -->
-    <div class="max-w-4xl mx-auto px-4 mt-4 w-full">
+    <!-- Global Messages Toast -->
+    <div class="max-w-4xl mx-auto px-4 mt-20 w-full z-40">
         {% if messages %}
             {% for message in messages %}
-                <div class="mb-3 px-4 py-3 rounded-xl text-sm flex items-center justify-between border 
-                    {% if message.tags == 'error' %}bg-rose-950/60 border-rose-800 text-rose-200
-                    {% elif message.tags == 'warning' %}bg-amber-950/60 border-amber-800 text-amber-200
-                    {% elif message.tags == 'success' %}bg-emerald-950/60 border-emerald-800 text-emerald-200
-                    {% else %}bg-cyan-950/60 border-cyan-800 text-cyan-200{% endif %}" role="alert">
-                    <div class="flex items-center space-x-2">
-                        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>{{ message }}</span>
+                <div class="mb-3 px-4 py-3 rounded-lg text-sm flex items-center justify-between border shadow-sm
+                    {% if message.tags == 'error' %}bg-error-container text-on-error-container border-error/30
+                    {% elif message.tags == 'warning' %}bg-tertiary-fixed text-on-tertiary-fixed border-tertiary/30
+                    {% elif message.tags == 'success' %}bg-secondary-container text-on-secondary-container border-secondary/30
+                    {% else %}bg-surface-container-high text-on-surface border-outline-variant{% endif %}" role="alert">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-base">info</span>
+                        <span class="font-medium">{{ message }}</span>
                     </div>
                     <button type="button" onclick="this.parentElement.remove()" class="text-xs opacity-70 hover:opacity-100">&times;</button>
                 </div>
@@ -239,35 +259,25 @@
         {% endif %}
     </div>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <!-- Main Content Canvas -->
+    <main class="w-full pt-16 bg-background min-h-screen">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Modern Dark Footer -->
-    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950/90 py-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div class="flex items-center space-x-3 text-sm text-slate-400">
-                <div class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">
-                    🛡️
-                </div>
-                <div>
-                    <p class="font-display font-semibold text-slate-200">CyberSimulator Platform</p>
-                    <p class="text-xs text-slate-500">Interactive Cybersecurity Education with Azure AI Foundry</p>
-                </div>
+    <!-- Institutional Footer -->
+    <footer class="w-full bg-surface-container-lowest border-t border-outline-variant py-space-lg mt-auto">
+        <div class="w-full px-4 sm:px-8 flex flex-col md:flex-row items-center justify-between gap-space-md">
+            <div class="flex items-center gap-space-md flex-wrap">
+                <span class="font-label-sm text-label-sm text-on-surface-variant">© 2025 CyberShield Academy • Institutional Deployment</span>
+                <span class="font-label-sm text-label-sm text-outline-variant">|</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant">NIST SP 800-181 Certified K-12 Framework</span>
+                <span class="font-label-sm text-label-sm text-outline-variant">|</span>
+                <span class="font-label-sm text-label-sm text-secondary font-medium">CyberSimulator Engine</span>
             </div>
-
-            <div class="flex items-center space-x-6 text-xs text-slate-400">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-cyan-950/60 border border-cyan-800/50 text-cyan-300 font-mono">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-2"></span>
-                    CyberQuizAgent (GPT-5) Connected
-                </span>
-                <span>•</span>
-                <span>Designed for Students & Teachers</span>
-            </div>
-
-            <div class="text-xs text-slate-500">
-                &copy; 2026 CyberSimulator. Safe digital habits for everyone.
+            <div class="flex items-center gap-space-lg">
+                <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface" href="{% url 'home' %}">Safe Harbor Policy</a>
+                <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface" href="{% url 'home' %}">Classroom Guidelines</a>
+                <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface" href="{% url 'health_check' %}">System Status</a>
             </div>
         </div>
     </footer>

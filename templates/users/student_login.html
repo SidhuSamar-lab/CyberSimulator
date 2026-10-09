@@ -1,85 +1,235 @@
 {% extends 'base.html' %}
 
-{% block title %}Student Login | CyberSimulator{% endblock %}
+{% block title %}Student Sign-In | CyberShield Academy{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto py-8">
-    <div class="glass-card rounded-2xl p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
-        <!-- Ambient background lights -->
-        <div class="absolute -top-16 -right-16 w-36 h-36 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
-        <div class="absolute -bottom-16 -left-16 w-36 h-36 bg-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-        <!-- Header -->
-        <div class="text-center space-y-2 mb-8">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center mx-auto shadow-lg shadow-cyan-500/30">
-                <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-            </div>
-            <h1 class="font-display font-bold text-2xl text-white">Student Sign-In</h1>
-            <p class="text-xs text-slate-400">
-                No password needed! Simply enter your details to launch your quiz lab.
-            </p>
-        </div>
-
-        <!-- Form -->
-        <form method="POST" action="{% url 'student_login' %}" class="space-y-5" id="student-login-form">
-            {% csrf_token %}
+<div class="min-h-[calc(100vh-8rem)] w-full flex items-center justify-center p-gutter">
+    <div class="flex flex-col w-full items-center justify-center py-6 px-4">
+        
+        <!-- Main Card Container -->
+        <div class="relative w-full max-w-xl flex flex-col items-center">
             
-            <div>
-                <label for="{{ form.name.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-                    {{ form.name.label }}
-                </label>
-                {{ form.name }}
-                {% if form.name.errors %}
-                    <p class="text-xs text-rose-400 mt-1">{{ form.name.errors.0 }}</p>
-                {% endif %}
-            </div>
+            <!-- Top Institution Identifier -->
+            <header class="w-full flex flex-col items-center text-center mb-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low mb-3 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-secondary"></span>
+                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Active Session • Term 2 (2024–2025)</span>
+                </div>
+                <div class="flex items-center gap-3 justify-center mb-2">
+                    <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-md">
+                        <span class="material-symbols-outlined text-[24px]">verified_user</span>
+                    </div>
+                    <div class="text-left">
+                        <h1 class="font-headline-md text-headline-md text-on-surface tracking-tight leading-none">CyberShield Academy</h1>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant font-medium mt-0.5">Oakridge High School Safety Portal</p>
+                    </div>
+                </div>
+            </header>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label for="{{ form.class_name.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-                        {{ form.class_name.label }}
-                    </label>
-                    {{ form.class_name }}
-                    {% if form.class_name.errors %}
-                        <p class="text-xs text-rose-400 mt-1">{{ form.class_name.errors.0 }}</p>
-                    {% endif %}
+            <!-- Main Sign-In Card -->
+            <div class="w-full bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden border border-outline-variant/40">
+                
+                <!-- Decorative Top Accent Bar -->
+                <div class="h-1.5 w-full bg-primary-container"></div>
+                
+                <div class="p-6 md:p-8 flex flex-col gap-6">
+                    
+                    <!-- Title & Welcoming Directive -->
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex items-center justify-between">
+                            <h2 class="font-headline-md text-headline-md text-on-surface">Student Sign-In</h2>
+                            <span class="inline-flex items-center gap-1 text-on-secondary-container bg-secondary-container/40 px-2.5 py-0.5 rounded-full font-label-sm text-label-sm font-semibold">
+                                <span class="material-symbols-outlined text-[15px]" style="font-variation-settings: 'FILL' 1;">shield</span> Lab Verified
+                            </span>
+                        </div>
+                        <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                            Welcome, cadet! Enter your classroom details to continue your safety badge training and practice simulations.
+                        </p>
+                    </div>
+
+                    <!-- Student Form submitting to Django POST -->
+                    <form method="POST" action="{% url 'student_login' %}" class="flex flex-col gap-5" id="studentSignInForm">
+                        {% csrf_token %}
+
+                        <!-- Input 1: Student Full Name -->
+                        <div class="flex flex-col gap-2">
+                            <label class="font-label-md text-label-md font-semibold text-on-surface flex items-center justify-between" for="studentName">
+                                <span>Student Full Name</span>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant font-normal">First & Last</span>
+                            </label>
+                            <div class="relative flex items-center">
+                                <span class="material-symbols-outlined absolute left-3.5 text-outline text-[20px] pointer-events-none">person</span>
+                                <input class="w-full h-11 pl-11 pr-4 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest border border-outline-variant/50 focus:border-primary shadow-sm transition-all" 
+                                       id="studentName" 
+                                       name="name" 
+                                       placeholder="e.g. Alex Chen" 
+                                       required="" 
+                                       type="text"/>
+                            </div>
+                        </div>
+
+                        <!-- Input 2: Grade & Homeroom Section with Quick Selectors -->
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center justify-between">
+                                <label class="font-label-md text-label-md font-semibold text-on-surface" for="classroomSelect">Grade & Section</label>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">Homeroom</span>
+                            </div>
+                            <div class="relative flex items-center">
+                                <span class="material-symbols-outlined absolute left-3.5 text-outline text-[20px] pointer-events-none">meeting_room</span>
+                                <select class="w-full h-11 pl-11 pr-10 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface appearance-none focus:outline-none focus:bg-surface-container-lowest border border-outline-variant/50 focus:border-primary shadow-sm transition-all cursor-pointer font-medium" 
+                                        id="classroomSelect" 
+                                        name="class_name">
+                                    <option selected="" value="Grade 8-B">Grade 8 - Section B (Mr. Vance)</option>
+                                    <option value="Grade 7-A">Grade 7 - Section A (Ms. Alvarez)</option>
+                                    <option value="Grade 8-A">Grade 8 - Section A (Dr. Thorne)</option>
+                                    <option value="Grade 9-C">Grade 9 - Section C (Coach Ramirez)</option>
+                                    <option value="Grade 9-A">Grade 9 - Section A</option>
+                                    <option value="Grade 9-B">Grade 9 - Section B</option>
+                                    <option value="Grade 11-A">Grade 11 - Section A</option>
+                                </select>
+                                <span class="material-symbols-outlined absolute right-3.5 text-outline text-[20px] pointer-events-none">expand_more</span>
+                            </div>
+
+                            <!-- Quick Pill Presets -->
+                            <div class="flex items-center gap-1.5 flex-wrap pt-1">
+                                <span class="font-label-sm text-label-sm text-on-surface-variant mr-1">Quick pick:</span>
+                                <button class="quick-pill px-2.5 py-1 rounded-md bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition" onclick="setGradeSelect('Grade 7-A')" type="button">7-A</button>
+                                <button class="quick-pill px-2.5 py-1 rounded-md bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition" onclick="setGradeSelect('Grade 8-A')" type="button">8-A</button>
+                                <button class="quick-pill px-2.5 py-1 rounded-md bg-primary-container text-on-primary font-label-sm text-label-sm font-semibold transition shadow-sm" onclick="setGradeSelect('Grade 8-B')" type="button">8-B (Vance)</button>
+                                <button class="quick-pill px-2.5 py-1 rounded-md bg-surface-container text-on-surface font-label-sm text-label-sm hover:bg-surface-container-high transition" onclick="setGradeSelect('Grade 9-C')" type="button">9-C</button>
+                            </div>
+                        </div>
+
+                        <!-- Input 3: Class Roll Number -->
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center justify-between">
+                                <label class="font-label-md text-label-md font-semibold text-on-surface" for="rollNumber">Class Roll Number</label>
+                                <span class="font-label-sm text-label-sm text-on-surface-variant">2-digit seat ID</span>
+                            </div>
+                            <div class="relative flex items-center">
+                                <span class="material-symbols-outlined absolute left-3.5 text-outline text-[20px] pointer-events-none">tag</span>
+                                <input class="w-full h-11 pl-11 pr-4 bg-surface-container-low rounded-lg font-headline-md text-headline-md tracking-wider text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest border border-outline-variant/50 focus:border-primary shadow-sm transition-all" 
+                                       id="rollNumber" 
+                                       name="roll_number" 
+                                       max="60" 
+                                       min="1" 
+                                       placeholder="24" 
+                                       required="" 
+                                       type="number"/>
+                            </div>
+                        </div>
+
+                        <!-- Explanatory Helper Notice Banner -->
+                        <div class="bg-surface-container-low p-4 rounded-lg flex items-start gap-3 border border-outline-variant/30">
+                            <div class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                                <span class="material-symbols-outlined text-[16px]">info</span>
+                            </div>
+                            <div class="flex flex-col gap-0.5">
+                                <p class="font-label-md text-label-md font-semibold text-on-surface">No password needed for students</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant leading-relaxed">
+                                    Your homeroom teacher automatically validates your badges, safety achievements, and module completions through your class roll number.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Primary Sign-In Submission -->
+                        <button class="w-full h-12 bg-primary-container text-on-primary rounded-lg font-headline-md text-headline-md font-semibold flex items-center justify-center gap-2 shadow-md hover:opacity-95 active:scale-[0.99] transition duration-150 cursor-pointer" 
+                                id="signInBtn" 
+                                type="submit">
+                            <span>Enter Safety Lab & Dashboard</span>
+                            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                        </button>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="relative flex items-center justify-center my-1">
+                        <div class="w-full h-[1px] bg-surface-container-highest"></div>
+                        <span class="absolute bg-surface-container-lowest px-3 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-medium">Alternative Options</span>
+                    </div>
+
+                    <!-- Secondary Support & SSO Actions -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+                        <button class="inline-flex items-center gap-1.5 font-label-sm text-label-sm font-semibold text-on-surface-variant hover:text-on-surface transition" onclick="toggleHelpModal()" type="button">
+                            <span class="material-symbols-outlined text-[16px]">help</span>
+                            <span>Forgot your roll number?</span>
+                        </button>
+                        <div class="inline-flex items-center gap-2">
+                            <span class="font-label-sm text-label-sm text-on-surface-variant">Staff Portal:</span>
+                            <a href="{% url 'teacher_login' %}" id="link-to-teacher-login" class="px-2.5 py-1 rounded bg-surface-container hover:bg-surface-container-high transition inline-flex items-center gap-1 text-on-surface font-label-sm text-label-sm font-medium">
+                                <span class="material-symbols-outlined text-[14px]">school</span>
+                                <span>Teacher Analytics</span>
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div>
-                    <label for="{{ form.roll_number.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
-                        {{ form.roll_number.label }}
-                    </label>
-                    {{ form.roll_number }}
-                    {% if form.roll_number.errors %}
-                        <p class="text-xs text-rose-400 mt-1">{{ form.roll_number.errors.0 }}</p>
-                    {% endif %}
+                <!-- Card Base Institutional Micro-Badge -->
+                <div class="bg-surface-container-low px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left border-t border-outline-variant/30">
+                    <div class="flex items-center gap-1.5 text-on-surface-variant">
+                        <span class="material-symbols-outlined text-[16px] text-secondary">verified</span>
+                        <span class="font-label-sm text-label-sm">Classroom Safe Mode Active</span>
+                    </div>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant">
+                        COPPA & FERPA Aligned • Student Data Protected
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Modals & Feedback Alerts (Hidden by Default) -->
+            <div class="hidden w-full mt-4 p-4 rounded-xl bg-surface-container-lowest shadow-lg border border-outline-variant/40" id="rollHelpModal">
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-[20px]">badge</span>
+                        <h4 class="font-headline-md text-headline-md text-on-surface">Finding Your Roll Number</h4>
+                    </div>
+                    <button class="text-on-surface-variant hover:text-on-surface" onclick="toggleHelpModal()" type="button">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-2 leading-relaxed">
+                    Your roll number is the number written on your classroom desk cubby tag and on your Oakridge Middle School assignment folders. If unsure, raise your hand and ask your homeroom teacher before starting.
+                </p>
+            </div>
+
+            <!-- Active Safety Badges Preview Banner -->
+            <div class="w-full mt-6 bg-surface-container-low rounded-xl p-4 shadow-sm flex items-center justify-between border border-outline-variant/30">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-primary-container">
+                        <span class="material-symbols-outlined text-[20px]">workspace_premium</span>
+                    </div>
+                    <div>
+                        <h5 class="font-label-md text-label-md font-semibold text-on-surface">Term 2 Cyber Challenge</h5>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant">Spotting Phishing Emails & Password Fortress</p>
+                    </div>
+                </div>
+                <div class="hidden sm:flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+                    <span class="font-label-sm text-label-sm font-semibold text-secondary">Ready to Unlock</span>
                 </div>
             </div>
 
-            <div class="pt-2">
-                <button type="submit" id="btn-submit-student-login" class="cyber-btn-primary w-full py-3.5 px-4 rounded-xl font-bold text-slate-950 text-sm shadow-lg shadow-cyan-500/20 hover:scale-[1.01] transition-transform flex items-center justify-center space-x-2">
-                    <span>Enter Quiz Lab</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                </button>
-            </div>
-        </form>
-
-        <!-- Footer / Teacher link -->
-        <div class="mt-8 pt-6 border-t border-slate-800 text-center space-y-2">
-            <p class="text-xs text-slate-500">
-                Are you an educator or school administrator?
-            </p>
-            <a href="{% url 'teacher_login' %}" id="link-to-teacher-login" class="text-xs text-purple-400 hover:text-purple-300 font-semibold inline-flex items-center space-x-1">
-                <span>Access Teacher Analytics Portal</span>
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-            </a>
         </div>
+
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function setGradeSelect(val) {
+        const select = document.getElementById('classroomSelect');
+        if (select) {
+            select.value = val;
+        }
+    }
+
+    function toggleHelpModal() {
+        const modal = document.getElementById('rollHelpModal');
+        if (modal) {
+            modal.classList.toggle('hidden');
+        }
+    }
+</script>
 {% endblock %}

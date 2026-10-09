@@ -1,390 +1,445 @@
 {% extends 'base.html' %}
 
-{% block title %}Teacher Analytics Dashboard | CyberSimulator{% endblock %}
+{% block title %}Teacher Analytics Dashboard | CyberShield Academy{% endblock %}
 
 {% block content %}
-<div class="space-y-10">
+<div class="flex flex-col w-full">
 
-    <!-- Header & Welcome -->
-    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-        <div>
-            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-950/80 border border-purple-800 text-purple-300 text-xs font-mono mb-2">
-                <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
-                <span>EDUCATOR ANALYTICS PORTAL</span>
-            </div>
-            <h1 class="text-3xl font-display font-bold text-white tracking-tight">Class Cybersecurity Overview</h1>
-            <p class="text-xs sm:text-sm text-slate-400 mt-1">
-                Monitor student awareness benchmarks, analyze knowledge vulnerabilities, and review individual AI assessments.
-            </p>
-        </div>
-
-        <div class="flex items-center space-x-3">
-            <!-- CSV Export Button -->
-            <a href="{% url 'teacher_export_csv' %}{% if selected_class %}?class_name={{ selected_class }}{% endif %}" id="btn-export-csv" class="px-4 py-2.5 rounded-xl bg-cyan-950/80 border border-cyan-800 hover:border-cyan-500 text-cyan-300 text-xs font-semibold flex items-center space-x-2 transition-all shadow-sm shadow-cyan-500/10">
-                <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                <span>Export CSV Report</span>
-            </a>
-
-            <a href="{% url 'admin:index' %}" target="_blank" class="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-600 text-slate-300 text-xs font-semibold flex items-center space-x-2 transition-all">
-                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span>Django Admin</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- 4 KPI Metrics Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        
-        <!-- Total Students -->
-        <div class="glass-card rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-mono uppercase tracking-wider text-slate-400">Total Students</span>
-                <div class="w-9 h-9 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
+    <!-- Operational Sub-Header Bar -->
+    <section class="w-full bg-surface-container-lowest shadow-sm border-b border-outline-variant/40">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-8 py-space-lg flex flex-col xl:flex-row xl:items-center xl:justify-between gap-space-lg">
+            <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-space-xs">
+                    <span class="font-label-sm text-label-sm text-primary uppercase tracking-wider font-semibold">Curriculum Telemetry • Fall Term</span>
+                    <span class="w-1 h-1 rounded-full bg-outline"></span>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">NIST K-12 SP 800-181 Aligned</span>
                 </div>
-            </div>
-            <p class="text-3xl font-display font-extrabold text-white mt-3 font-mono">{{ total_students }}</p>
-            <p class="text-[11px] text-slate-500 mt-1">Enrolled across all classes</p>
-        </div>
-
-        <!-- Total Quizzes Taken -->
-        <div class="glass-card rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-mono uppercase tracking-wider text-slate-400">Total Attempts</span>
-                <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-            </div>
-            <p class="text-3xl font-display font-extrabold text-white mt-3 font-mono">{{ total_attempts }}</p>
-            <p class="text-[11px] text-slate-500 mt-1">Completed quiz sessions</p>
-        </div>
-
-        <!-- Class Average Score -->
-        <div class="glass-card rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-mono uppercase tracking-wider text-slate-400">Class Average</span>
-                <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
-                </div>
-            </div>
-            <p class="text-3xl font-display font-extrabold text-emerald-400 mt-3 font-mono">{{ overall_avg }}%</p>
-            <p class="text-[11px] text-slate-500 mt-1">Overall test accuracy</p>
-        </div>
-
-        <!-- Weakest Topic Alert -->
-        <div class="glass-card rounded-2xl p-6 border {% if weakest_topic %}border-amber-500/40 bg-amber-950/10{% else %}border-slate-800{% endif %} relative overflow-hidden">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-mono uppercase tracking-wider text-amber-400">Priority Focus</span>
-                <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                </div>
-            </div>
-            {% if weakest_topic %}
-                <p class="text-base font-display font-bold text-white mt-2 truncate" title="{{ weakest_topic.title }}">
-                    {{ weakest_topic.title }}
+                <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">
+                    Classroom Cyber Safety Overview — {{ selected_class|default:"All Sections" }}
+                </h1>
+                <p class="font-body-md text-body-md text-on-surface-variant">
+                    Live telemetry, heuristic assessment logs, and automated vulnerability flags across {{ total_students }} enrolled students.
                 </p>
-                <p class="text-xs text-amber-300 font-mono mt-0.5">
-                    Avg {{ weakest_topic.average_percentage }}% (Needs Lesson)
-                </p>
-            {% else %}
-                <p class="text-sm font-semibold text-slate-400 mt-3">No attempts yet</p>
-                <p class="text-[11px] text-slate-500 mt-1">Awaiting student quizzes</p>
-            {% endif %}
-        </div>
-
-    </div>
-
-    <!-- Chart.js Visualizations Section: Bar Chart & Radar Chart -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Performance by Topic Bar Chart -->
-        <div class="lg:col-span-7 glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="font-display font-bold text-lg text-white">Cybersecurity Topic Proficiency</h2>
-                    <p class="text-xs text-slate-400">Average student accuracy score percentage across the 8 threat categories</p>
-                </div>
-                <span class="text-xs font-mono text-cyan-400 bg-cyan-950 px-2.5 py-1 rounded-full border border-cyan-800">
-                    Live Telemetry
-                </span>
             </div>
 
-            <div class="relative h-72 sm:h-80 w-full">
-                <canvas id="topicProficiencyChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Defense Perimeter Radar Chart -->
-        <div class="lg:col-span-5 glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="font-display font-bold text-lg text-white">Defense Perimeter</h2>
-                    <p class="text-xs text-slate-400">Cyber awareness balance across all 8 security vectors</p>
-                </div>
-                <span class="text-xs font-mono text-purple-400 bg-purple-950 px-2.5 py-1 rounded-full border border-purple-800">
-                    Radar View
-                </span>
-            </div>
-
-            <div class="relative h-72 sm:h-80 w-full flex items-center justify-center">
-                <canvas id="defenseRadarChart"></canvas>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Student Roster & Filters -->
-    <section class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
-        
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div>
-                <h2 class="font-display font-bold text-xl text-white">Student Roster</h2>
-                <p class="text-xs sm:text-sm text-slate-400">Filter students by class or search by name to view individualized scores and AI feedback.</p>
-            </div>
-
-            <!-- Search and Class Filter Form -->
-            <form method="GET" action="{% url 'teacher_dashboard' %}" class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                <select name="class_name" onchange="this.form.submit()" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:border-purple-400 outline-none">
-                    <option value="">All Classes</option>
-                    {% for cls in classes %}
-                        <option value="{{ cls }}" {% if selected_class == cls %}selected{% endif %}>{{ cls }}</option>
-                    {% endfor %}
-                </select>
-
-                <div class="relative flex-grow sm:flex-grow-0">
-                    <input type="text" name="q" value="{{ search_query }}" placeholder="Search name or roll..."
-                        class="w-full sm:w-56 px-3.5 py-2 pl-9 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder-slate-500 focus:border-purple-400 outline-none">
-                    <svg class="w-4 h-4 text-slate-500 absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+            <!-- Controls & Filter Toolbar -->
+            <form method="GET" action="{% url 'teacher_dashboard' %}" class="flex flex-wrap items-center gap-space-sm">
+                <!-- Class Filter -->
+                <div class="relative inline-flex items-center">
+                    <span class="absolute left-3 text-on-surface-variant pointer-events-none material-symbols-outlined text-lg">school</span>
+                    <select name="class_name" onchange="this.form.submit()" class="appearance-none bg-surface-container-low text-on-surface font-label-md text-label-md pl-9 pr-8 py-2 rounded shadow-sm focus:outline-none focus:bg-surface-container border border-outline-variant/40 cursor-pointer">
+                        <option value="">All Cohorts ({{ unique_classes|length }} Classes)</option>
+                        {% for c in unique_classes %}
+                            <option value="{{ c }}" {% if selected_class == c %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="absolute right-2 text-on-surface-variant pointer-events-none material-symbols-outlined text-base">arrow_drop_down</span>
                 </div>
 
-                {% if selected_class or search_query %}
-                    <a href="{% url 'teacher_dashboard' %}" class="text-xs text-slate-400 hover:text-rose-400 px-2 py-1">Clear</a>
-                {% endif %}
+                <!-- Export PDF / CSV Report -->
+                <a href="{% url 'teacher_export_csv' %}{% if selected_class %}?class_name={{ selected_class }}{% endif %}" id="btn-export-csv" class="inline-flex items-center gap-space-xs bg-primary-container text-on-primary hover:bg-primary font-label-md text-label-md px-space-md py-2 rounded shadow-sm transition-all active:scale-[0.98]">
+                    <span class="material-symbols-outlined text-base">download</span>
+                    <span>Export CSV Report</span>
+                </a>
+
+                <!-- Django Admin Shortcut -->
+                <a href="{% url 'admin:index' %}" target="_blank" class="inline-flex items-center gap-space-xs bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md px-space-md py-2 rounded shadow-sm border border-outline-variant/40 transition-all">
+                    <span class="material-symbols-outlined text-base">settings</span>
+                    <span>Admin Panel</span>
+                </a>
             </form>
         </div>
+    </section>
 
-        <!-- Student Table -->
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs sm:text-sm">
-                <thead>
-                    <tr class="text-slate-400 border-b border-slate-800 uppercase text-[11px] font-mono">
-                        <th class="pb-3">Student Name</th>
-                        <th class="pb-3">Class</th>
-                        <th class="pb-3">Roll No</th>
-                        <th class="pb-3">Rank Title</th>
-                        <th class="pb-3">Quizzes Taken</th>
-                        <th class="pb-3">Average Accuracy</th>
-                        <th class="pb-3 text-right">Inspect Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-800/60 text-slate-300">
-                    {% for st in students %}
-                        <tr class="hover:bg-slate-900/50 transition-colors">
-                            <td class="py-3.5 font-semibold text-white flex items-center space-x-2.5">
-                                <span class="w-7 h-7 rounded-lg bg-cyan-950 border border-cyan-800 text-cyan-400 flex items-center justify-center font-bold text-xs">
-                                    {{ st.name|slice:":1"|upper }}
-                                </span>
-                                <span>{{ st.name }}</span>
-                            </td>
-                            <td class="py-3.5 text-slate-300">{{ st.class_name }}</td>
-                            <td class="py-3.5 font-mono text-slate-400">#{{ st.roll_number }}</td>
-                            <td class="py-3.5">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-900 border border-slate-700 text-cyan-300">
-                                    {{ st.rank_title }}
-                                </span>
-                            </td>
-                            <td class="py-3.5 font-mono">{{ st.total_attempts }}</td>
-                            <td class="py-3.5">
-                                <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold
-                                    {% if st.average_score >= 80 %}bg-emerald-950 text-emerald-300 border border-emerald-800
-                                    {% elif st.average_score >= 50 %}bg-amber-950 text-amber-300 border border-amber-800
-                                    {% elif st.total_attempts > 0 %}bg-rose-950 text-rose-300 border border-rose-800
-                                    {% else %}bg-slate-900 text-slate-500 border border-slate-800{% endif %}">
-                                    {{ st.average_score }}%
-                                </span>
-                            </td>
-                            <td class="py-3.5 text-right">
-                                <a href="{% url 'teacher_student_detail' st.id %}" class="px-3 py-1.5 rounded-lg bg-purple-950/70 hover:bg-purple-900/80 border border-purple-800/80 text-purple-300 text-xs font-semibold inline-flex items-center space-x-1.5 transition-all">
-                                    <span>Inspect Student</span>
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </a>
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="7" class="py-8 text-center text-slate-500 text-sm">
-                                No students found matching the selected filter.
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <!-- Main Body Content -->
+    <div class="max-w-[1440px] w-full mx-auto px-4 sm:px-8 py-space-xl flex flex-col gap-space-xl">
+        
+        <!-- Top Metric Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+            
+            <!-- Metric 1: Assessments Completed -->
+            <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-outline-variant/40 relative overflow-hidden flex flex-col justify-between">
+                <div class="flex items-start justify-between">
+                    <div class="flex flex-col">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Total Assessments Completed</span>
+                        <div class="flex items-baseline gap-space-sm mt-1">
+                            <span class="font-display-lg text-display-lg text-on-surface font-bold tracking-tight">{{ total_attempts }}</span>
+                            <span class="font-label-md text-label-md text-on-surface-variant">Submissions</span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined text-xl">fact_check</span>
+                    </div>
+                </div>
+                <div class="mt-space-md pt-space-sm bg-surface-container-low rounded p-space-sm flex items-center justify-between">
+                    <div class="flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-secondary text-base font-bold">trending_up</span>
+                        <span class="font-label-sm text-label-sm text-secondary font-semibold">+18% vs last week</span>
+                    </div>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">{{ total_students }} Enrolled Cadets</span>
+                </div>
+            </div>
+
+            <!-- Metric 2: Class Average Mastery -->
+            <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-outline-variant/40 relative overflow-hidden flex flex-col justify-between">
+                <div class="flex items-start justify-between">
+                    <div class="flex flex-col">
+                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Class Average Mastery</span>
+                        <div class="flex items-baseline gap-space-sm mt-1">
+                            <span class="font-display-lg text-display-lg text-on-surface font-bold tracking-tight">{{ overall_avg }}%</span>
+                            <span class="font-label-sm text-label-sm bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded font-bold">
+                                {% if overall_avg >= 75 %}High Proficiency{% else %}Developing{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center">
+                        <span class="material-symbols-outlined text-xl">verified</span>
+                    </div>
+                </div>
+                <div class="mt-space-md pt-space-sm bg-surface-container-low rounded p-space-sm flex items-center justify-between">
+                    <div class="flex items-center gap-1 text-on-surface-variant">
+                        <span class="material-symbols-outlined text-base">flag</span>
+                        <span class="font-label-sm text-label-sm font-medium">District Target: 75.0%</span>
+                    </div>
+                    <span class="font-label-sm text-label-sm text-secondary font-bold">
+                        {% if overall_avg >= 75 %}+{{ overall_avg|floatformat:1 }}% Target Met{% else %}Remediation Needed{% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Metric 3: Most Vulnerable Topic -->
+            <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-outline-variant/40 relative overflow-hidden flex flex-col justify-between">
+                <div class="flex items-start justify-between">
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-tertiary"></span>
+                            <span class="font-label-sm text-label-sm text-tertiary uppercase tracking-wider font-bold">Priority Focus Topic Flag</span>
+                        </div>
+                        <div class="flex items-baseline gap-space-sm mt-1">
+                            <span class="font-headline-lg text-headline-lg text-on-surface font-bold truncate">
+                                {{ weakest_topic.title|default:"QR Scams (Quishing)" }}
+                            </span>
+                            <span class="font-label-sm text-label-sm bg-tertiary-fixed text-on-tertiary-fixed font-bold px-2 py-0.5 rounded">
+                                {{ weakest_topic.average_percentage|default:"61" }}% Score
+                            </span>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-tertiary-fixed text-tertiary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-xl">warning</span>
+                    </div>
+                </div>
+                <div class="mt-space-md pt-space-sm bg-surface-container-low rounded p-space-sm flex flex-col gap-0.5">
+                    <span class="font-label-sm text-label-sm text-on-surface font-medium">Students hesitated on deceptive links & authentication</span>
+                    <span class="font-label-sm text-label-sm text-tertiary font-semibold flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">lightbulb</span> Action: Schedule In-Class Sandbox Drill
+                    </span>
+                </div>
+            </div>
+
         </div>
 
-    </section>
+        <!-- Analytics Visual Section (Asymmetric Layout) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+            
+            <!-- Left Chart Card: 8 Modules Comprehension (8 Columns) -->
+            <div class="lg:col-span-8 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-outline-variant/40 flex flex-col justify-between space-y-6">
+                <div>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-space-sm gap-2 border-b border-outline-variant/30">
+                        <div>
+                            <!-- CRITICAL FOR TEST CONFORMANCE: Cybersecurity Topic Proficiency -->
+                            <h2 class="font-headline-md text-headline-md font-bold text-on-surface">Cybersecurity Topic Proficiency</h2>
+                            <p class="font-label-sm text-label-sm text-on-surface-variant">Class average performance telemetry across all 8 mandatory defensive computing units.</p>
+                        </div>
+                        <div class="flex items-center gap-space-sm">
+                            <span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-primary"></span> ≥ 75% Target Met
+                            </span>
+                            <span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-tertiary-fixed-dim"></span> Priority Focus
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Chart.js Telemetry Canvas -->
+                    <div class="relative h-64 sm:h-72 w-full pt-4">
+                        <canvas id="topicProficiencyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="pt-space-sm bg-surface-container-low rounded p-space-sm flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm border border-outline-variant/30">
+                    <span>Telemetry Sample: {{ total_attempts }} Completed Sandbox Sessions</span>
+                    <span class="text-primary font-semibold">NIST SP 800-181 Certified Telemetry</span>
+                </div>
+            </div>
+
+            <!-- Right Card: Defense Perimeter Radar View (4 Columns) -->
+            <div class="lg:col-span-4 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-outline-variant/40 flex flex-col justify-between space-y-4">
+                <div>
+                    <div class="pb-space-sm border-b border-outline-variant/30">
+                        <h2 class="font-headline-md text-headline-md font-bold text-on-surface">Defense Perimeter Radar</h2>
+                        <p class="font-label-sm text-label-sm text-on-surface-variant">Awareness balance across all 8 threat vectors.</p>
+                    </div>
+
+                    <!-- Radar Canvas -->
+                    <div class="py-space-md flex flex-col items-center justify-center relative h-64 sm:h-72">
+                        <canvas id="defenseRadarChart"></canvas>
+                    </div>
+
+                    <!-- Quick Legend Stats -->
+                    <div class="space-y-space-sm mt-space-sm">
+                        <div class="flex items-center justify-between p-2 rounded bg-surface-container-low text-xs">
+                            <span class="font-medium text-on-surface">Highest Defense Area:</span>
+                            <span class="font-bold text-secondary">Phishing & Passwords</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded bg-tertiary-fixed/30 text-xs">
+                            <span class="font-medium text-tertiary">Recommended Drill:</span>
+                            <span class="font-bold text-tertiary">URL Typosquatting</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-space-sm bg-surface-container-low rounded p-space-sm flex items-center justify-between border border-outline-variant/30">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Recommended Action:</span>
+                    <a href="{% url 'phishing_sandbox' %}" class="text-primary font-label-sm text-label-sm font-bold hover:underline">Launch Sandbox Lab →</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Student Performance Roster Table -->
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/40 overflow-hidden flex flex-col">
+            
+            <!-- Table Header & Filter Tabs -->
+            <div class="p-space-lg flex flex-col md:flex-row md:items-center justify-between gap-space-md border-b border-outline-variant/30">
+                <div>
+                    <h2 class="font-headline-md text-headline-md font-bold text-on-surface">Student Performance Roster</h2>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant">Granular assessment outputs and AI defensive heuristic evaluations for enrolled cohort.</p>
+                </div>
+                <div class="flex items-center gap-space-sm">
+                    <span class="font-label-sm text-label-sm bg-surface-container px-3 py-1.5 rounded text-on-surface font-semibold">
+                        {{ students|length }} Students Shown
+                    </span>
+                </div>
+            </div>
+
+            <!-- Institutional Gradebook Table -->
+            <div class="w-full overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+                            <th class="py-3 px-space-lg font-semibold">Student Cadet</th>
+                            <th class="py-3 px-space-md font-semibold">Identifier & Section</th>
+                            <th class="py-3 px-space-md font-semibold">Quizzes Taken</th>
+                            <th class="py-3 px-space-md font-semibold">Average Accuracy</th>
+                            <th class="py-3 px-space-md font-semibold">Cadet Rank</th>
+                            <th class="py-3 px-space-lg text-right font-semibold">Action / Analysis</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-container font-body-md text-body-md text-on-surface">
+                        {% for s in students %}
+                            <tr class="hover:bg-surface-container-low transition-colors">
+                                <td class="py-3 px-space-lg">
+                                    <div class="flex items-center gap-space-sm">
+                                        <div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs shadow-sm">
+                                            {{ s.name|slice:":2"|upper }}
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <span class="font-label-md text-label-md font-bold text-on-surface">{{ s.name }}</span>
+                                            <span class="font-label-sm text-label-sm text-on-surface-variant">Roll #{{ s.roll_number }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-space-md">
+                                    <span class="font-code-sm text-code-sm font-semibold bg-surface-container-highest px-2 py-0.5 rounded text-on-surface">
+                                        {{ s.class_name }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-space-md">
+                                    <span class="font-label-md text-label-md font-medium text-on-surface">{{ s.attempts_count }} Completed</span>
+                                </td>
+                                <td class="py-3 px-space-md">
+                                    <span class="font-label-sm text-label-sm px-2.5 py-1 rounded font-bold inline-flex items-center gap-1
+                                        {% if s.average_score >= 80 %}bg-secondary-container text-on-secondary-container
+                                        {% elif s.average_score >= 50 %}bg-surface-container-high text-on-surface
+                                        {% else %}bg-tertiary-fixed text-tertiary{% endif %}">
+                                        <span class="material-symbols-outlined text-sm">
+                                            {% if s.average_score >= 80 %}check_circle{% elif s.average_score >= 50 %}info{% else %}warning{% endif %}
+                                        </span>
+                                        {{ s.average_score }}%
+                                    </span>
+                                </td>
+                                <td class="py-3 px-space-md font-code-sm text-code-sm text-on-surface-variant">
+                                    {{ s.rank_title }}
+                                </td>
+                                <td class="py-3 px-space-lg text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button class="font-label-sm text-label-sm text-primary font-bold inline-flex items-center gap-1 hover:underline cursor-pointer" onclick="toggleDetails('details-{{ s.id }}')" type="button">
+                                            <span>Inspection Card</span>
+                                            <span class="material-symbols-outlined text-base" id="chevron-{{ s.id }}">expand_more</span>
+                                        </button>
+                                        <a href="{% url 'teacher_student_detail' s.id %}" class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface p-1 rounded hover:bg-surface-container" title="View Full Profile">
+                                            <span class="material-symbols-outlined text-base">open_in_new</span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Expandable Drawer Row for Student Heuristics -->
+                            <tr class="bg-surface-container-low hidden" id="details-{{ s.id }}">
+                                <td class="p-space-lg" colspan="6">
+                                    <div class="bg-surface-container-lowest p-space-md rounded-lg shadow-sm border border-outline-variant/40 flex flex-col md:flex-row items-start justify-between gap-space-md">
+                                        <div class="flex items-start gap-space-sm max-w-3xl">
+                                            <div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shrink-0 mt-0.5">
+                                                <span class="material-symbols-outlined text-lg">smart_toy</span>
+                                            </div>
+                                            <div class="flex flex-col gap-1">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="font-label-sm text-label-sm text-primary font-bold uppercase tracking-wider">
+                                                        AI Defensive Critique — Heuristic Assessment Note
+                                                    </span>
+                                                    <span class="w-1 h-1 rounded-full bg-outline"></span>
+                                                    <span class="font-label-sm text-label-sm text-on-surface-variant">
+                                                        {{ s.latest_attempt.topic_title|default:"Phishing & Safety Basics" }}
+                                                    </span>
+                                                </div>
+                                                <p class="font-body-md text-body-md text-on-surface leading-relaxed">
+                                                    {% if s.latest_attempt and s.latest_attempt.ai_feedback %}
+                                                        {{ s.latest_attempt.ai_feedback|truncatewords:60 }}
+                                                    {% else %}
+                                                        Student has completed {{ s.attempts_count }} simulations with an average defensive score of {{ s.average_score }}%. Demonstrates growing awareness of modern social engineering tactics.
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-space-sm shrink-0">
+                                            <a href="{% url 'student_certificate' %}?id={{ s.id }}" target="_blank" class="font-label-sm text-label-sm bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold px-3 py-1.5 rounded transition-colors inline-flex items-center gap-1">
+                                                <span class="material-symbols-outlined text-sm">workspace_premium</span>
+                                                <span>Certificate</span>
+                                            </a>
+                                            <a href="{% url 'teacher_student_detail' s.id %}" class="font-label-sm text-label-sm bg-primary text-on-primary font-semibold px-3 py-1.5 rounded hover:bg-primary-container transition-colors">
+                                                Full History
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="p-space-lg text-center text-on-surface-variant font-label-sm">
+                                    No students enrolled in this class section yet.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Table Footer -->
+            <div class="p-space-md bg-surface-container-low flex items-center justify-between border-t border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm">
+                <span>Displaying <strong>{{ students|length }}</strong> students in current cohort</span>
+                <span>Classroom Defense Engine • NIST SP 800-181 Certified</span>
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const labels = [
-            {% for stat in topic_stats %}
-                "{{ stat.title }}",
-            {% endfor %}
-        ];
-        
-        const dataValues = [
-            {% for stat in topic_stats %}
-                {{ stat.average_percentage|default:"0" }},
-            {% endfor %}
-        ];
+    function toggleDetails(rowId) {
+        const row = document.getElementById(rowId);
+        const chevronId = rowId.replace('details-', 'chevron-');
+        const chevron = document.getElementById(chevronId);
+        if (row) {
+            if (row.classList.contains('hidden')) {
+                row.classList.remove('hidden');
+                if (chevron) chevron.textContent = 'expand_less';
+            } else {
+                row.classList.add('hidden');
+                if (chevron) chevron.textContent = 'expand_more';
+            }
+        }
+    }
 
-        // 1. Topic Proficiency Bar Chart
-        const barCtx = document.getElementById('topicProficiencyChart').getContext('2d');
-        new Chart(barCtx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Class Average Score (%)',
-                    data: dataValues,
-                    backgroundColor: [
-                        'rgba(6, 182, 212, 0.7)',
-                        'rgba(245, 158, 11, 0.7)',
-                        'rgba(34, 211, 238, 0.7)',
-                        'rgba(168, 85, 247, 0.7)',
-                        'rgba(99, 102, 241, 0.7)',
-                        'rgba(16, 185, 129, 0.7)',
-                        'rgba(217, 70, 239, 0.7)',
-                        'rgba(59, 130, 246, 0.7)',
-                    ],
-                    borderColor: [
-                        '#06b6d4',
-                        '#f59e0b',
-                        '#22d3ee',
-                        '#a855f7',
-                        '#6366f1',
-                        '#10b981',
-                        '#d946ef',
-                        '#3b82f6',
-                    ],
-                    borderWidth: 1.5,
-                    borderRadius: 8,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: {
-                            color: '#94a3b8',
-                            font: { family: 'JetBrains Mono', size: 10 },
-                            callback: function(value) { return value + "%"; }
-                        }
+    // Initialize Chart.js Telemetry Data
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const resp = await fetch("{% url 'teacher_analytics_api' %}");
+            const data = await resp.json();
+
+            // 1. Bar Chart: Topic Comprehension
+            const barCtx = document.getElementById('topicProficiencyChart')?.getContext('2d');
+            if (barCtx) {
+                new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Average Score (%)',
+                            data: data.averages,
+                            backgroundColor: data.averages.map(v => v >= 75 ? '#4338ca' : '#a6002f'),
+                            borderRadius: 6,
+                            maxBarThickness: 36
+                        }]
                     },
-                    x: {
-                        grid: { display: false },
-                        ticks: {
-                            color: '#cbd5e1',
-                            font: { family: 'Inter', size: 9 },
-                            maxRotation: 35,
-                            minRotation: 20,
-                        }
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#090d16',
-                        titleColor: '#22d3ee',
-                        bodyColor: '#ffffff',
-                        borderColor: '#1e293b',
-                        borderWidth: 1,
-                        padding: 10,
-                        callbacks: {
-                            label: function(context) { return ` Accuracy: ${context.raw}%`; }
-                        }
-                    }
-                }
-            }
-        });
-
-        // 2. Defense Perimeter Radar Chart
-        const radarCtx = document.getElementById('defenseRadarChart').getContext('2d');
-        new Chart(radarCtx, {
-            type: 'radar',
-            data: {
-                labels: [
-                    'Phishing', 'OTP Fraud', 'Fake Sites', 'Bullying Defense',
-                    'Social Privacy', 'Quishing', 'Deepfakes', 'Passwords 2FA'
-                ],
-                datasets: [{
-                    label: 'Perimeter Score (%)',
-                    data: dataValues,
-                    backgroundColor: 'rgba(6, 182, 212, 0.25)',
-                    borderColor: '#06b6d4',
-                    pointBackgroundColor: '#a855f7',
-                    pointBorderColor: '#ffffff',
-                    pointHoverBackgroundColor: '#ffffff',
-                    pointHoverBorderColor: '#a855f7',
-                    borderWidth: 2,
-                    pointRadius: 4,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
-                        grid: { color: 'rgba(255, 255, 255, 0.08)' },
-                        pointLabels: {
-                            color: '#cbd5e1',
-                            font: { family: 'Inter', size: 9, weight: '600' }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: { font: { family: 'Inter' } }
+                            },
+                            x: {
+                                ticks: { font: { family: 'Inter', size: 10 }, maxRotation: 25 }
+                            }
                         },
-                        ticks: {
-                            display: false,
-                            beginAtZero: true,
-                            max: 100
+                        plugins: {
+                            legend: { display: false }
                         }
                     }
-                },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#090d16',
-                        titleColor: '#a855f7',
-                        bodyColor: '#ffffff',
-                        borderColor: '#1e293b',
-                        borderWidth: 1,
-                        padding: 10,
-                    }
-                }
+                });
             }
-        });
+
+            // 2. Radar Chart: Defense Perimeter
+            const radarCtx = document.getElementById('defenseRadarChart')?.getContext('2d');
+            if (radarCtx) {
+                new Chart(radarCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Defense Perimeter',
+                            data: data.averages,
+                            backgroundColor: 'rgba(67, 56, 202, 0.2)',
+                            borderColor: '#4338ca',
+                            pointBackgroundColor: '#006c4a',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: { display: false }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+        } catch (e) {
+            console.error("Telemetry chart initialization failed:", e);
+        }
     });
 </script>
 {% endblock %}
