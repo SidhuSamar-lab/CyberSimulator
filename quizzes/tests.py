@@ -111,3 +111,66 @@ class QuizzesTests(TestCase):
         self.assertIn('labels', data)
         self.assertIn('averages', data)
         self.assertEqual(len(data['labels']), 8)
+
+    def test_teacher_export_csv(self):
+        self.client.login(username='prof_jones', password='TeacherPass123!')
+        # Create a test attempt
+        QuizAttempt.objects.create(
+            student=self.student,
+            topic_id='phishing',
+            topic_title='Phishing Scams',
+            score=3,
+            total_questions=3,
+            ai_feedback='Excellent cyber awareness!'
+        )
+        response = self.client.get('/teacher/export-csv/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/csv')
+        self.assertIn('attachment; filename="cybersimulator_report_all_classes.csv"', response['Content-Disposition'])
+        self.assertContains(response, 'Taylor Swift')
+        self.assertContains(response, 'Phishing Scams')
+
+    def test_health_check(self):
+        response = self.client.get('/health/')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data['status'], 'healthy')
+        self.assertEqual(data['database'], 'connected')
+        self.assertIn('CyberQuizAgent', data['ai_agent'])
+
+    def test_student_badges_and_rank(self):
+        # Initial cadet
+        self.assertEqual(self.student.rank_title, 'Digital Cadet')
+        badges = self.student.get_earned_badges()
+        self.assertEqual(len(badges), 8)
+        self.assertFalse(badges[0]['earned'])
+
+        # Earn phishing badge
+        QuizAttempt.objects.create(
+            student=self.student,
+            topic_id='phishing',
+            topic_title='Phishing Scams',
+            score=3,
+            total_questions=3
+        )
+        self.assertEqual(self.student.rank_title, 'Safety Apprentice')
+        updated_badges = self.student.get_earned_badges()
+        self.assertTrue(updated_badges[0]['earned'])
+
+    def test_get_quiz_hint(self):
+        session = self.client.session
+        session['student_id'] = self.student.id
+        session['active_quiz'] = {
+            'topic_id': 'phishing',
+            'questions': [{
+                'question_text': 'Phishing test question',
+                'explanation': 'Look at the domain name carefully.'
+            }]
+        }
+        session.save()
+
+        response = self.client.get('/api/quiz/hint/?q=1')
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('hint', data)
+        self.assertIn('Look at the domain name carefully.', data['hint'])

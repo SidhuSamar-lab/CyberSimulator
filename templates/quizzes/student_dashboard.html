@@ -21,7 +21,7 @@
                             {{ student.name }}
                         </h1>
                         <span class="px-2.5 py-0.5 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-400 text-xs font-mono">
-                            Student
+                            {{ rank_title }}
                         </span>
                     </div>
                     <p class="text-xs sm:text-sm text-slate-400 mt-1">
@@ -69,6 +69,38 @@
                 <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-700"
                      style="width: {% widthratio completed_count total_topics 100 %}%;"></div>
             </div>
+        </div>
+    </section>
+
+    <!-- Gamified Badge Shelf -->
+    <section class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-800 space-y-5">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-xl font-display font-bold text-white">Cyber Defense Badges</h2>
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-950/80 border border-amber-700/80 text-amber-300">
+                        {{ unlocked_badge_count }} / 8 Unlocked
+                    </span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">Score 2+ on a topic quiz to earn its official mastery badge.</p>
+            </div>
+            <span class="hidden sm:inline-block px-3 py-1 rounded-xl bg-slate-900 border border-slate-700 text-xs text-cyan-300 font-mono">
+                Rank: {{ rank_title }}
+            </span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+            {% for b in badges %}
+                <div class="p-3.5 rounded-2xl text-center border transition-all duration-300
+                    {% if b.earned %}bg-slate-900/90 border-amber-500/40 shadow-lg shadow-amber-500/10 scale-100{% else %}bg-slate-950/50 border-slate-800/80 opacity-50 grayscale hover:grayscale-0 hover:opacity-80{% endif %}">
+                    <div class="text-2xl mb-1.5">{{ b.icon }}</div>
+                    <p class="text-xs font-bold text-white leading-tight truncate" title="{{ b.title }}">{{ b.title }}</p>
+                    <span class="inline-block mt-1 text-[9px] font-mono uppercase px-1.5 py-0.5 rounded
+                        {% if b.earned %}bg-amber-950 text-amber-300 border border-amber-800{% else %}bg-slate-900 text-slate-500{% endif %}">
+                        {% if b.earned %}Earned{% else %}Locked{% endif %}
+                    </span>
+                </div>
+            {% endfor %}
         </div>
     </section>
 

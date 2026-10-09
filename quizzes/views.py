@@ -61,6 +61,8 @@ def student_dashboard(request):
 
     completed_count = sum(1 for t in topics_with_progress if t['completed'])
     overall_percent = student.average_score
+    earned_badges = student.get_earned_badges()
+    unlocked_badge_count = sum(1 for b in earned_badges if b['earned'])
 
     return render(request, 'quizzes/student_dashboard.html', {
         'student': student,
@@ -69,6 +71,9 @@ def student_dashboard(request):
         'total_topics': len(CYBER_TOPICS),
         'overall_percent': overall_percent,
         'recent_attempts': student_attempts[:5],
+        'badges': earned_badges,
+        'unlocked_badge_count': unlocked_badge_count,
+        'rank_title': student.rank_title,
     })
 
 
@@ -338,4 +343,91 @@ def teacher_analytics_api(request):
         'labels': labels,
         'averages': averages,
         'attempt_counts': attempt_counts,
+    })
+
+
+@user_passes_test(is_teacher, login_url='teacher_login')
+def teacher_export_csv(request):
+    """
+    Exports student quiz results into a downloadable CSV report.
+    Allows filtering by class name.
+    """
+    import csv
+    from django.http import HttpResponse
+
+    selected_class = request.GET.get('class_name', '').strip()
+    attempts_qs = QuizAttempt.objects.select_related('student').all()
+    if selected_class:
+        attempts_qs = attempts_qs.filter(student__class_name=selected_class)
+
+    filename = f"cybersimulator_report_{selected_class or 'all_classes'}.csv"
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    writer = csv.writer(response)
+    writer.writerow([
+        'Student Name', 'Class', 'Roll Number', 'Topic',
+        'Score', 'Total Questions', 'Percentage', 'Completed At (UTC)', 'AI Mentor Review Excerpt'
+    ])
+
+    for att in attempts_qs:
+        feedback_snippet = (att.ai_feedback[:120] + '...') if len(att.ai_feedback) > 120 else att.ai_feedback
+        clean_snippet = feedback_snippet.replace('\n', ' ')
+        writer.writerow([
+            att.student.name,
+            att.student.class_name,
+            att.student.roll_number,
+            att.topic_title,
+            att.score,
+            att.total_questions,
+            f"{att.percentage}%",
+            att.completed_at.strftime('%Y-%m-%d %H:%M:%S'),
+            clean_snippet,
+        ])
+
+    return response
+
+
+def get_quiz_hint(request):
+    """
+    Provides an encouraging, educational AI hint for a question during an active quiz.
+    Uses student's active_quiz session.
+    """
+    student_id = request.session.get('student_id')
+    if not student_id:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+
+    active_quiz = request.session.get('active_quiz')
+    if not active_quiz:
+        return JsonResponse({'error': 'No active quiz found'}, status=404)
+
+    try:
+        q_num = int(request.GET.get('q', 1))
+        questions = active_quiz.get('questions', [])
+        if 1 <= q_num <= len(questions):
+            q_data = questions[q_num - 1]
+            explanation = q_data.get('explanation', '')
+            hint_text = f"💡 AI Tutor Hint: Focus on the key danger—{explanation}"
+            return JsonResponse({'hint': hint_text})
+        return JsonResponse({'error': 'Invalid question index'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def health_check(request):
+    """
+    System and cloud health check endpoint for monitoring & uptime.
+    """
+    from django.db import connection
+    db_ok = True
+    try:
+        connection.ensure_connection()
+    except Exception:
+        db_ok = False
+
+    return JsonResponse({
+        'status': 'healthy' if db_ok else 'degraded',
+        'database': 'connected' if db_ok else 'error',
+        'ai_agent': 'CyberQuizAgent (gpt-5)',
+        'platform': 'CyberSimulator v1.0',
     })

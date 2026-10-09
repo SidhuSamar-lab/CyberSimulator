@@ -19,6 +19,14 @@
         </div>
 
         <div class="flex items-center space-x-3">
+            <!-- CSV Export Button -->
+            <a href="{% url 'teacher_export_csv' %}{% if selected_class %}?class_name={{ selected_class }}{% endif %}" id="btn-export-csv" class="px-4 py-2.5 rounded-xl bg-cyan-950/80 border border-cyan-800 hover:border-cyan-500 text-cyan-300 text-xs font-semibold flex items-center space-x-2 transition-all shadow-sm shadow-cyan-500/10">
+                <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>Export CSV Report</span>
+            </a>
+
             <a href="{% url 'admin:index' %}" target="_blank" class="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-600 text-slate-300 text-xs font-semibold flex items-center space-x-2 transition-all">
                 <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -99,11 +107,11 @@
 
     </div>
 
-    <!-- Chart.js Visualizations Section -->
+    <!-- Chart.js Visualizations Section: Bar Chart & Radar Chart -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         <!-- Performance by Topic Bar Chart -->
-        <div class="lg:col-span-8 glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
+        <div class="lg:col-span-7 glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="font-display font-bold text-lg text-white">Cybersecurity Topic Proficiency</h2>
@@ -119,26 +127,20 @@
             </div>
         </div>
 
-        <!-- Topic Breakdown Summary List -->
-        <div class="lg:col-span-4 glass-card rounded-2xl p-6 border border-slate-800 flex flex-col justify-between">
-            <div>
-                <h3 class="font-display font-bold text-base text-white mb-4">Topic Mastery Breakdown</h3>
-                <div class="space-y-3.5 overflow-y-auto max-h-80 pr-1">
-                    {% for stat in topic_stats %}
-                        <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 space-y-1.5">
-                            <div class="flex items-center justify-between text-xs">
-                                <span class="font-semibold text-slate-200 truncate pr-2">{{ stat.title }}</span>
-                                <span class="font-mono font-bold {% if stat.average_percentage >= 75 %}text-emerald-400{% elif stat.average_percentage >= 50 %}text-amber-400{% elif stat.average_percentage %}text-rose-400{% else %}text-slate-500{% endif %}">
-                                    {% if stat.average_percentage != None %}{{ stat.average_percentage }}%{% else %}N/A{% endif %}
-                                </span>
-                            </div>
-                            <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                                <span>{{ stat.attempts_count }} submissions</span>
-                                <span>3 questions/quiz</span>
-                            </div>
-                        </div>
-                    {% endfor %}
+        <!-- Defense Perimeter Radar Chart -->
+        <div class="lg:col-span-5 glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="font-display font-bold text-lg text-white">Defense Perimeter</h2>
+                    <p class="text-xs text-slate-400">Cyber awareness balance across all 8 security vectors</p>
                 </div>
+                <span class="text-xs font-mono text-purple-400 bg-purple-950 px-2.5 py-1 rounded-full border border-purple-800">
+                    Radar View
+                </span>
+            </div>
+
+            <div class="relative h-72 sm:h-80 w-full flex items-center justify-center">
+                <canvas id="defenseRadarChart"></canvas>
             </div>
         </div>
 
@@ -184,6 +186,7 @@
                         <th class="pb-3">Student Name</th>
                         <th class="pb-3">Class</th>
                         <th class="pb-3">Roll No</th>
+                        <th class="pb-3">Rank Title</th>
                         <th class="pb-3">Quizzes Taken</th>
                         <th class="pb-3">Average Accuracy</th>
                         <th class="pb-3 text-right">Inspect Actions</th>
@@ -200,6 +203,11 @@
                             </td>
                             <td class="py-3.5 text-slate-300">{{ st.class_name }}</td>
                             <td class="py-3.5 font-mono text-slate-400">#{{ st.roll_number }}</td>
+                            <td class="py-3.5">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-900 border border-slate-700 text-cyan-300">
+                                    {{ st.rank_title }}
+                                </span>
+                            </td>
                             <td class="py-3.5 font-mono">{{ st.total_attempts }}</td>
                             <td class="py-3.5">
                                 <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold
@@ -221,7 +229,7 @@
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="6" class="py-8 text-center text-slate-500 text-sm">
+                            <td colspan="7" class="py-8 text-center text-slate-500 text-sm">
                                 No students found matching the selected filter.
                             </td>
                         </tr>
@@ -238,9 +246,6 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const ctx = document.getElementById('topicProficiencyChart').getContext('2d');
-        
-        // Topic data from Django
         const labels = [
             {% for stat in topic_stats %}
                 "{{ stat.title }}",
@@ -253,8 +258,9 @@
             {% endfor %}
         ];
 
-        // Custom cyber styling
-        new Chart(ctx, {
+        // 1. Topic Proficiency Bar Chart
+        const barCtx = document.getElementById('topicProficiencyChart').getContext('2d');
+        new Chart(barCtx, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -292,12 +298,10 @@
                     y: {
                         beginAtZero: true,
                         max: 100,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.05)',
-                        },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
                         ticks: {
                             color: '#94a3b8',
-                            font: { family: 'JetBrains Mono', size: 11 },
+                            font: { family: 'JetBrains Mono', size: 10 },
                             callback: function(value) { return value + "%"; }
                         }
                     },
@@ -305,7 +309,7 @@
                         grid: { display: false },
                         ticks: {
                             color: '#cbd5e1',
-                            font: { family: 'Inter', size: 10 },
+                            font: { family: 'Inter', size: 9 },
                             maxRotation: 35,
                             minRotation: 20,
                         }
@@ -319,12 +323,64 @@
                         bodyColor: '#ffffff',
                         borderColor: '#1e293b',
                         borderWidth: 1,
-                        padding: 12,
+                        padding: 10,
                         callbacks: {
-                            label: function(context) {
-                                return ` Average Accuracy: ${context.raw}%`;
-                            }
+                            label: function(context) { return ` Accuracy: ${context.raw}%`; }
                         }
+                    }
+                }
+            }
+        });
+
+        // 2. Defense Perimeter Radar Chart
+        const radarCtx = document.getElementById('defenseRadarChart').getContext('2d');
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: [
+                    'Phishing', 'OTP Fraud', 'Fake Sites', 'Bullying Defense',
+                    'Social Privacy', 'Quishing', 'Deepfakes', 'Passwords 2FA'
+                ],
+                datasets: [{
+                    label: 'Perimeter Score (%)',
+                    data: dataValues,
+                    backgroundColor: 'rgba(6, 182, 212, 0.25)',
+                    borderColor: '#06b6d4',
+                    pointBackgroundColor: '#a855f7',
+                    pointBorderColor: '#ffffff',
+                    pointHoverBackgroundColor: '#ffffff',
+                    pointHoverBorderColor: '#a855f7',
+                    borderWidth: 2,
+                    pointRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                        pointLabels: {
+                            color: '#cbd5e1',
+                            font: { family: 'Inter', size: 9, weight: '600' }
+                        },
+                        ticks: {
+                            display: false,
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#090d16',
+                        titleColor: '#a855f7',
+                        bodyColor: '#ffffff',
+                        borderColor: '#1e293b',
+                        borderWidth: 1,
+                        padding: 10,
                     }
                 }
             }

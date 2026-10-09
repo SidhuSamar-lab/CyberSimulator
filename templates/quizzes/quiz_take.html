@@ -9,9 +9,15 @@
     <div class="glass-card rounded-2xl p-6 border border-cyan-500/30 shadow-xl relative overflow-hidden">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-800 text-cyan-400 text-xs font-mono mb-2">
-                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                    <span>AI LIVE SCENARIO SIMULATION</span>
+                <div class="flex items-center space-x-2 mb-2">
+                    <span class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-800 text-cyan-400 text-xs font-mono">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                        <span>CYBERQUIZAGENT (GPT-5) LIVE</span>
+                    </span>
+                    <button type="button" id="toggle-sound-btn" class="px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 hover:border-cyan-500 text-slate-300 text-[11px] font-mono flex items-center space-x-1 transition-all">
+                        <span id="sound-icon">🔊</span>
+                        <span id="sound-label">SFX: ON</span>
+                    </button>
                 </div>
                 <h1 class="font-display font-bold text-2xl sm:text-3xl text-white">
                     {{ topic.title }}
@@ -22,8 +28,8 @@
             </div>
 
             <div class="bg-slate-900/80 border border-slate-700/80 px-4 py-2.5 rounded-xl text-center self-stretch sm:self-auto">
-                <span class="block text-[10px] text-slate-400 uppercase tracking-wider font-mono">Questions</span>
-                <span class="text-xl font-display font-bold text-cyan-400">3 of 3</span>
+                <span class="block text-[10px] text-slate-400 uppercase tracking-wider font-mono">Progress</span>
+                <span class="text-xl font-display font-bold text-cyan-400" id="progress-indicator">3 Questions</span>
             </div>
         </div>
     </div>
@@ -36,16 +42,34 @@
             <div class="glass-card rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-lg space-y-5 question-card" data-question-num="{{ forloop.counter }}">
                 
                 <!-- Question Number & Prompt -->
-                <div class="flex items-start space-x-4">
-                    <span class="w-8 h-8 rounded-xl bg-cyan-950 border border-cyan-800 text-cyan-400 flex items-center justify-center font-bold text-sm font-mono flex-shrink-0 mt-0.5">
-                        0{{ forloop.counter }}
-                    </span>
-                    <div class="space-y-1">
-                        <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400">Scenario Challenge</span>
-                        <h2 class="text-base sm:text-lg font-semibold text-white leading-relaxed">
-                            {{ q.question_text }}
-                        </h2>
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex items-start space-x-4">
+                        <span class="w-8 h-8 rounded-xl bg-cyan-950 border border-cyan-800 text-cyan-400 flex items-center justify-center font-bold text-sm font-mono flex-shrink-0 mt-0.5">
+                            0{{ forloop.counter }}
+                        </span>
+                        <div class="space-y-1">
+                            <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400">Scenario Challenge</span>
+                            <h2 class="text-base sm:text-lg font-semibold text-white leading-relaxed">
+                                {{ q.question_text }}
+                            </h2>
+                        </div>
                     </div>
+
+                    <!-- AI Hint Button -->
+                    <button type="button" 
+                            class="btn-hint flex-shrink-0 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-500/40 hover:border-amber-400 text-amber-300 text-xs font-mono flex items-center space-x-1.5 transition-all"
+                            data-q-num="{{ forloop.counter }}">
+                        <span>💡</span>
+                        <span class="hidden sm:inline">Ask AI Hint</span>
+                    </button>
+                </div>
+
+                <!-- AI Hint Box (Hidden by default) -->
+                <div id="hint-box-{{ forloop.counter }}" class="hidden p-3.5 rounded-xl bg-amber-950/20 border border-amber-600/40 text-xs text-amber-200 leading-relaxed font-sans animate-fade-in">
+                    <div class="flex items-center space-x-2 font-mono font-semibold text-[11px] text-amber-400 mb-1">
+                        <span>🤖 CyberQuizAgent Hint:</span>
+                    </div>
+                    <p class="hint-text"></p>
                 </div>
 
                 <!-- 4 Options Cards -->
@@ -121,13 +145,13 @@
             <div class="absolute inset-0 rounded-full border-4 border-cyan-400 border-t-transparent animate-spin"></div>
         </div>
         <div>
-            <h3 class="font-display font-bold text-xl text-white">AI Mentor is Evaluating...</h3>
+            <h3 class="font-display font-bold text-xl text-white">CyberQuizAgent (GPT-5) is Evaluating...</h3>
             <p class="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-                Analyzing your decisions and generating a supportive, personalized cybersecurity review.
+                Analyzing your choices and writing your personalized cybersecurity review with actionable safety tips.
             </p>
         </div>
         <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs font-mono text-cyan-400">
-            <span>Powered by Azure AI Foundry</span>
+            <span>Live via Azure AI Foundry</span>
         </div>
     </div>
 </div>
@@ -139,11 +163,43 @@
         const form = document.getElementById('quiz-submission-form');
         const overlay = document.getElementById('loading-overlay');
         const labels = document.querySelectorAll('.option-label');
+        const hintBtns = document.querySelectorAll('.btn-hint');
+        
+        // Sound FX setup via Web Audio API (no external files required)
+        let soundEnabled = true;
+        const toggleSoundBtn = document.getElementById('toggle-sound-btn');
+        const soundIcon = document.getElementById('sound-icon');
+        const soundLabel = document.getElementById('sound-label');
 
-        // Highlight selected option nicely
+        toggleSoundBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            soundIcon.textContent = soundEnabled ? '🔊' : '🔇';
+            soundLabel.textContent = soundEnabled ? 'SFX: ON' : 'SFX: OFF';
+            toggleSoundBtn.classList.toggle('border-cyan-500', soundEnabled);
+        });
+
+        function playBlip(freq = 600, duration = 0.05) {
+            if (!soundEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        // Highlight selected option nicely and play cyber sound
         labels.forEach(label => {
             const radio = label.querySelector('input[type="radio"]');
             radio.addEventListener('change', () => {
+                playBlip(750, 0.06);
                 const groupName = radio.name;
                 document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
                     r.closest('.option-label').classList.remove('border-cyan-400', 'bg-cyan-950/30');
@@ -156,9 +212,42 @@
             });
         });
 
+        // AI Hint Fetcher
+        hintBtns.forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const qNum = btn.dataset.qNum;
+                const hintBox = document.getElementById(`hint-box-${qNum}`);
+                const hintText = hintBox.querySelector('.hint-text');
+
+                playBlip(900, 0.08);
+                btn.disabled = true;
+                btn.classList.add('opacity-50');
+
+                if (hintBox.classList.contains('hidden')) {
+                    hintBox.classList.remove('hidden');
+                    hintText.textContent = "Asking CyberQuizAgent for a safety hint...";
+
+                    try {
+                        const res = await fetch(`/api/quiz/hint/?q=${qNum}`);
+                        const data = await res.json();
+                        if (data.hint) {
+                            hintText.textContent = data.hint;
+                        } else {
+                            hintText.textContent = "Focus on the source of the message, unexpected urgency, and whether official channels would ask for this.";
+                        }
+                    } catch (err) {
+                        hintText.textContent = "Pause and verify through trusted, independent sources before acting on urgent prompts.";
+                    }
+                } else {
+                    hintBox.classList.add('hidden');
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50');
+                }
+            });
+        });
+
         // Show loading state on submit
         form.addEventListener('submit', (e) => {
-            // Check all 3 questions
             let allAnswered = true;
             for (let i = 1; i <= 3; i++) {
                 const checked = form.querySelector(`input[name="q_${i}"]:checked`);
@@ -171,6 +260,7 @@
             }
 
             if (allAnswered) {
+                playBlip(1100, 0.12);
                 overlay.classList.remove('hidden');
                 overlay.classList.add('flex');
             }

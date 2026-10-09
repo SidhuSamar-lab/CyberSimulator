@@ -18,6 +18,11 @@ class QuizAttempt(models.Model):
 
     class Meta:
         ordering = ['-completed_at']
+        indexes = [
+            models.Index(fields=['student', 'topic_id']),
+            models.Index(fields=['topic_id']),
+            models.Index(fields=['-completed_at']),
+        ]
 
     def __str__(self):
         return f"{self.student.name} - {self.topic_title} ({self.score}/{self.total_questions})"
@@ -50,6 +55,9 @@ class AttemptQuestion(models.Model):
 
     class Meta:
         ordering = ['attempt', 'question_number']
+        indexes = [
+            models.Index(fields=['attempt', 'question_number']),
+        ]
 
     def __str__(self):
         return f"Q{self.question_number}: {self.question_text[:50]}... ({'Correct' if self.is_correct else 'Wrong'})"
