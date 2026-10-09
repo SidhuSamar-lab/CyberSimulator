@@ -67,11 +67,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
-# Connects to Supabase PostgreSQL when DATABASE_URL is provided; falls back to SQLite for local development.
+# Connects to Supabase PostgreSQL when DATABASE_URL is provided; falls back to SQLite for local development & testing.
 import dj_database_url
+import sys
 
 DATABASE_URL = os.getenv('DATABASE_URL', '').strip()
-if DATABASE_URL:
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db_test.sqlite3',
+        }
+    }
+elif DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
