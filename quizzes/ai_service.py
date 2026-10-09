@@ -1,6 +1,7 @@
 import json
 import logging
 import random
+import re
 import requests
 from django.conf import settings
 from .topics import get_topic_by_id
@@ -249,35 +250,54 @@ FALLBACK_QUESTIONS = {
 class AzureAIFoundryClient:
     """
     Client for communicating with Azure AI Foundry endpoints.
-    Handles dynamic quiz question generation and educational feedback evaluations.
-    Includes robust fallback logic when credentials are not yet configured or during outages.
+    Supports both:
+    1. Azure AI Agents (e.g., CyberQuizAgent running gpt-5 via protocols/openai/responses?api-version=v1)
+    2. Standard Azure OpenAI / Model Inference chat completions endpoints.
     """
 
     def __init__(self):
         self.endpoint = settings.AZURE_AI_ENDPOINT
         self.api_key = settings.AZURE_AI_KEY
-        self.deployment = settings.AZURE_AI_DEPLOYMENT_NAME or "gpt-4o-mini"
-        self.api_version = settings.AZURE_AI_API_VERSION or "2024-06-01"
+        self.deployment = settings.AZURE_AI_DEPLOYMENT_NAME or "gpt-5"
+        self.api_version = settings.AZURE_AI_API_VERSION or "v1"
 
     @property
     def is_configured(self) -> bool:
         return bool(self.endpoint and self.api_key)
 
-    def _get_api_url(self) -> str:
-        """Determines the appropriate REST URL for Azure OpenAI or AI Foundry."""
-        clean_endpoint = self.endpoint.rstrip('/')
-        if 'openai.azure.com' in clean_endpoint:
-            return f"{clean_endpoint}/openai/deployments/{self.deployment}/chat/completions?api-version={self.api_version}"
-        elif '/chat/completions' in clean_endpoint:
-            return clean_endpoint
-        elif '/models' in clean_endpoint:
-            return f"{clean_endpoint}/chat/completions?api-version={self.api_version}"
-        else:
-            # Azure AI Foundry Model Inference standard endpoint
-            return f"{clean_endpoint}/models/chat/completions?api-version={self.api_version}"
+    @property
+    def is_agent_responses_endpoint(self) -> bool:
+        """Checks if the endpoint is an Azure AI Agent protocols/openai/responses endpoint."""
+        return "protocols/openai/responses" in self.endpoint or "/agents/" in self.endpoint
 
-    def _call_azure_chat(self, system_prompt: str, user_prompt: str, json_mode: bool = True) -> str:
-        """Executes a chat completion REST call to Azure AI Foundry."""
+    def _get_api_url(self) -> str:
+        """Determines the appropriate REST URL for Azure AI Agent or Azure OpenAI."""
+        clean_endpoint = self.endpoint.rstrip('/')
+
+        # 1. Azure AI Agent Protocols endpoint (CyberQuizAgent)
+        if self.is_agent_responses_endpoint:
+            if "api-version=" not in clean_endpoint:
+                version = self.api_version or "v1"
+                return f"{clean_endpoint}?api-version={version}"
+            return clean_endpoint
+
+        # 2. Azure OpenAI standard completions endpoint
+        if "openai.azure.com" in clean_endpoint:
+            version = self.api_version or "2024-06-01"
+            return f"{clean_endpoint}/openai/deployments/{self.deployment}/chat/completions?api-version={version}"
+
+        if "/chat/completions" in clean_endpoint:
+            return clean_endpoint
+
+        # 3. Model Inference standard endpoint
+        version = self.api_version or "2024-06-01"
+        return f"{clean_endpoint}/models/chat/completions?api-version={version}"
+
+    def _call_azure(self, prompt: str, system_prompt: str = "") -> str:
+        """
+        Executes a call to Azure AI Foundry, seamlessly handling either
+        the Azure AI Agent responses protocol or standard chat completions.
+        """
         if not self.is_configured:
             raise ValueError("Azure AI Foundry credentials are not configured in settings/environment.")
 
@@ -287,38 +307,56 @@ class AzureAIFoundryClient:
             "api-key": self.api_key,
         }
 
-        payload = {
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            "temperature": 0.7,
-            "max_tokens": 1500,
-        }
+        # Case A: Azure AI Agent endpoint (e.g., CyberQuizAgent running gpt-5)
+        if self.is_agent_responses_endpoint:
+            combined_input = f"{system_prompt}\n\n{prompt}" if system_prompt else prompt
+            payload = {
+                "model": self.deployment or "gpt-5",
+                "input": combined_input,
+            }
+            response = requests.post(url, headers=headers, json=payload, timeout=35)
+            response.raise_for_status()
+            data = response.json()
 
-        if json_mode:
-            payload["response_format"] = {"type": "json_object"}
+            # Extract assistant text from output messages
+            for item in data.get("output", []):
+                if item.get("type") == "message" and item.get("role") == "assistant":
+                    for c in item.get("content", []):
+                        if c.get("type") == "output_text":
+                            return c.get("text", "")
+            return ""
 
-        response = requests.post(url, headers=headers, json=payload, timeout=20)
-        response.raise_for_status()
-        data = response.json()
-        return data["choices"][0]["message"]["content"]
+        # Case B: Standard Chat Completions endpoint
+        else:
+            messages = []
+            if system_prompt:
+                messages.append({"role": "system", "content": system_prompt})
+            messages.append({"role": "user", "content": prompt})
+
+            payload = {
+                "messages": messages,
+                "temperature": 0.7,
+                "max_tokens": 1500,
+            }
+            response = requests.post(url, headers=headers, json=payload, timeout=25)
+            response.raise_for_status()
+            data = response.json()
+            return data["choices"][0]["message"]["content"]
+
+    def _clean_json_string(self, text: str) -> str:
+        """Strips markdown code blocks and whitespace to extract clean JSON."""
+        cleaned = text.strip()
+        if cleaned.startswith("```json"):
+            cleaned = cleaned[7:]
+        elif cleaned.startswith("```"):
+            cleaned = cleaned[3:]
+        if cleaned.endswith("```"):
+            cleaned = cleaned[:-3]
+        return cleaned.strip()
 
     def generate_quiz_questions(self, topic_id: str, count: int = 3) -> list:
         """
-        Dynamically generates `count` MCQ questions for the given topic.
-        Enforces JSON schema:
-        [
-          {
-            "question_text": "...",
-            "option_a": "...",
-            "option_b": "...",
-            "option_c": "...",
-            "option_d": "...",
-            "correct_option": "A|B|C|D",
-            "explanation": "..."
-          }
-        ]
+        Dynamically generates `count` MCQ questions for the given topic using Azure AI Foundry / CyberQuizAgent.
         """
         topic = get_topic_by_id(topic_id)
         topic_title = topic["title"] if topic else topic_id
@@ -328,13 +366,13 @@ class AzureAIFoundryClient:
                 system_prompt = (
                     "You are an expert cybersecurity educator creating engaging, scenario-based multiple-choice "
                     "quizzes for Middle and High School students (ages 11-18). "
-                    "Always formulate questions around realistic, relatable teenage scenarios: gaming platforms, "
-                    "social media (TikTok, Instagram, Discord, Snapchat), school portals, mobile SMS/WhatsApp, and friends. "
+                    "Focus on realistic teenage scenarios: gaming platforms, social media (TikTok, Instagram, Discord, Snapchat), "
+                    "school portals, mobile SMS/WhatsApp, and friends. "
                     "You must output ONLY valid JSON matching this schema: "
                     '{"questions": [{"question_text": "...", "option_a": "...", "option_b": "...", "option_c": "...", "option_d": "...", "correct_option": "A/B/C/D", "explanation": "..."}]}'
                 )
 
-                user_prompt = (
+                prompt = (
                     f"Generate exactly {count} distinct multiple-choice questions for the topic: '{topic_title}'.\n"
                     f"Topic description: {topic.get('description', '')}\n"
                     f"Key learning concepts: {', '.join(topic.get('key_concepts', []))}\n\n"
@@ -342,22 +380,22 @@ class AzureAIFoundryClient:
                     "1. Exactly 4 plausible options for each question (option_a, option_b, option_c, option_d).\n"
                     "2. One unambiguously correct answer (correct_option must be 'A', 'B', 'C', or 'D').\n"
                     "3. Include an educational explanation clarifying why the correct choice keeps the student safe.\n"
-                    "4. Output format must be strict JSON with a top-level 'questions' array."
+                    "4. Output format must be strict JSON with a top-level 'questions' array. Do not include markdown code blocks or extra text."
                 )
 
-                raw_content = self._call_azure_chat(system_prompt, user_prompt, json_mode=True)
-                parsed = json.loads(raw_content)
+                raw_content = self._call_azure(prompt=prompt, system_prompt=system_prompt)
+                clean_content = self._clean_json_string(raw_content)
+                parsed = json.loads(clean_content)
                 questions = parsed.get("questions", [])
                 if len(questions) >= count:
-                    logger.info(f"Successfully generated {len(questions)} questions from Azure AI Foundry for {topic_id}")
+                    logger.info(f"Successfully generated {len(questions)} questions from Azure AI for {topic_id}")
                     return questions[:count]
             except Exception as e:
-                logger.warning(f"Azure AI Foundry question generation failed ({e}). Falling back to curated bank.")
+                logger.warning(f"Azure AI question generation failed ({e}). Falling back to curated bank.")
 
         # Fallback to curated realistic question pool
         pool = FALLBACK_QUESTIONS.get(topic_id, [])
         if not pool:
-            # Generic fallback if unknown topic
             pool = [
                 {
                     "question_text": f"What is the safest action when encountering an unknown message regarding {topic_title}?",
@@ -369,32 +407,23 @@ class AzureAIFoundryClient:
                     "explanation": "Verifying messages through trusted channels prevents falling victim to online scams."
                 }
             ]
-        # Shuffle or select up to count
         selected = list(pool)
         random.shuffle(selected)
         return selected[:count]
 
     def generate_feedback(self, student_name: str, topic_title: str, score: int, total: int, items_review: list) -> str:
         """
-        Generates supportive, personalized feedback for a student based on their quiz performance.
-        items_review is a list of dicts:
-        [{
-          "question_text": "...",
-          "student_selected": "...",
-          "correct_option": "...",
-          "is_correct": bool,
-          "explanation": "..."
-        }]
+        Generates supportive, personalized feedback for a student based on their quiz performance using CyberQuizAgent.
         """
         percentage = round((score / total) * 100) if total > 0 else 0
 
         if self.is_configured:
             try:
                 system_prompt = (
-                    "You are an encouraging, supportive, and knowledgeable cybersecurity teacher reviewing a student's "
-                    "quiz attempt. Your tone is warm, inspiring, and actionable for a teenager. "
+                    "You are an encouraging, supportive cybersecurity teacher reviewing a student's quiz attempt. "
+                    "Your tone is warm, inspiring, and actionable for a teenager. "
                     "Congratulate them on what they did well, clearly and gently explain why any incorrect choices they made "
-                    "were dangerous in the real world, and give 2 practical safety tips they can immediately use."
+                    "were dangerous in the real world, and give 2 practical safety tips they can remember."
                 )
 
                 user_prompt = (
@@ -414,17 +443,17 @@ class AzureAIFoundryClient:
                     )
 
                 user_prompt += (
-                    "Please provide a well-structured feedback review containing:\n"
-                    "1. An encouraging opening acknowledging their score and effort.\n"
-                    "2. A gentle, clear breakdown of any mistakes they made and why that cyber threat is risky.\n"
-                    "3. 2 golden cybersecurity rules for this specific topic that they can remember forever."
+                    "Please provide an encouraging feedback review for the student:\n"
+                    "1. A warm opening acknowledging their score and effort.\n"
+                    "2. A gentle explanation of any mistakes and why that cyber threat is dangerous.\n"
+                    "3. 2 golden cybersecurity rules for this specific topic."
                 )
 
-                review = self._call_azure_chat(system_prompt, user_prompt, json_mode=False)
+                review = self._call_azure(prompt=user_prompt, system_prompt=system_prompt)
                 if review and len(review.strip()) > 30:
                     return review.strip()
             except Exception as e:
-                logger.warning(f"Azure AI Foundry feedback generation failed ({e}). Falling back to local mentor engine.")
+                logger.warning(f"Azure AI feedback generation failed ({e}). Falling back to local mentor engine.")
 
         # Fallback educational review generator
         return self._generate_fallback_feedback(student_name, topic_title, score, total, items_review)
