@@ -12,16 +12,16 @@ from datetime import datetime
 from pathlib import Path
 import streamlit as st
 import pandas as pd
+from dotenv import load_dotenv
 
 # Setup Django environment
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(BASE_DIR))
 
 # Load .env if present locally
-from dotenv import load_dotenv
 load_dotenv(BASE_DIR / '.env')
 
-# Default to Supabase Cloud PostgreSQL - Never save to local storage
+# Default to Supabase Cloud PostgreSQL - Cloud database only
 SUPABASE_DATABASE_URL = "postgresql://postgres.zdcebdeazxodmecjrkan:Samardeida%4022@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres"
 if not os.getenv('DATABASE_URL'):
     os.environ['DATABASE_URL'] = SUPABASE_DATABASE_URL
@@ -40,31 +40,39 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 import django
 django.setup()
 
-# Ensure database tables exist (auto-migrates on fresh cloud containers)
-try:
-    from django.core.management import call_command
-    call_command('migrate', interactive=False)
-except Exception:
-    pass
-
 from django.db import connection
 from users.models import Student
 from quizzes.models import QuizAttempt, AttemptQuestion
 from quizzes.topics import CYBER_TOPICS, get_topic_by_id
 from quizzes.ai_service import ai_client
 
-# Seed default student roster if table is empty
-try:
-    if Student.objects.count() == 0:
-        Student.objects.bulk_create([
-            Student(name="Alex Morgan", class_name="Grade 9-A", roll_number="101"),
-            Student(name="Jordan Lee", class_name="Grade 9-A", roll_number="102"),
-            Student(name="Sam Taylor", class_name="Grade 9-A", roll_number="103"),
-            Student(name="Riley Patel", class_name="Grade 9-B", roll_number="201"),
-            Student(name="Raman", class_name="Grade 11-A", roll_number="12"),
-        ])
-except Exception:
-    pass
+
+# One-time bootstrap cached for the entire server worker lifecycle (never runs on re-renders)
+@st.cache_resource
+def bootstrap_cloud_backend():
+    """Ensures database tables and default students exist on fresh cloud containers."""
+    try:
+        from django.core.management import call_command
+        call_command('migrate', interactive=False)
+    except Exception:
+        pass
+
+    try:
+        if Student.objects.count() == 0:
+            Student.objects.bulk_create([
+                Student(name="Alex Morgan", class_name="Grade 9-A", roll_number="101"),
+                Student(name="Jordan Lee", class_name="Grade 9-A", roll_number="102"),
+                Student(name="Sam Taylor", class_name="Grade 9-A", roll_number="103"),
+                Student(name="Riley Patel", class_name="Grade 9-B", roll_number="201"),
+                Student(name="Raman", class_name="Grade 11-A", roll_number="12"),
+            ])
+    except Exception:
+        pass
+    return True
+
+
+bootstrap_cloud_backend()
+
 
 # Helper to render clean raw HTML without Markdown code-block interpretation
 def render_html(html_str: str):
@@ -86,7 +94,7 @@ st.set_page_config(
 )
 
 # -------------------------------------------------------------
-# NEXUS STUDIO DESIGN SYSTEM & CSS OVERHAUL (1:1 with Localhost)
+# NEXUS STUDIO DESIGN SYSTEM & CSS (1:1 with Localhost)
 # -------------------------------------------------------------
 st.markdown("""
 <style>
@@ -103,7 +111,6 @@ st.markdown("""
 
     /* Ambient Glow Blobs & Grid Lines (Exact Localhost Signature) */
     .stApp {
-        background-color: #04040a !important;
         background-image: 
             radial-gradient(circle at 20% 12%, rgba(232, 255, 71, 0.08) 0%, transparent 45%),
             radial-gradient(circle at 80% 45%, rgba(255, 107, 53, 0.07) 0%, transparent 45%),
@@ -171,9 +178,12 @@ st.markdown("""
         border-radius: 16px;
         padding: 12px 24px;
         margin-bottom: 24px;
+    }
+    .navbar-container {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        width: 100%;
         gap: 16px;
     }
     .brand-link {
@@ -269,6 +279,23 @@ st.markdown("""
         background: #e8ff47;
         box-shadow: 0 0 8px #e8ff47;
     }
+    .teacher-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #9898b8;
+        text-decoration: none;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.72rem;
+        transition: all 0.2s;
+    }
+    .teacher-toggle-btn:hover {
+        border-color: rgba(232, 255, 71, 0.4);
+        color: #ffffff;
+    }
     .student-avatar-pill {
         display: flex;
         align-items: center;
@@ -359,7 +386,29 @@ st.markdown("""
         color: #ffffff !important;
     }
 
-    /* Bento Cards */
+    /* Bento Grid Layout (Exact Asymmetric Localhost ServicesGrid) */
+    .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+    @media (max-width: 900px) {
+        .bento-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    .bento-span-2 {
+        grid-column: span 2;
+    }
+    .bento-span-3 {
+        grid-column: span 3;
+    }
+    @media (max-width: 900px) {
+        .bento-span-2, .bento-span-3 {
+            grid-column: span 1;
+        }
+    }
+
     .bento-card {
         background: #0b0b18;
         border: 1px solid rgba(255, 255, 255, 0.06);
@@ -371,7 +420,6 @@ st.markdown("""
         justify-content: space-between;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         min-height: 240px;
-        margin-bottom: 16px;
     }
     .bento-card:hover {
         border-color: rgba(232, 255, 71, 0.35);
@@ -564,11 +612,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-
 # -------------------------------------------------------------
 # SESSION STATE & QUERY PARAMETER SYNCHRONIZATION
 # -------------------------------------------------------------
-# Support query parameters for 1:1 URL navigation (?page=...&topic=...)
 page_lookup = {
     "home": "🏠 Home",
     "curriculum": "🏠 Home",
@@ -593,10 +639,6 @@ if hasattr(st, "query_params"):
         st.session_state.active_quiz_questions = None
         st.session_state.quiz_result_data = None
 
-if 'current_student_id' not in st.session_state:
-    first_student = Student.objects.first()
-    st.session_state.current_student_id = first_student.id if first_student else None
-
 if 'active_page' not in st.session_state:
     st.session_state.active_page = "🏠 Home"
 
@@ -609,22 +651,17 @@ if 'active_quiz_questions' not in st.session_state:
 if 'quiz_result_data' not in st.session_state:
     st.session_state.quiz_result_data = None
 
+# Single prefetch query for all students and their attempts (eliminates N+1 queries)
+all_students = list(Student.objects.prefetch_related('attempts').order_by('class_name', 'name'))
 
-# Helper to get current active student safely
-def get_current_student():
-    sid = st.session_state.get('current_student_id')
-    if sid:
-        try:
-            return Student.objects.get(id=sid)
-        except Student.DoesNotExist:
-            pass
-    first = Student.objects.first()
-    if first:
-        st.session_state.current_student_id = first.id
-        return first
-    return None
+if 'current_student_id' not in st.session_state or not st.session_state.current_student_id:
+    st.session_state.current_student_id = all_students[0].id if all_students else None
 
-current_student = get_current_student()
+# Resolve current student in memory
+current_student = next((s for s in all_students if s.id == st.session_state.current_student_id), None)
+if not current_student and all_students:
+    current_student = all_students[0]
+    st.session_state.current_student_id = current_student.id
 
 nav_options = [
     "🏠 Home",
@@ -682,7 +719,7 @@ render_html(f"""
             </a>
             <a href="?page=student_hub" target="_self" class="student-avatar-pill" style="text-decoration: none;">
                 <div class="avatar-circle">{initials}</div>
-                <div class="avatar-info">
+                <div>
                     <span class="avatar-name">{student_display_name}</span>
                     <span class="avatar-meta">#{student_roll} &bull; {student_score} pts</span>
                 </div>
@@ -692,21 +729,13 @@ render_html(f"""
 </header>
 """)
 
-# Quick interactive switcher fallback for touch/mobile
-c_sw1, c_sw2 = st.columns([4, 1])
-with c_sw1:
-    selected_view = st.segmented_control(
-        "Navigation Bar",
-        nav_options,
-        default=st.session_state.active_page,
-        label_visibility="collapsed"
-    )
-    if selected_view and selected_view != st.session_state.active_page:
-        st.session_state.active_page = selected_view
-        st.rerun()
+# Sidebar Navigation & Cadet Profile Switcher
+sidebar_active_idx = nav_options.index(st.session_state.active_page) if st.session_state.active_page in nav_options else 0
+chosen_page = st.sidebar.selectbox("Navigate to View:", nav_options, index=sidebar_active_idx)
+if chosen_page != st.session_state.active_page:
+    st.session_state.active_page = chosen_page
+    st.rerun()
 
-# Sidebar Profile Switcher
-all_students = list(Student.objects.all().order_by('class_name', 'name'))
 if all_students:
     student_labels = [f"{s.name} ({s.class_name} • #{s.roll_number})" for s in all_students]
     current_idx = 0
@@ -715,7 +744,7 @@ if all_students:
             if s.id == current_student.id:
                 current_idx = i
                 break
-                
+
     chosen_label = st.sidebar.selectbox("Active Cadet Profile:", student_labels, index=current_idx)
     chosen_student_obj = all_students[student_labels.index(chosen_label)]
     if chosen_student_obj.id != st.session_state.current_student_id:
@@ -824,7 +853,6 @@ if st.session_state.active_page == "🏠 Home":
     </div>
     """)
 
-    # Topic Icons mapping matching localhost
     topic_icons = {
         'phishing': 'mark_email_unread',
         'passwords': 'key',
@@ -836,13 +864,19 @@ if st.session_state.active_page == "🏠 Home":
         'safe_browsing': 'travel_explore'
     }
 
-    # Render Bento Grid in 4 columns
+    # Render Bento Grid with asymmetric column spans (cards 0, 3, 6 span 2 or 3 cols)
     bento_html = ['<div class="bento-grid">']
     for idx, t in enumerate(CYBER_TOPICS):
         icon_name = topic_icons.get(t['id'], 'shield')
         tagline = t.get('tagline') or t.get('description', '')
+        span_class = ""
+        if idx == 0 or idx == 3:
+            span_class = "bento-span-2"
+        elif idx == 6:
+            span_class = "bento-span-3"
+
         bento_html.append(f"""
-        <a href="?page=quiz_arena&topic={t['id']}" target="_self" class="bento-card">
+        <a href="?page=quiz_arena&topic={t['id']}" target="_self" class="bento-card {span_class}">
             <div class="bento-top">
                 <span class="bento-num">0{idx+1}</span>
                 <div class="bento-icon">
@@ -911,7 +945,7 @@ if st.session_state.active_page == "🏠 Home":
     </div>
     """)
 
-    # 4. Ready to Test Your Instincts CTA
+    # 4. Ready to Test Your Instincts CTA & Footer
     render_html("""
     <div style="text-align: center; padding: 60px 20px 40px 20px; max-width: 800px; margin: 0 auto;">
         <h2 style="font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 700; color: #ffffff; margin: 0 0 16px 0;">
@@ -976,13 +1010,12 @@ elif st.session_state.active_page == "🛡️ Student Hub":
                 else:
                     st.error("Please fill all 3 fields.")
 
-    current_student = get_current_student()
     if not current_student:
         st.warning("No student profile found. Please enroll above.")
     else:
         earned_badges = current_student.get_earned_badges()
         unlocked_count = sum(1 for b in earned_badges if b['earned'])
-        
+
         render_html(f"""
         <div class="nexus-card-active">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
@@ -1024,7 +1057,7 @@ elif st.session_state.active_page == "🛡️ Student Hub":
                 bg_color = "#0d0d1f" if is_earned else "#080812"
                 opacity = "1" if is_earned else "0.55"
                 status_text = "<span style='color:#e8ff47; font-weight:bold;'>UNLOCKED</span>" if is_earned else "<span style='color:#9898b8;'>LOCKED</span>"
-                
+
                 render_html(f"""
                 <div style="background:{bg_color}; border:1px solid {border_color}; border-radius:16px; padding:18px; margin-bottom:14px; opacity:{opacity}; text-align:center;">
                     <div style="font-size: 2.2rem; margin-bottom: 6px;">{b['icon']}</div>
@@ -1036,7 +1069,6 @@ elif st.session_state.active_page == "🛡️ Student Hub":
 
         # Topic Launch Grid
         st.markdown("<h3 style='margin-top: 25px; margin-bottom: 14px;'>📚 Threat Defense Curriculum Directory</h3>", unsafe_allow_html=True)
-        
         student_attempts = current_student.attempts.all()
         t_cols = st.columns(2)
         for idx, topic in enumerate(CYBER_TOPICS):
@@ -1046,7 +1078,7 @@ elif st.session_state.active_page == "🛡️ Student Hub":
                 has_taken = t_attempts.exists()
                 best_att = t_attempts.order_by('-score').first() if has_taken else None
                 score_str = f"{best_att.score}/{best_att.total_questions} ({best_att.percentage}%)" if best_att else "Not attempted yet"
-                
+
                 render_html(f"""
                 <div class="nexus-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -1073,7 +1105,6 @@ elif st.session_state.active_page == "🛡️ Student Hub":
 # PAGE 3: 📝 QUIZ ARENA (Interactive Assessment & AI Feedback)
 # =============================================================
 elif st.session_state.active_page == "📝 Quiz Arena":
-    current_student = get_current_student()
     if not current_student:
         st.warning("Please select or enroll a student first in the Student Hub.")
     else:
@@ -1094,7 +1125,7 @@ elif st.session_state.active_page == "📝 Quiz Arena":
             if t['id'] == topic['id']:
                 curr_topic_idx = i
                 break
-                
+
         chosen_topic_str = st.selectbox("Switch Topic:", topic_titles, index=curr_topic_idx)
         new_topic = CYBER_TOPICS[topic_titles.index(chosen_topic_str)]
         if new_topic['id'] != topic['id']:
@@ -1137,7 +1168,7 @@ elif st.session_state.active_page == "📝 Quiz Arena":
                     card_border = "rgba(52, 211, 153, 0.4)" if is_c else "rgba(255, 107, 53, 0.4)"
                     status_badge = "✅ CORRECT" if is_c else "❌ INCORRECT"
                     status_color = "#34d399" if is_c else "#ff6b35"
-                    
+
                     render_html(f"""
                     <div style="background:#080812; border:1px solid {card_border}; border-radius:16px; padding:20px; margin-bottom:14px;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
@@ -1289,8 +1320,6 @@ elif st.session_state.active_page == "🏆 Leaderboard":
     </div>
     """)
 
-    all_students = Student.objects.all()
-
     class_groups = {}
     for s in all_students:
         if s.class_name not in class_groups:
@@ -1363,7 +1392,6 @@ elif st.session_state.active_page == "🏆 Leaderboard":
 # PAGE 5: 📜 CERTIFICATE OF CYBER MASTERY
 # =============================================================
 elif st.session_state.active_page == "📜 Certificate":
-    current_student = get_current_student()
     if not current_student:
         st.warning("Please select a student first in the Student Hub.")
     else:
@@ -1436,18 +1464,16 @@ elif st.session_state.active_page == "📊 Teacher Portal":
     if auth_pass != "TeacherPass123!":
         st.warning("Please enter your educator access key in the sidebar to access student analytics.")
     else:
-        all_students = Student.objects.all()
         all_attempts = QuizAttempt.objects.all()
 
         m1, m2, m3, m4 = st.columns(4)
-        m1.metric("Total Students", all_students.count())
+        m1.metric("Total Students", len(all_students))
         m2.metric("Quizzes Completed", all_attempts.count())
         avg_overall = round(sum(a.percentage for a in all_attempts) / all_attempts.count(), 1) if all_attempts.exists() else 0.0
         m3.metric("School Average", f"{avg_overall}%")
-        m4.metric("Active Classes", len(set(all_students.values_list('class_name', flat=True))))
+        m4.metric("Active Classes", len(set(s.class_name for s in all_students)))
 
         st.markdown("---")
-
         st.markdown("### 📈 Cybersecurity Topic Proficiency")
         topic_counts = {}
         for t in CYBER_TOPICS:
@@ -1459,9 +1485,10 @@ elif st.session_state.active_page == "📊 Teacher Portal":
         st.bar_chart(df_topics.set_index("Topic"))
 
         st.markdown("### 👥 Student Roster & Attempt Inspector")
-        class_filter = st.selectbox("Filter by Class:", ["All Classes"] + sorted(list(set(all_students.values_list('class_name', flat=True)))))
+        available_classes = sorted(list(set(s.class_name for s in all_students)))
+        class_filter = st.selectbox("Filter by Class:", ["All Classes"] + available_classes)
 
-        filtered = all_students if class_filter == "All Classes" else all_students.filter(class_name=class_filter)
+        filtered = all_students if class_filter == "All Classes" else [s for s in all_students if s.class_name == class_filter]
 
         for s in filtered:
             with st.expander(f"{s.name} ({s.class_name} • Roll #{s.roll_number}) — {s.total_attempts} Quizzes • {s.average_score}% Avg"):
@@ -1516,7 +1543,7 @@ elif st.session_state.active_page == "⚙️ Diagnostics":
             <h4>🗄️ Database Connection</h4>
             <p><strong>Provider:</strong> Supabase Cloud</p>
             <p><strong>Engine:</strong> {db_vendor} 17</p>
-            <p><strong>Enrolled Students:</strong> {Student.objects.count()}</p>
+            <p><strong>Enrolled Students:</strong> {len(all_students)}</p>
             <p><strong>Quiz Attempts Recorded:</strong> {QuizAttempt.objects.count()}</p>
             <p><strong>Status:</strong> <span style="color: #e8ff47; font-weight: bold;">● CONNECTED & LIVE</span></p>
         </div>
