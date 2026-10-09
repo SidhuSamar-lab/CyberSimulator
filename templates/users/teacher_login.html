@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Faculty Portal Sign-In | CyberShield{% endblock %}
+{% block title %}Teacher Sign-In | CyberShield{% endblock %}
 
 {% block content %}
 <div class="min-h-[calc(100vh-5rem)] w-full flex items-center justify-center p-4 sm:p-8 relative overflow-hidden bg-ink-950 text-mist-100">
@@ -16,15 +16,15 @@
         <header class="w-full flex flex-col items-center text-center mb-6">
             <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-ink-900 mb-3 shadow-lg border border-white/10 text-xs font-mono text-signal">
                 <span class="w-1.5 h-1.5 rounded-full bg-signal animate-pulse-slow"></span>
-                <span>FACULTY TELEMETRY &bull; PROVOST GATE</span>
+                <span>TEACHER PORTAL</span>
             </div>
             <div class="flex items-center gap-3 justify-center mb-2">
                 <div class="w-10 h-10 rounded-xl bg-ink-900 border border-signal/30 flex items-center justify-center text-signal shadow-lg">
                     <span class="material-symbols-outlined text-xl">school</span>
                 </div>
                 <div class="text-left">
-                    <h1 class="font-display text-xl font-bold text-white tracking-tight leading-none">Faculty Portal</h1>
-                    <p class="font-mono text-[10px] uppercase tracking-wider text-mist-900 mt-0.5">Oakridge Defense Chapter</p>
+                    <h1 class="font-display text-xl font-bold text-white tracking-tight leading-none">Teacher Sign-In</h1>
+                    <p class="font-mono text-[10px] uppercase tracking-wider text-mist-900 mt-0.5">Educator Dashboard</p>
                 </div>
             </div>
         </header>
@@ -34,9 +34,9 @@
             
             <div class="p-6 sm:p-8 flex flex-col gap-6">
                 <div class="flex flex-col gap-1 border-b border-white/5 pb-4">
-                    <h2 class="font-display text-2xl font-bold text-white">Dean &amp; Faculty Access</h2>
+                    <h2 class="font-display text-2xl font-bold text-white">Teacher Portal</h2>
                     <p class="font-body text-xs text-mist-900 leading-relaxed">
-                        Inspect student telemetry attempts, review class vulnerability flags, and export CSV ledger reports.
+                        Access student progress reports, review quiz attempts, and export class analytics.
                     </p>
                 </div>
 
@@ -44,13 +44,13 @@
                     {% csrf_token %}
 
                     <div class="flex flex-col gap-1.5">
-                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="id_username">Faculty Username</label>
+                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="id_username">Teacher Username</label>
                         <div class="relative flex items-center">
                             <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">badge</span>
                             <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
                                    id="id_username" 
                                    name="username" 
-                                   placeholder="ms_carter or prof_jones" 
+                                   placeholder="Username" 
                                    required="" 
                                    autofocus 
                                    type="text"/>
@@ -58,12 +58,13 @@
                     </div>
 
                     <div class="flex flex-col gap-1.5">
-                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="id_password">Access Key / Password</label>
+                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="id_password">Password</label>
                         <div class="relative flex items-center">
                             <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">lock</span>
                             <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
                                    id="id_password" 
                                    name="password" 
+                                   placeholder="Password"
                                    required="" 
                                    type="password"/>
                         </div>
@@ -72,7 +73,7 @@
                     <button type="submit" 
                             id="btn-teacher-submit"
                             class="w-full h-12 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-xs uppercase tracking-wider font-bold transition-all shadow-[0_0_20px_rgba(232,255,71,0.2)] flex items-center justify-center gap-2 cursor-pointer mt-1">
-                        <span>Authenticate Faculty Access</span>
+                        <span>Sign In to Portal</span>
                         <span class="material-symbols-outlined text-base">arrow_forward</span>
                     </button>
                 </form>

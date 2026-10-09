@@ -27,11 +27,11 @@
             <div class="flex items-center gap-2.5">
                 <div class="flex items-center gap-1.5 px-3 py-1 bg-ink-900 rounded-full border border-white/10 text-mist-700 text-xs font-mono">
                     <span class="material-symbols-outlined text-xs text-signal">timer</span>
-                    <span>UNTIMED LAB DRILL</span>
+                    <span>Self-Paced Quiz</span>
                 </div>
                 <div class="flex items-center gap-1.5 px-3 py-1 bg-signal/10 rounded-full border border-signal/30 text-signal text-xs font-mono font-bold">
                     <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
-                    <span>NIST SP 800-181</span>
+                    <span>Interactive Quiz</span>
                 </div>
             </div>
         </div>
@@ -44,25 +44,25 @@
                 <div class="flex flex-col gap-2">
                     <div class="flex items-center gap-2 flex-wrap">
                         <span class="bg-ink-950 text-signal font-mono text-[10px] tracking-widest px-3 py-1 rounded-full font-bold uppercase border border-signal/30">
-                            DRILL &bull; {{ topic.category|default:"DIGITAL SAFETY"|upper }}
+                            {{ topic.category|default:"DIGITAL SAFETY"|upper }}
                         </span>
                         <span class="bg-ink-950 text-mist-700 text-xs font-mono px-3 py-1 rounded-full border border-white/10">
-                            Adversarial Specimen Assessment
+                            Interactive Scenario
                         </span>
                     </div>
                     <h1 class="font-display text-2xl sm:text-4xl text-white font-bold tracking-tight mt-1 leading-snug">
                         Scenario Challenge: {{ topic.title }}
                     </h1>
                     <p class="font-mono text-xs text-mist-900 tracking-wider uppercase">
-                        LAB SPECIMEN ANALYSIS &bull; {{ questions|length }} ADVERSARIAL QUESTIONS
+                        {{ questions|length }} SCENARIO QUESTIONS
                     </p>
                 </div>
 
                 <div class="flex items-center gap-4 bg-ink-950 px-5 py-3 rounded-2xl border border-white/10 shrink-0 shadow-inner">
                     <div class="text-right font-mono">
-                        <div class="text-[10px] uppercase tracking-widest text-mist-900">Drill Scope</div>
+                        <div class="text-[10px] uppercase tracking-widest text-mist-900">Progress</div>
                         <div class="font-display text-xl sm:text-2xl text-signal font-bold tracking-tight">
-                            {{ questions|length }} / {{ questions|length }} <span class="text-xs text-mist-900 font-normal">UNITS</span>
+                            {{ questions|length }} / {{ questions|length }} <span class="text-xs text-mist-900 font-normal">QUESTIONS</span>
                         </div>
                     </div>
                     <div class="w-11 h-11 rounded-xl border border-signal/40 bg-signal/15 flex items-center justify-center text-signal font-mono font-bold text-sm">
@@ -77,7 +77,7 @@
                 <div class="flex flex-col gap-1.5">
                     <div class="h-1 rounded-full bg-signal shadow-[0_0_8px_rgba(232,255,71,0.6)]"></div>
                     <span class="font-mono text-[10px] uppercase text-signal font-bold flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-signal"></span> Scenario 0{{ forloop.counter }}
+                        <span class="w-1.5 h-1.5 rounded-full bg-signal"></span> Question 0{{ forloop.counter }}
                     </span>
                 </div>
                 {% endfor %}
@@ -96,8 +96,8 @@
                     
                     <div class="flex items-center justify-between pb-3 border-b border-white/5">
                         <div class="flex items-center gap-2 text-signal font-mono text-xs font-bold uppercase tracking-widest">
-                            <span class="material-symbols-outlined text-base">balance</span>
-                            <span>Scenario Challenge #{{ forloop.counter }} Exhibit</span>
+                            <span class="material-symbols-outlined text-base">quiz</span>
+                            <span>Scenario Challenge #{{ forloop.counter }}</span>
                         </div>
 
                         <!-- AI Hint Button -->
@@ -105,7 +105,7 @@
                                 class="btn-hint inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-ink-950 border border-signal/30 text-signal hover:bg-signal hover:text-ink-950 text-xs font-mono tracking-wider transition-all cursor-pointer"
                                 data-q-num="{{ forloop.counter }}">
                             <span class="material-symbols-outlined text-sm">lightbulb</span>
-                            <span>Request Provost Hint</span>
+                            <span>Get AI Hint</span>
                         </button>
                     </div>
 
@@ -113,7 +113,7 @@
                     <div id="hint-box-{{ forloop.counter }}" class="hidden p-4 rounded-xl bg-ink-950 border border-signal/40 text-xs text-mist-100 leading-relaxed shadow-inner font-body">
                         <div class="flex items-center gap-1.5 font-bold text-signal text-xs font-mono mb-1">
                             <span class="material-symbols-outlined text-sm">psychology</span>
-                            <span>CyberQuizAgent (GPT-5) Guidance:</span>
+                            <span>AI Mentor Hint:</span>
                         </div>
                         <p class="hint-text text-mist-700 font-mono text-[11px]"></p>
                     </div>
@@ -127,15 +127,15 @@
                     <div class="bg-ink-950 rounded-xl border border-white/10 p-5 space-y-3 font-mono text-xs">
                         <div class="flex items-center justify-between pb-2 border-b border-white/5 text-mist-900">
                             <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded bg-ink-900 border border-white/10 text-signal font-bold">#0{{ forloop.counter }}A</span>
-                                <span class="text-white text-[11px]">FORENSIC TELEMETRY SPECIMEN</span>
+                                <span class="px-2 py-0.5 rounded bg-ink-900 border border-white/10 text-signal font-bold">#0{{ forloop.counter }}</span>
+                                <span class="text-white text-[11px]">SCENARIO CONTEXT</span>
                             </div>
-                            <span class="text-signal text-[10px]">SANDBOX SIMULATION</span>
+                            <span class="text-signal text-[10px]">PRACTICE QUESTION</span>
                         </div>
                         <div class="p-3.5 rounded-lg bg-ink-900 border border-white/5 text-mist-700 leading-relaxed">
-                            <p class="font-sans mb-1 text-white font-medium">Examine the threat pattern and apply your defense protocols:</p>
+                            <p class="font-sans mb-1 text-white font-medium">Read carefully and select the safest response:</p>
                             <p class="text-[11px] font-mono text-mist-900">
-                                Scrutinize domain spelling, unexpected urgency, and authentication requirements before responding.
+                                Look for red flags like urgent language, suspicious links, and unverified senders.
                             </p>
                         </div>
                     </div>
@@ -143,7 +143,7 @@
                     <!-- Options -->
                     <div class="flex flex-col gap-3 pt-2">
                         <span class="font-mono text-xs font-bold text-signal uppercase tracking-widest px-1">
-                            Candidate Verdict Selection:
+                            Choose Your Answer:
                         </span>
 
                         <label class="p-4 rounded-xl bg-ink-950 border border-white/10 hover:border-signal/50 hover:bg-ink-900 transition-all cursor-pointer flex items-start gap-3.5 group">
@@ -188,7 +188,7 @@
 
             </section>
 
-            <!-- Right: Provost AI Aside (5 cols) -->
+            <!-- Right: Mentor AI Aside (5 cols) -->
             <aside class="lg:col-span-5 flex flex-col gap-6 sticky top-20">
                 
                 <div class="bg-ink-900/95 rounded-3xl border border-white/10 shadow-2xl p-6 sm:p-8 flex flex-col gap-6 backdrop-blur-xl">
@@ -198,21 +198,20 @@
                             <span class="material-symbols-outlined text-xl">psychology</span>
                         </div>
                         <div>
-                            <h3 class="font-display text-base font-bold text-white">AI Safety Provost</h3>
-                            <span class="font-mono text-[11px] text-signal">CyberQuizAgent &bull; GPT-5 Engine</span>
+                            <h3 class="font-display text-base font-bold text-white">AI Cyber Mentor</h3>
+                            <span class="font-mono text-[11px] text-signal">Powered by GPT-5</span>
                         </div>
                     </div>
 
                     <div class="p-4 rounded-2xl bg-ink-950 border border-white/5 text-xs font-mono text-mist-700 leading-relaxed">
-                        <span class="text-signal font-bold block mb-1">PROVOST INSTRUCTIONS:</span>
-                        Examine each scenario carefully. Upon clicking submit, the GPT-5 agent evaluates your reasoning, flags typosquatting homoglyphs, and logs your response to your cadet record.
+                        <span class="text-signal font-bold block mb-1">MENTOR TIP:</span>
+                        Take your time on each scenario. Once submitted, your answers are evaluated with instant feedback and explanations.
                     </div>
 
                     <button type="submit" 
                             id="btn-submit-quiz"
                             class="w-full py-4 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-sm font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(232,255,71,0.25)] cursor-pointer">
-                        <span>Submit Verdict &amp; AI Analysis</span>
-                        <span class="material-symbols-outlined text-lg font-bold">arrow_forward</span>
+                        <span>Submit Quiz &rarr;</span>
                     </button>
 
                     <a href="{% url 'student_dashboard' %}" class="w-full py-2.5 rounded-full bg-ink-950 hover:bg-ink-800 border border-white/10 text-mist-700 font-mono text-xs text-center transition-colors">
@@ -224,9 +223,9 @@
                 <div class="bg-ink-850 border border-white/5 rounded-2xl p-4 flex items-center justify-between text-xs font-mono text-mist-900">
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-signal animate-pulse-slow"></span>
-                        <span>Isolated Sandbox Environment</span>
+                        <span>Safe Practice Environment</span>
                     </div>
-                    <span>Zero Network Risk</span>
+                    <span>Zero Risk</span>
                 </div>
 
             </aside>
@@ -243,9 +242,9 @@
         <div class="w-14 h-14 mx-auto rounded-2xl bg-signal/15 border border-signal/40 text-signal flex items-center justify-center">
             <span class="material-symbols-outlined text-2xl animate-spin">sync</span>
         </div>
-        <h3 class="font-display text-xl font-bold text-white">Analyzing Forensic Reasoning...</h3>
+        <h3 class="font-display text-xl font-bold text-white">Analyzing Your Responses...</h3>
         <p class="text-xs text-mist-700 font-body">
-            CyberQuizAgent (GPT-5) is evaluating your defense instincts and generating your educational critique ledger.
+            CyberQuizAgent (GPT-5) is evaluating your defense instincts and generating your educational feedback.
         </p>
     </div>
 </div>
@@ -270,14 +269,14 @@
             try {
                 const resp = await fetch(`{% url 'get_quiz_hint' %}?q=${qNum}`);
                 const data = await resp.json();
-                hintText.textContent = data.hint || "Carefully verify sender credentials, visual homoglyphs, and unauthorized root domains.";
+                hintText.textContent = data.hint || "Carefully check the sender email, look for spelling tricks in the domain, and think before clicking.";
                 hintBox.classList.remove('hidden');
             } catch (err) {
-                hintText.textContent = "Focus on the domain name, artificial urgency, and unexpected attachments.";
+                hintText.textContent = "Focus on the sender domain, artificial urgency, and unexpected requests.";
                 hintBox.classList.remove('hidden');
             } finally {
                 this.disabled = false;
-                this.innerHTML = `<span class="material-symbols-outlined text-sm">lightbulb</span><span>Request Provost Hint</span>`;
+                this.innerHTML = `<span class="material-symbols-outlined text-sm">lightbulb</span><span>Get AI Hint</span>`;
             }
         });
     });

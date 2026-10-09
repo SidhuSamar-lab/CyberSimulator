@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Cadet Terminal | {{ student.name }} | CyberShield{% endblock %}
+{% block title %}Student Dashboard | {{ student.name }} | CyberShield{% endblock %}
 
 {% block content %}
 <div class="relative w-full overflow-hidden bg-ink-950 text-mist-100 min-h-screen">
@@ -12,23 +12,20 @@
 
     <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-10 flex flex-col gap-10">
         
-        <!-- Hero Cadet Sentinel HUD Banner -->
+        <!-- Hero Student Overview Banner -->
         <div class="relative overflow-hidden bg-ink-900/90 border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl flex flex-col lg:flex-row items-stretch justify-between gap-8">
             
-            <!-- Left Column: Greeting & Telemetry HUD -->
+            <!-- Left Column: Greeting & HUD -->
             <div class="flex flex-col justify-between max-w-2xl">
                 <div>
                     <!-- Badge Row -->
                     <div class="flex flex-wrap items-center gap-2 mb-4">
                         <span class="px-3 py-1 rounded-full bg-ink-950 text-signal text-xs font-mono font-bold tracking-wider uppercase border border-signal/30 shadow-sm">
-                            CLASS OF 2029 &bull; {{ student.class_name }} | ROLL #{{ student.roll_number }}
+                            {{ student.class_name }} &bull; Roll #{{ student.roll_number }}
                         </span>
                         <span class="px-3 py-1 rounded-full bg-ink-950 text-mist-700 text-xs font-mono border border-white/10 flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
-                            Oakridge Defense Chapter
-                        </span>
-                        <span class="px-3 py-1 rounded-full bg-signal/10 text-signal text-xs font-mono border border-signal/20">
-                            Term Assessment: Nov 14
+                            Active Student
                         </span>
                     </div>
 
@@ -37,28 +34,28 @@
                         Welcome back, {{ student.name }}
                     </h1>
                     <p class="font-body text-sm sm:text-base text-mist-900 max-w-xl leading-relaxed mt-2">
-                        Sharpen your adversarial detection radar. You have mastered <strong class="text-white font-bold">{{ completed_count }}</strong> of {{ total_topics }} threat vectors for Term II.
+                        Practice cybersecurity scenarios and build strong online safety habits. You have mastered <strong class="text-white font-bold">{{ completed_count }}</strong> of {{ total_topics }} topics.
                     </p>
                 </div>
 
                 <!-- Telemetry Indicators in Nexus Studio Inset Card -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-6 pt-5 bg-ink-950/80 border border-white/5 rounded-2xl p-4">
                     <div class="flex flex-col border-r border-white/5 pr-2">
-                        <span class="text-[10px] uppercase tracking-widest font-mono text-mist-900">Sentinel Tier</span>
+                        <span class="text-[10px] uppercase tracking-widest font-mono text-mist-900">Current Rank</span>
                         <div class="flex items-center gap-1.5 mt-1">
                             <span class="material-symbols-outlined text-signal text-lg">shield</span>
                             <span class="font-display text-sm font-bold text-white">{{ rank_title }}</span>
                         </div>
                     </div>
                     <div class="flex flex-col sm:border-r border-white/5 sm:pr-2">
-                        <span class="text-[10px] uppercase tracking-widest font-mono text-mist-900">Drill Streak</span>
+                        <span class="text-[10px] uppercase tracking-widest font-mono text-mist-900">Practice Streak</span>
                         <div class="flex items-center gap-1.5 mt-1">
                             <span class="material-symbols-outlined text-ember text-lg">local_fire_department</span>
                             <span class="font-display text-sm font-bold text-ember">4 Days Active</span>
                         </div>
                     </div>
                     <div class="flex flex-col col-span-2 sm:col-span-1 pt-2 sm:pt-0">
-                        <span class="text-[10px] uppercase tracking-widest font-mono text-mist-900">Cadet Standings</span>
+                        <span class="text-[10px] uppercase tracking-widest font-mono text-mist-900">Class Standing</span>
                         <div class="flex items-center gap-1.5 mt-1">
                             <span class="material-symbols-outlined text-white text-lg">workspace_premium</span>
                             <span class="font-display text-sm font-bold text-white">Top Honor Roll</span>
@@ -67,13 +64,13 @@
                 </div>
             </div>
 
-            <!-- Right Column: Curricular Resilience Gauge -->
+            <!-- Right Column: Course Progress -->
             <div class="flex flex-col justify-between lg:w-96 p-6 rounded-2xl bg-ink-950 border border-white/10 shadow-xl">
                 <div>
                     <div class="flex items-center justify-between mb-2 pb-3 border-b border-white/5">
-                        <span class="font-display text-sm font-bold text-white">Curricular Resilience</span>
+                        <span class="font-display text-sm font-bold text-white">Course Progress</span>
                         <span class="font-mono text-xs font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-signal/15 text-signal border border-signal/30">
-                            {{ completed_count }} / {{ total_topics }} Vectors
+                            {{ completed_count }} / {{ total_topics }} Topics
                         </span>
                     </div>
 
@@ -81,7 +78,7 @@
                         <span class="font-display text-4xl sm:text-5xl font-bold text-signal tracking-tight tabular-nums">
                             {{ completion_percentage }}%
                         </span>
-                        <span class="font-mono text-xs text-mist-900 uppercase tracking-wider">Mastery Rate</span>
+                        <span class="font-mono text-xs text-mist-900 uppercase tracking-wider">Completion</span>
                     </div>
                     
                     <!-- Electric Lime Progress Bar -->
@@ -102,15 +99,15 @@
                     </div>
                 </div>
 
-                <!-- Cadet Digital Certification Link -->
+                <!-- Certificate Link -->
                 <a href="{% url 'student_certificate' %}" class="mt-6 p-4 rounded-xl bg-ink-900 border border-white/10 hover:border-signal/50 flex items-center justify-between shadow-inner transition-all group cursor-pointer">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-lg bg-signal/15 text-signal border border-signal/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                             <span class="material-symbols-outlined text-lg">verified</span>
                         </div>
                         <div class="flex flex-col">
-                            <span class="font-display text-xs font-bold text-white">Digital Honor Credential</span>
-                            <span class="font-mono text-[10px] text-mist-900">Inspect verified graduation seal</span>
+                            <span class="font-display text-xs font-bold text-white">Certificate of Mastery</span>
+                            <span class="font-mono text-[10px] text-mist-900">View and print your certificate</span>
                         </div>
                     </div>
                     <span class="material-symbols-outlined text-signal text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -121,26 +118,26 @@
         <!-- Main Grid: Modules & Sidebar -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- Left: 8 Threat Modules Area (8 Cols) -->
+            <!-- Left: 8 Topics Area (8 Cols) -->
             <div class="lg:col-span-8 flex flex-col gap-6">
                 
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-white/5">
                     <div>
-                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-white tracking-tight">Curriculum Vectors</h2>
-                        <p class="font-body text-xs text-mist-900 mt-0.5">8 interactive threat vector drills aligned with NIST standards.</p>
+                        <h2 class="font-display text-2xl sm:text-3xl font-bold text-white tracking-tight">Cybersecurity Topics</h2>
+                        <p class="font-body text-xs text-mist-900 mt-0.5">Interactive scenario quizzes designed for middle and high school students.</p>
                     </div>
                     
-                    <div class="inline-flex p-1 bg-ink-900 rounded-full border border-white/10 gap-1 text-xs font-mono">
-                        <button class="px-3.5 py-1 rounded-full bg-signal text-ink-950 font-bold shadow-sm">All ({{ total_topics }})</button>
-                        <button class="px-3.5 py-1 rounded-full text-mist-900 hover:text-white transition-colors">Active ({{ active_count }})</button>
-                        <button class="px-3.5 py-1 rounded-full text-mist-900 hover:text-white transition-colors">Mastered ({{ completed_count }})</button>
+                    <div class="inline-flex p-1 bg-ink-900 rounded-full border border-white/10 gap-1 text-xs font-mono" id="filter-tabs">
+                        <button onclick="filterTopics('all', this)" class="filter-btn px-3.5 py-1 rounded-full bg-signal text-ink-950 font-bold shadow-sm transition-all cursor-pointer">All ({{ total_topics }})</button>
+                        <button onclick="filterTopics('active', this)" class="filter-btn px-3.5 py-1 rounded-full text-mist-900 hover:text-white transition-all cursor-pointer">Active ({{ active_count }})</button>
+                        <button onclick="filterTopics('mastered', this)" class="filter-btn px-3.5 py-1 rounded-full text-mist-900 hover:text-white transition-all cursor-pointer">Mastered ({{ completed_count }})</button>
                     </div>
                 </div>
 
                 <!-- 8 Bento Grid Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="topics-grid">
                     {% for topic in topics %}
-                    <div class="flex flex-col justify-between bg-ink-850 border {% if topic.is_completed %}border-signal/30 bg-ink-850/90{% else %}border-white/5{% endif %} rounded-2xl p-6 shadow-xl hover:border-signal/40 hover:bg-ink-800 transition-all duration-300 group">
+                    <div class="topic-card flex flex-col justify-between bg-ink-850 border {% if topic.is_completed %}border-signal/30 bg-ink-850/90{% else %}border-white/5{% endif %} rounded-2xl p-6 shadow-xl hover:border-signal/40 hover:bg-ink-800 transition-all duration-300 group" data-status="{% if topic.is_completed %}mastered{% else %}active{% endif %}">
                         <div>
                             <div class="flex items-start justify-between gap-2">
                                 {% if topic.is_completed %}
@@ -193,14 +190,14 @@
 
                         <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
                             {% if topic.is_completed %}
-                                <span class="font-mono text-[11px] text-mist-900">Passed</span>
+                                <span class="font-mono text-[11px] text-signal font-semibold">Completed</span>
                                 <a href="{% url 'take_quiz' topic.id %}" class="px-4 py-2 rounded-full bg-ink-950 hover:bg-ink-900 border border-white/10 text-white font-mono text-xs transition-colors">
                                     Review
                                 </a>
                             {% else %}
-                                <span class="font-mono text-[11px] text-mist-900">Term II</span>
+                                <span class="font-mono text-[11px] text-mist-900">Available</span>
                                 <a href="{% url 'take_quiz' topic.id %}" class="px-4 py-2 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-signal/20">
-                                    <span>Launch Drill</span>
+                                    <span>Start Quiz</span>
                                     <span>&rarr;</span>
                                 </a>
                             {% endif %}
@@ -211,69 +208,69 @@
 
             </div>
 
-            <!-- Right: Precept & Cohort Standings (4 Cols) -->
+            <!-- Right: Safety Tip & Class Leaderboard (4 Cols) -->
             <div class="lg:col-span-4 flex flex-col gap-6">
                 
-                <!-- Daily Precept Box -->
+                <!-- Daily Tip Box -->
                 <div class="bg-ink-900/90 border border-white/10 p-6 rounded-2xl shadow-xl flex flex-col backdrop-blur-xl">
                     <div class="flex items-center justify-between pb-3 border-b border-white/5">
                         <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-signal text-lg">menu_book</span>
-                            <span class="font-display text-sm font-bold text-white uppercase tracking-wider">Academy Precept</span>
+                            <span class="material-symbols-outlined text-signal text-lg">lightbulb</span>
+                            <span class="font-display text-sm font-bold text-white uppercase tracking-wider">Cyber Tip</span>
                         </div>
-                        <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-signal bg-signal/10 px-2.5 py-0.5 rounded-full border border-signal/20">Daily Canon</span>
+                        <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-signal bg-signal/10 px-2.5 py-0.5 rounded-full border border-signal/20">Daily Rule</span>
                     </div>
                     
                     <div class="mt-4 p-4 bg-ink-950 border border-white/5 rounded-xl">
-                        <span class="text-[10px] font-mono font-bold tracking-widest text-signal block mb-1">RULE #42 &bull; URL INTEGRITY</span>
+                        <span class="text-[10px] font-mono font-bold tracking-widest text-signal block mb-1">RULE: CHECK DOMAIN NAMES</span>
                         <p class="font-body text-sm text-white font-medium leading-relaxed">
-                            “Always scrutinize the root domain before entering any login credentials.”
+                            “Always check the exact address in the browser bar before typing your password.”
                         </p>
                     </div>
 
                     <!-- Domain Comparison Box -->
                     <div class="mt-4 space-y-2">
                         <div class="flex items-center justify-between text-xs p-3 rounded-xl bg-ink-950 border border-signal/30">
-                            <span class="font-mono text-white text-[11px]">portal.oakridge.edu</span>
+                            <span class="font-mono text-white text-[11px]">portal.school.edu</span>
                             <span class="font-mono text-[10px] text-signal font-bold flex items-center gap-1 bg-signal/15 px-2 py-0.5 rounded-full border border-signal/30">
-                                Authentic
+                                Real
                             </span>
                         </div>
                         <div class="flex items-center justify-between text-xs p-3 rounded-xl bg-ink-950 border border-ember/30">
-                            <span class="font-mono text-white text-[11px]">portal-oakridge-auth.cc</span>
+                            <span class="font-mono text-white text-[11px]">portal-school-login.xyz</span>
                             <span class="font-mono text-[10px] text-ember font-bold flex items-center gap-1 bg-ember/15 px-2 py-0.5 rounded-full border border-ember/30">
-                                Spoofed
+                                Fake
                             </span>
                         </div>
                     </div>
 
                     <a href="{% url 'take_quiz' topic_id='phishing' %}" class="mt-4 w-full py-2.5 bg-ink-950 hover:bg-ink-800 border border-white/10 hover:border-signal/50 text-white font-mono text-xs rounded-full transition-all flex items-center justify-center gap-2">
-                        <span>Test Phishing Defense</span>
+                        <span>Practice Phishing Quiz</span>
                         <span class="material-symbols-outlined text-sm text-signal">arrow_outward</span>
                     </a>
                 </div>
 
-                <!-- Cadet Standings Widget -->
+                <!-- Class Leaderboard Widget -->
                 <div class="bg-ink-900/90 border border-white/10 p-6 rounded-2xl shadow-xl flex flex-col backdrop-blur-xl">
                     <div class="flex items-center justify-between pb-3 border-b border-white/5">
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-lg bg-ink-950 border border-white/10 text-signal flex items-center justify-center">
-                                <span class="material-symbols-outlined text-base">shield</span>
+                                <span class="material-symbols-outlined text-base">leaderboard</span>
                             </div>
                             <div>
-                                <h3 class="font-display text-sm font-bold text-white leading-tight">Cadet Standings</h3>
-                                <span class="font-mono text-[10px] text-mist-900">{{ student.class_name }} Honor Roll</span>
+                                <h3 class="font-display text-sm font-bold text-white leading-tight">Class Leaderboard</h3>
+                                <span class="font-mono text-[10px] text-mist-900">{{ student.class_name }} Standings</span>
                             </div>
                         </div>
-                        <span class="px-2.5 py-0.5 rounded-full bg-signal/10 text-signal font-mono text-[10px] font-bold uppercase tracking-wider border border-signal/20">Weekly</span>
+                        <span class="px-2.5 py-0.5 rounded-full bg-signal/10 text-signal font-mono text-[10px] font-bold uppercase tracking-wider border border-signal/20">Live</span>
                     </div>
 
                     <!-- Highlight -->
                     <div class="mt-4 p-3.5 bg-ink-950 border border-white/5 rounded-xl flex items-center gap-3">
                         <span class="text-xl">🎯</span>
                         <div class="flex flex-col">
-                            <span class="font-display text-xs font-bold text-white">184 Threat Labs Solved</span>
-                            <span class="font-body text-[11px] text-mist-900">Your homeroom leads district cyber defense rankings.</span>
+                            <span class="font-display text-xs font-bold text-white">Class Progress</span>
+                            <span class="font-body text-[11px] text-mist-900">Your homeroom is actively mastering cyber safety topics.</span>
                         </div>
                     </div>
 
@@ -300,7 +297,7 @@
                         <!-- You -->
                         <div class="flex items-center justify-between p-3 rounded-xl bg-signal/10 border border-signal/40 shadow-sm">
                             <div class="flex items-center gap-3">
-                                <span class="font-mono text-xs font-bold text-signal w-4">06</span>
+                                <span class="font-mono text-xs font-bold text-signal w-4">#</span>
                                 <div class="w-7 h-7 rounded-full bg-signal text-ink-950 flex items-center justify-center font-mono text-xs font-bold">
                                     {{ student.name|slice:":2"|upper }}
                                 </div>
@@ -309,12 +306,11 @@
                                     <span class="font-mono text-[10px] text-signal">{{ completed_count }} / {{ total_topics }} Done</span>
                                 </div>
                             </div>
-                            <span class="font-mono text-xs font-bold text-signal">{{ student.total_score|default:"780" }} pts</span>
+                            <span class="font-mono text-xs font-bold text-signal">{{ student.total_score }} pts</span>
                         </div>
                     </div>
 
-                    <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs">
-                        <span class="font-mono text-[10px] text-mist-900">Tournament in 2 days</span>
+                    <div class="mt-4 pt-3 border-t border-white/5 flex items-center justify-end text-xs">
                         <a class="font-mono text-xs font-bold text-signal hover:underline flex items-center gap-1" href="{% url 'leaderboard_view' %}">
                             Full Leaderboard &rarr;
                         </a>
@@ -328,4 +324,26 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function filterTopics(category, btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('bg-signal', 'text-ink-950', 'font-bold', 'shadow-sm');
+            b.classList.add('text-mist-900');
+        });
+        btn.classList.add('bg-signal', 'text-ink-950', 'font-bold', 'shadow-sm');
+        btn.classList.remove('text-mist-900');
+
+        document.querySelectorAll('.topic-card').forEach(card => {
+            const status = card.getAttribute('data-status');
+            if (category === 'all' || status === category) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
 {% endblock %}

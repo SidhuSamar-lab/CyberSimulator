@@ -17,7 +17,7 @@
         <!-- Top Status Pill -->
         <div class="bg-ink-800 border border-white/10 text-mist-700 font-mono text-xs px-4 py-2 rounded-full mb-10 flex items-center gap-2.5 shadow-lg">
             <div class="w-2 h-2 bg-signal rounded-full animate-pulse-slow"></div>
-            <span>CyberSimulator Defense Platform &bull; NIST SP 800-181 Certified &bull; Term II Active</span>
+            <span>CyberSimulator &bull; Interactive Defense Platform &bull; Powered by GPT-5</span>
         </div>
 
         <!-- Brutalist Editorial Headline -->
@@ -29,30 +29,30 @@
 
         <!-- Subtitle -->
         <p class="font-body text-mist-900 text-lg md:text-xl max-w-2xl mb-10 leading-relaxed">
-            Interactive threat vector simulations engineered for secondary students. Deconstruct typosquatting homoglyphs, dissect raw RFC headers, and test your instincts against live adversarial tactics.
+            Interactive cybersecurity quizzes designed for students. Spot deceptive phishing lures, master strong password habits, outsmart AI deepfakes, and build real-world digital resilience.
         </p>
 
         <!-- CTA Buttons -->
         <div class="flex flex-wrap items-center gap-4 sm:gap-6 mb-16">
             {% if current_student %}
                 <a href="{% url 'student_dashboard' %}" class="px-8 py-4 rounded-full bg-signal text-ink-950 font-display font-bold text-sm tracking-wide hover:bg-signal-dim shadow-[0_0_25px_rgba(232,255,71,0.25)] flex items-center gap-2 transition-all">
-                    <span>Open Cadet Dossier</span>
+                    <span>Open Dashboard</span>
                     <span class="font-mono">&rarr;</span>
                 </a>
             {% else %}
                 <a href="{% url 'student_login' %}" class="px-8 py-4 rounded-full bg-signal text-ink-950 font-display font-bold text-sm tracking-wide hover:bg-signal-dim shadow-[0_0_25px_rgba(232,255,71,0.25)] flex items-center gap-2 transition-all">
-                    <span>Enter Safety Lab (No Passwords)</span>
+                    <span>Start Learning (No Passwords)</span>
                     <span class="font-mono">&rarr;</span>
                 </a>
             {% endif %}
 
             <a href="{% url 'leaderboard_view' %}" class="px-8 py-4 rounded-full border border-white/10 hover:border-signal/50 text-white hover:text-signal font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm text-signal">trophy</span>
-                <span>Classroom Honor Roll</span>
+                <span>Leaderboard</span>
             </a>
 
             <a href="{% url 'teacher_dashboard' %}" class="px-6 py-4 text-mist-700 hover:text-white font-mono text-xs uppercase tracking-wider transition-colors flex items-center gap-1.5">
-                <span>Faculty Ledger</span>
+                <span>Teacher Portal</span>
                 <span>&rarr;</span>
             </a>
         </div>
@@ -61,19 +61,19 @@
         <div class="w-full pt-10 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-6">
             <div>
                 <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">8</p>
-                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-1">Threat Vectors</p>
+                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-1">Core Topics</p>
             </div>
             <div>
                 <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">0</p>
                 <p class="font-mono text-xs text-signal uppercase tracking-wider mt-1">Passwords Stored</p>
             </div>
             <div>
-                <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">412+</p>
-                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-1">Recorded Drills</p>
+                <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">{{ total_quizzes|default:"100" }}+</p>
+                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-1">Quizzes Completed</p>
             </div>
             <div>
                 <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">GPT-5</p>
-                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-1">AI Safety Provost</p>
+                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-1">AI Cyber Mentor</p>
             </div>
         </div>
 
@@ -82,24 +82,24 @@
     <!-- Continuous Marquee Telemetry Ticker (Nexus Studio Signature) -->
     <div class="w-full py-4 bg-ink-900 border-y border-white/5 overflow-hidden whitespace-nowrap relative select-none">
         <div class="inline-block animate-marquee font-mono text-xs uppercase tracking-[0.2em] text-mist-900">
-            <span class="mx-6 text-signal font-bold">&bull; LIVE TELEMETRY</span>
-            <span class="mx-6">HOMOGLYPH DETECTION VERIFIED</span>
-            <span class="mx-6 text-ember">&bull; RFC 5322 HEADER INSPECTION</span>
-            <span class="mx-6">QUISHING ATTACK REMEDIATION</span>
-            <span class="mx-6 text-signal">&bull; NIST SP 800-181 COMPLIANT</span>
-            <span class="mx-6">DEEPFAKE VOICE CLONING ANALYSIS</span>
-            <span class="mx-6 text-white">&bull; ZERO CREDENTIAL STORAGE</span>
-            <span class="mx-6">AZURE AI FOUNDRY GPT-5 AGENT</span>
+            <span class="mx-6 text-signal font-bold">&bull; INTERACTIVE LEARNING</span>
+            <span class="mx-6">PHISHING DETECTION</span>
+            <span class="mx-6 text-ember">&bull; PASSWORD SECURITY</span>
+            <span class="mx-6">SOCIAL MEDIA PRIVACY</span>
+            <span class="mx-6 text-signal">&bull; AI DEEPFAKE DEFENSE</span>
+            <span class="mx-6">SAFE BROWSING HABITS</span>
+            <span class="mx-6 text-white">&bull; ZERO PASSWORDS REQUIRED</span>
+            <span class="mx-6">POWERED BY GPT-5</span>
         </div>
         <div class="inline-block animate-marquee font-mono text-xs uppercase tracking-[0.2em] text-mist-900">
-            <span class="mx-6 text-signal font-bold">&bull; LIVE TELEMETRY</span>
-            <span class="mx-6">HOMOGLYPH DETECTION VERIFIED</span>
-            <span class="mx-6 text-ember">&bull; RFC 5322 HEADER INSPECTION</span>
-            <span class="mx-6">QUISHING ATTACK REMEDIATION</span>
-            <span class="mx-6 text-signal">&bull; NIST SP 800-181 COMPLIANT</span>
-            <span class="mx-6">DEEPFAKE VOICE CLONING ANALYSIS</span>
-            <span class="mx-6 text-white">&bull; ZERO CREDENTIAL STORAGE</span>
-            <span class="mx-6">AZURE AI FOUNDRY GPT-5 AGENT</span>
+            <span class="mx-6 text-signal font-bold">&bull; INTERACTIVE LEARNING</span>
+            <span class="mx-6">PHISHING DETECTION</span>
+            <span class="mx-6 text-ember">&bull; PASSWORD SECURITY</span>
+            <span class="mx-6">SOCIAL MEDIA PRIVACY</span>
+            <span class="mx-6 text-signal">&bull; AI DEEPFAKE DEFENSE</span>
+            <span class="mx-6">SAFE BROWSING HABITS</span>
+            <span class="mx-6 text-white">&bull; ZERO PASSWORDS REQUIRED</span>
+            <span class="mx-6">POWERED BY GPT-5</span>
         </div>
     </div>
 
@@ -107,7 +107,7 @@
     <section class="max-w-7xl mx-auto px-6 md:px-12 py-28 relative z-10" id="curriculum">
         
         <div class="mb-16">
-            <p class="font-mono text-xs text-signal uppercase tracking-widest mb-3">Core Capabilities &bull; 8 Threat Vectors</p>
+            <p class="font-mono text-xs text-signal uppercase tracking-widest mb-3">Curriculum &bull; 8 Interactive Topics</p>
             <h2 class="font-display text-4xl sm:text-6xl font-bold tracking-tight text-white">
                 Everything you need to survive online.<br class="hidden sm:inline" />
                 Nothing you don't.
@@ -160,7 +160,7 @@
                     </div>
 
                     <a href="{% url 'take_quiz' topic.id %}" class="flex items-center gap-1.5 text-signal font-mono text-xs uppercase tracking-wider group-hover:translate-x-1 transition-all">
-                        <span>Launch Drill</span>
+                        <span>Start Quiz</span>
                         <span>&rarr;</span>
                     </a>
                 </div>
@@ -180,11 +180,11 @@
             Ready to test your instincts?
         </h2>
         <p class="font-body text-mist-900 text-lg max-w-xl mx-auto mb-10 leading-relaxed">
-            Join Oakridge scholars in hands-on cybersecurity simulations. No passwords required. Instant entry via your desk seat ID.
+            Test your digital instincts with hands-on simulations. No passwords required — start instantly with your class details.
         </p>
         <div class="flex justify-center items-center gap-4">
             <a href="{% url 'student_login' %}" class="px-8 py-4 rounded-full bg-signal text-ink-950 font-display font-bold text-sm tracking-wide hover:bg-signal-dim shadow-[0_0_30px_rgba(232,255,71,0.2)] transition-all">
-                Enter Safety Lab Now &rarr;
+                Get Started Now &rarr;
             </a>
         </div>
     </section>

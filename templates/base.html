@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>{% block title %}CyberShield | Interactive Cybersecurity Threat Laboratory{% endblock %}</title>
+    <title>{% block title %}CyberShield | Interactive Cybersecurity Platform{% endblock %}</title>
     
     <!-- Nexus Studio Fonts: Clash Display, Cabinet Grotesk, JetBrains Mono, Material Symbols -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -225,7 +225,7 @@
                     <a href="{% url 'teacher_dashboard' %}" 
                        id="nav-teacher-portal-link"
                        class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if 'teacher' in request.path %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
-                        Faculty Portal
+                        Teacher Portal
                         <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if 'teacher' in request.path %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
                     </a>
                 </nav>
@@ -249,7 +249,7 @@
                 {% else %}
                     <a href="{% url 'teacher_login' %}" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-ink-800 border border-white/10 text-mist-700 hover:text-signal hover:border-signal/30 transition-all text-xs font-mono" title="Switch Operational Role">
                         <span class="material-symbols-outlined text-sm text-signal">verified_user</span>
-                        <span>Faculty Access</span>
+                        <span>Teacher Portal</span>
                     </a>
                 {% endif %}
 
@@ -274,7 +274,7 @@
                         </div>
                         <div class="flex flex-col text-left">
                             <span class="text-xs font-medium text-white leading-tight">{{ user.username }}</span>
-                            <span class="text-[10px] font-mono text-emerald-light leading-tight">Faculty Dean</span>
+                            <span class="text-[10px] font-mono text-emerald-light leading-tight">Teacher</span>
                         </div>
                         <a href="{% url 'teacher_logout' %}" id="btn-teacher-logout" class="ml-1 text-mist-900 hover:text-ember transition-colors" title="Log Out">
                             <span class="material-symbols-outlined text-sm">logout</span>
@@ -321,15 +321,15 @@
             <div class="flex items-center gap-3 flex-wrap">
                 <span class="font-display text-sm tracking-tight text-white font-bold">CYBERSHIELD</span>
                 <span class="text-white/20">/</span>
-                <span class="text-xs text-mist-900 font-mono">NIST SP 800-181 Certified K-12 Defense Platform</span>
+                <span class="text-xs text-mist-900 font-mono">Cybersecurity Education Platform</span>
                 <span class="text-white/20">/</span>
                 <span class="text-xs text-signal font-mono">GPT-5 AI Engine</span>
             </div>
             <div class="flex items-center gap-6 text-xs font-mono text-mist-900">
-                <a class="hover:text-white transition-colors" href="{% url 'home' %}">Charter</a>
+                <a class="hover:text-white transition-colors" href="{% url 'home' %}">Curriculum</a>
                 <a class="hover:text-white transition-colors" href="{% url 'leaderboard_view' %}">Leaderboard</a>
                 <a class="hover:text-white transition-colors" href="{% url 'health_check' %}">Status</a>
-                <span class="text-mist-900/60">© 2025 CyberShield</span>
+                <span class="text-mist-900/60">© 2026 CyberShield</span>
             </div>
         </div>
     </footer>

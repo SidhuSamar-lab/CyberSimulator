@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Faculty Telemetry & Analytics | CyberShield{% endblock %}
+{% block title %}Teacher Analytics & Overview | CyberShield{% endblock %}
 
 {% block content %}
 <div class="relative w-full overflow-hidden bg-ink-950 text-mist-100 min-h-screen">
@@ -11,22 +11,20 @@
     <div class="absolute inset-0 grid-lines pointer-events-none opacity-40"></div>
     <div class="grain absolute inset-0 pointer-events-none"></div>
 
-    <!-- Top Faculty Header Banner -->
+    <!-- Top Teacher Header Banner -->
     <section class="relative z-10 w-full bg-ink-900/90 border-b border-white/10 shadow-2xl backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-6 md:px-12 py-8 flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6">
             <div class="flex flex-col gap-2 max-w-3xl">
                 <div class="flex items-center gap-2.5 flex-wrap">
-                    <span class="font-mono text-xs text-signal uppercase tracking-widest font-bold">Faculty Telemetry Ledger</span>
+                    <span class="font-mono text-xs text-signal uppercase tracking-widest font-bold">Teacher Portal</span>
                     <span class="text-white/20">&bull;</span>
-                    <span class="font-mono text-xs uppercase tracking-wider text-mist-700">NIST SP 800-181 Certified</span>
-                    <span class="text-white/20">&bull;</span>
-                    <span class="font-mono text-xs text-mist-900">Term II Active Session</span>
+                    <span class="font-mono text-xs uppercase tracking-wider text-mist-700">Analytics Overview</span>
                 </div>
                 <h1 class="font-display text-2xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
-                    Classroom Defense Telemetry &bull; {{ selected_class|default:"All Cohorts" }}
+                    Class Analytics &bull; {{ selected_class|default:"All Classes" }}
                 </h1>
                 <p class="font-body text-xs md:text-sm text-mist-900 leading-relaxed">
-                    Automated heuristic telemetry, adversarial response logs, and remediation triggers across {{ total_students }} enrolled students.
+                    Student quiz accuracy, topic completion history, and performance metrics across {{ total_students }} enrolled students.
                 </p>
             </div>
 
@@ -67,7 +65,7 @@
                 <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-signal to-transparent"></div>
                 <div class="flex items-start justify-between">
                     <div class="flex flex-col">
-                        <span class="font-mono text-xs text-mist-900 uppercase tracking-widest font-semibold">Assessments Recorded</span>
+                        <span class="font-mono text-xs text-mist-900 uppercase tracking-widest font-semibold">Total Quizzes Taken</span>
                         <div class="flex items-baseline gap-2.5 mt-2">
                             <span class="font-display text-4xl sm:text-5xl text-white font-bold tracking-tight">{{ total_attempts }}</span>
                             <span class="font-mono text-xs uppercase text-mist-700 tracking-wider">Submissions</span>
@@ -79,10 +77,10 @@
                 </div>
                 <div class="mt-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono">
                     <div class="flex items-center gap-1.5 text-signal font-bold">
-                        <span class="material-symbols-outlined text-sm">north_east</span>
-                        <span>+18% vs last week</span>
+                        <span class="material-symbols-outlined text-sm">trending_up</span>
+                        <span>Active Submissions</span>
                     </div>
-                    <span class="text-mist-900">94% Active Enrollment</span>
+                    <span class="text-mist-900">All Enrolled</span>
                 </div>
             </div>
 
@@ -91,11 +89,11 @@
                 <div class="absolute top-0 left-0 right-0 h-1 bg-signal"></div>
                 <div class="flex items-start justify-between">
                     <div class="flex flex-col">
-                        <span class="font-mono text-xs text-mist-900 uppercase tracking-widest font-semibold">Cohort Mastery Benchmark</span>
+                        <span class="font-mono text-xs text-mist-900 uppercase tracking-widest font-semibold">Average Score</span>
                         <div class="flex items-baseline gap-2.5 mt-2">
                             <span class="font-display text-4xl sm:text-5xl text-white font-bold tracking-tight">{{ overall_avg }}%</span>
                             <span class="font-mono text-[11px] uppercase tracking-wider bg-signal/15 text-signal border border-signal/30 px-2 py-0.5 rounded-full font-bold">
-                                High Proficiency
+                                Class Average
                             </span>
                         </div>
                     </div>
@@ -106,9 +104,9 @@
                 <div class="mt-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono">
                     <div class="flex items-center gap-1.5 text-mist-700">
                         <span class="material-symbols-outlined text-sm text-signal">bookmark</span>
-                        <span>District Standard: 75.0%</span>
+                        <span>Target: 75%</span>
                     </div>
-                    <span class="text-signal font-bold">+9.6% Surplus</span>
+                    <span class="text-signal font-bold">Passing Benchmark</span>
                 </div>
             </div>
 
@@ -119,14 +117,14 @@
                     <div class="flex flex-col">
                         <div class="flex items-center gap-1.5">
                             <span class="w-2 h-2 rounded-full bg-ember animate-pulse-slow"></span>
-                            <span class="font-mono text-xs text-ember uppercase tracking-widest font-bold">Critical Remediation</span>
+                            <span class="font-mono text-xs text-ember uppercase tracking-widest font-bold">Needs Attention</span>
                         </div>
                         <div class="flex items-baseline gap-2 mt-2">
                             <span class="font-display text-2xl text-white font-bold truncate">
-                                {{ weakest_topic.title|default:"QR Scams (Quishing)" }}
+                                {{ weakest_topic.title|default:"QR Scams" }}
                             </span>
                             <span class="font-mono text-[11px] uppercase tracking-wider bg-ember/15 text-ember border border-ember/30 px-2 py-0.5 rounded-full font-bold">
-                                {{ weakest_topic.avg_score|default:"61" }}% Score
+                                {{ weakest_topic.avg_score|default:"61" }}% Avg
                             </span>
                         </div>
                     </div>
@@ -135,9 +133,9 @@
                     </div>
                 </div>
                 <div class="mt-6 pt-3 border-t border-white/5 flex flex-col gap-1 text-xs font-mono">
-                    <span class="text-mist-900">34% of scholars failed the spoofed physical poster simulation</span>
+                    <span class="text-mist-900">Lowest average across recent attempts</span>
                     <span class="text-ember font-semibold flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">schedule</span> Action: Forensic triage drill dispatched
+                        <span class="material-symbols-outlined text-sm">schedule</span> Recommended: Review in class
                     </span>
                 </div>
             </div>
@@ -193,10 +191,8 @@
                 </div>
 
                 <div class="mt-8 pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-mist-900">
-                    <span>Institutional Sample: {{ total_attempts }} Simulation Telemetry Sessions</span>
-                    <span class="text-signal font-semibold hover:underline cursor-pointer flex items-center gap-1 transition-colors">
-                        Examine Diagnostic Matrix &rarr;
-                    </span>
+                    <span>Total Attempts: {{ total_attempts }}</span>
+                    <span class="text-signal font-semibold">Active Curriculum</span>
                 </div>
             </div>
 
@@ -204,8 +200,8 @@
             <div class="lg:col-span-4 bg-ink-850 border border-white/10 p-6 sm:p-8 rounded-2xl shadow-xl flex flex-col justify-between">
                 <div>
                     <div class="pb-3 border-b border-white/5">
-                        <h2 class="font-display text-xl font-bold text-white">Cohort Risk Census</h2>
-                        <p class="font-mono text-xs text-mist-900 mt-0.5">Distribution by heuristic vulnerability.</p>
+                        <h2 class="font-display text-xl font-bold text-white">Mastery Breakdown</h2>
+                        <p class="font-mono text-xs text-mist-900 mt-0.5">Distribution by student score level.</p>
                     </div>
 
                     <!-- SVG Donut Chart in Nexus Studio Style -->
@@ -221,7 +217,7 @@
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                             <span class="font-display text-4xl font-bold text-white leading-none">{{ total_students }}</span>
-                            <span class="font-mono text-[10px] text-mist-900 uppercase tracking-widest font-bold mt-1">Scholars</span>
+                            <span class="font-mono text-[10px] text-mist-900 uppercase tracking-widest font-bold mt-1">Students</span>
                         </div>
                     </div>
 
@@ -230,7 +226,7 @@
                         <div class="flex items-center justify-between p-3 rounded-xl bg-ink-950 border border-white/5">
                             <div class="flex items-center gap-2">
                                 <span class="w-2 h-2 rounded-full bg-signal shadow-[0_0_6px_rgba(232,255,71,0.8)]"></span>
-                                <span class="text-mist-100">Mastered / Resilient</span>
+                                <span class="text-mist-100">High Proficiency (&ge;80%)</span>
                             </div>
                             <div class="flex items-center gap-1.5 font-bold">
                                 <span class="text-white">58</span>
@@ -241,7 +237,7 @@
                         <div class="flex items-center justify-between p-3 rounded-xl bg-ink-950 border border-white/5">
                             <div class="flex items-center gap-2">
                                 <span class="w-2 h-2 rounded-full bg-white/40"></span>
-                                <span class="text-mist-100">Moderate Awareness</span>
+                                <span class="text-mist-100">Moderate (60-79%)</span>
                             </div>
                             <div class="flex items-center gap-1.5 font-bold">
                                 <span class="text-white">24</span>
@@ -252,7 +248,7 @@
                         <div class="flex items-center justify-between p-3 rounded-xl bg-ember/15 border border-ember/30">
                             <div class="flex items-center gap-2">
                                 <span class="w-2 h-2 rounded-full bg-ember shadow-[0_0_6px_rgba(255,107,53,0.8)]"></span>
-                                <span class="text-ember font-bold">Remediation Priority</span>
+                                <span class="text-ember font-bold">Needs Support (&lt;60%)</span>
                             </div>
                             <div class="flex items-center gap-1.5 font-bold text-ember">
                                 <span>6</span>
@@ -263,10 +259,8 @@
                 </div>
 
                 <div class="mt-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono">
-                    <span class="text-mist-900">Faculty Action:</span>
-                    <button class="text-ember hover:underline font-bold flex items-center gap-1 transition-colors" type="button">
-                        <span>Open Coaching Matrix &rarr;</span>
-                    </button>
+                    <span class="text-mist-900">Total Enrolled:</span>
+                    <span class="text-white font-bold">{{ total_students }} Students</span>
                 </div>
             </div>
 
@@ -277,13 +271,13 @@
             
             <div class="p-6 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-ink-900">
                 <div>
-                    <h2 class="font-display text-xl font-bold text-white">Scholar Evaluation Register</h2>
-                    <p class="font-mono text-xs text-mist-900">Assessment outputs and GPT-5 heuristic critique records</p>
+                    <h2 class="font-display text-xl font-bold text-white">Recent Student Attempts</h2>
+                    <p class="font-mono text-xs text-mist-900">Recent quiz submissions and educational feedback</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <div class="relative">
                         <span class="absolute left-3 top-2.5 text-mist-900 material-symbols-outlined text-base">search</span>
-                        <input class="bg-ink-950 border border-white/10 text-white font-mono text-xs pl-8 pr-3 py-2 rounded-full focus:outline-none focus:border-signal w-56 placeholder:text-mist-900" placeholder="Search cadet, roll #..." type="text">
+                        <input class="bg-ink-950 border border-white/10 text-white font-mono text-xs pl-8 pr-3 py-2 rounded-full focus:outline-none focus:border-signal w-56 placeholder:text-mist-900" placeholder="Search student, roll #..." type="text">
                     </div>
                 </div>
             </div>
@@ -293,12 +287,12 @@
                 <table class="w-full text-left border-collapse font-body text-xs">
                     <thead>
                         <tr class="bg-ink-950 border-b border-white/5 font-mono text-[11px] text-mist-900 uppercase tracking-wider">
-                            <th class="py-3.5 px-6 font-semibold">Scholar Cadet</th>
-                            <th class="py-3.5 px-4 font-semibold">Section &amp; Roll</th>
-                            <th class="py-3.5 px-4 font-semibold">Module Assessed</th>
-                            <th class="py-3.5 px-4 font-semibold">Mastery Grade</th>
-                            <th class="py-3.5 px-4 font-semibold">Timestamp</th>
-                            <th class="py-3.5 px-6 text-right font-semibold">Diagnostic Dossier</th>
+                            <th class="py-3.5 px-6 font-semibold">Student</th>
+                            <th class="py-3.5 px-4 font-semibold">Class &amp; Roll #</th>
+                            <th class="py-3.5 px-4 font-semibold">Topic</th>
+                            <th class="py-3.5 px-4 font-semibold">Score</th>
+                            <th class="py-3.5 px-4 font-semibold">Date</th>
+                            <th class="py-3.5 px-6 text-right font-semibold">Details</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/5 text-mist-100">
@@ -311,7 +305,7 @@
                                     </div>
                                     <div class="flex flex-col">
                                         <span class="font-display text-sm font-bold text-white">{{ attempt.student.name }}</span>
-                                        <span class="font-mono text-[10px] text-mist-900">{{ attempt.student.roll_number }}@oakridge.edu</span>
+                                        <span class="font-mono text-[10px] text-mist-900">Roll #{{ attempt.student.roll_number }}</span>
                                     </div>
                                 </div>
                             </td>
@@ -343,7 +337,7 @@
                             </td>
                             <td class="py-4 px-6 text-right">
                                 <button class="text-xs text-signal font-mono font-semibold inline-flex items-center gap-1 hover:underline cursor-pointer" onclick="toggleDetails('attempt-{{ attempt.id }}')" type="button">
-                                    <span>Academic Dossier</span>
+                                    <span>View Feedback</span>
                                     <span class="material-symbols-outlined text-sm" id="chevron-{{ attempt.id }}">
                                         {% if forloop.first %}expand_less{% else %}expand_more{% endif %}
                                     </span>
@@ -362,22 +356,20 @@
                                         </div>
                                         <div class="flex flex-col gap-1.5">
                                             <div class="flex items-center gap-2">
-                                                <span class="font-mono text-xs uppercase tracking-wider text-signal font-bold">Faculty Critique &bull; Telemetry Brief</span>
+                                                <span class="font-mono text-xs uppercase tracking-wider text-signal font-bold">AI Educational Feedback</span>
                                                 <span class="text-white/20">&bull;</span>
-                                                <span class="text-[11px] font-mono text-mist-900">Evaluated by CyberQuizAgent GPT-5</span>
+                                                <span class="text-[11px] font-mono text-mist-900">Powered by GPT-5</span>
                                             </div>
                                             <p class="font-body text-sm text-mist-100 leading-relaxed">
-                                                {{ attempt.ai_feedback|default:"Cadet demonstrated consistent evaluation of domain signatures. Continued drill recommended for simulated multi-factor authentication scenarios." }}
+                                                {{ attempt.ai_feedback|default:"Student demonstrated solid evaluation of safe online practices. Continued practice recommended for multi-factor authentication scenarios." }}
                                             </p>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2.5 shrink-0 self-start md:self-center">
-                                        <button class="text-xs font-mono px-3.5 py-1.5 rounded-full bg-ink-950 text-white border border-white/10 hover:border-signal/50 transition-colors" type="button">
-                                            Assign Target Drill
-                                        </button>
-                                        <button class="text-xs font-mono font-bold bg-signal text-ink-950 px-3.5 py-1.5 rounded-full hover:bg-signal-dim transition-colors shadow-md" type="button">
-                                            Notify Guardian
-                                        </button>
+                                        <a href="{% url 'teacher_student_detail' student_id=attempt.student.id %}" class="text-xs font-mono font-bold bg-signal text-ink-950 px-4 py-2 rounded-full hover:bg-signal-dim transition-all shadow-md inline-flex items-center gap-1.5 cursor-pointer">
+                                            <span>Student Details</span>
+                                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                                        </a>
                                     </div>
                                 </div>
                             </td>
@@ -389,18 +381,8 @@
 
             <div class="p-4 bg-ink-900 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-mist-900">
                 <span>
-                    Cataloging <strong class="text-white">{{ recent_attempts|length }}</strong> recorded examinations in current cohort
+                    Showing <strong class="text-white">{{ recent_attempts|length }}</strong> most recent quiz attempts in current view
                 </span>
-                <div class="flex items-center gap-1">
-                    <button class="w-7 h-7 rounded-full border border-white/10 bg-ink-950 text-mist-900 flex items-center justify-center disabled:opacity-30 cursor-not-allowed" disabled="" type="button">
-                        <span class="material-symbols-outlined text-sm">chevron_left</span>
-                    </button>
-                    <button class="w-7 h-7 rounded-full bg-signal text-ink-950 font-bold" type="button">1</button>
-                    <button class="w-7 h-7 rounded-full border border-white/10 bg-ink-950 text-white hover:border-signal/40" type="button">2</button>
-                    <button class="w-7 h-7 rounded-full border border-white/10 bg-ink-950 text-white hover:border-signal/40 flex items-center justify-center" type="button">
-                        <span class="material-symbols-outlined text-sm">chevron_right</span>
-                    </button>
-                </div>
             </div>
 
         </div>

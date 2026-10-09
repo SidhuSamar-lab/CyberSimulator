@@ -53,25 +53,46 @@ def student_dashboard(request):
             best_score = best_attempt.score
             best_total = best_attempt.total_questions
 
+        percentage = round((best_score / best_total) * 100) if best_total > 0 and has_completed else 0
         topics_with_progress.append({
             **topic,
             'completed': has_completed,
+            'is_completed': has_completed,
             'best_score': best_score,
             'best_total': best_total,
+            'percentage': percentage,
             'attempts_count': topic_attempts.count(),
         })
 
+    total_topics = len(CYBER_TOPICS)
     completed_count = sum(1 for t in topics_with_progress if t['completed'])
+    completion_percentage = int((completed_count / total_topics) * 100) if total_topics else 0
+    active_count = sum(1 for t in topics_with_progress if t['attempts_count'] > 0 and not t['completed'])
+    pending_count = max(0, total_topics - completed_count - active_count)
     overall_percent = student.average_score
     earned_badges = student.get_earned_badges()
     unlocked_badge_count = sum(1 for b in earned_badges if b['earned'])
+
+    # Top peer scholars in same grade for cohort standings
+    top_peers = Student.objects.filter(class_name=student.class_name).exclude(id=student.id)[:2]
+    top_students = []
+    for peer in top_peers:
+        top_students.append({
+            'name': peer.name,
+            'badge_count': len(peer.badges_earned),
+            'total_score': peer.total_score,
+        })
 
     return render(request, 'quizzes/student_dashboard.html', {
         'student': student,
         'topics': topics_with_progress,
         'completed_count': completed_count,
-        'total_topics': len(CYBER_TOPICS),
+        'total_topics': total_topics,
+        'completion_percentage': completion_percentage,
+        'active_count': active_count,
+        'pending_count': pending_count,
         'overall_percent': overall_percent,
+        'top_students': top_students,
         'recent_attempts': student_attempts[:5],
         'badges': earned_badges,
         'unlocked_badge_count': unlocked_badge_count,

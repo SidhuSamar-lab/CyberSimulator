@@ -54,7 +54,7 @@
                     onclick="window.print()" 
                     class="bg-signal hover:bg-signal-dim text-ink-950 px-6 py-2.5 rounded-full font-display text-xs uppercase tracking-wider font-bold shadow-[0_0_20px_rgba(232,255,71,0.25)] flex items-center justify-center gap-2 transition-all cursor-pointer">
                 <span class="material-symbols-outlined text-base">print</span>
-                <span>Print / Export Credential</span>
+                <span>Print Certificate</span>
             </button>
         </div>
 
@@ -69,7 +69,7 @@
             <div class="text-center space-y-3 relative z-10">
                 <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono tracking-widest uppercase bg-ink-950 border border-signal/30 text-signal font-bold">
                     <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
-                    <span>CYBERSHIELD ACADEMY &bull; OAKRIDGE DEFENSE CHAPTER</span>
+                    <span>CYBERSHIELD</span>
                 </div>
                 
                 <h1 class="text-3xl sm:text-5xl font-display font-bold tracking-tight text-white uppercase mt-2">
@@ -77,14 +77,14 @@
                 </h1>
                 
                 <p class="text-xs font-mono text-mist-900 tracking-widest uppercase">
-                    Official Credential &bull; Digital Defense &amp; Safety Distinction
+                    Official Certificate &bull; Digital Safety Distinction
                 </p>
             </div>
 
             <!-- Recipient Information -->
             <div class="text-center space-y-4 py-4 relative z-10">
                 <p class="font-body text-xs sm:text-sm text-mist-900">
-                    This certifies that cadet
+                    This certifies that
                 </p>
 
                 <div class="text-3xl sm:text-6xl font-display font-bold text-signal py-1 tracking-tight drop-shadow-[0_0_25px_rgba(232,255,71,0.3)]">
@@ -92,26 +92,26 @@
                 </div>
 
                 <p class="font-body text-xs sm:text-sm text-mist-700 max-w-xl mx-auto leading-relaxed">
-                    representing class <strong class="text-white font-semibold">{{ student.class_name }}</strong> (Desk Roll #{{ student.roll_number }}), has demonstrated verified mastery in adversarial threat detection, phishing triage, password entropy, and K-12 defensive computing hygiene.
+                    representing class <strong class="text-white font-semibold">{{ student.class_name }}</strong> (Roll #{{ student.roll_number }}), has demonstrated verified mastery in threat detection, phishing identification, password security, and safe online computing practices.
                 </p>
             </div>
 
             <!-- Achievement Metrics Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto py-2 relative z-10 font-mono text-xs">
                 <div class="p-3.5 rounded-xl bg-ink-950 border border-white/5 text-center">
-                    <span class="text-[10px] text-mist-900 block uppercase font-semibold">CADET RANK</span>
+                    <span class="text-[10px] text-mist-900 block uppercase font-semibold">STUDENT RANK</span>
                     <span class="font-bold text-xs sm:text-sm text-signal font-display mt-0.5">{{ rank_title }}</span>
                 </div>
                 <div class="p-3.5 rounded-xl bg-ink-950 border border-white/5 text-center">
-                    <span class="text-[10px] text-mist-900 block uppercase font-semibold">BADGES CONFERRED</span>
+                    <span class="text-[10px] text-mist-900 block uppercase font-semibold">BADGES EARNED</span>
                     <span class="font-bold text-xs sm:text-sm text-signal font-display mt-0.5">{{ badges_unlocked }} / 8</span>
                 </div>
                 <div class="p-3.5 rounded-xl bg-ink-950 border border-white/5 text-center">
-                    <span class="text-[10px] text-mist-900 block uppercase font-semibold">DRILLS MASTERED</span>
+                    <span class="text-[10px] text-mist-900 block uppercase font-semibold">QUIZZES COMPLETED</span>
                     <span class="font-bold text-xs sm:text-sm text-white font-display mt-0.5">{{ total_quizzes }}</span>
                 </div>
                 <div class="p-3.5 rounded-xl bg-ink-950 border border-white/5 text-center">
-                    <span class="text-[10px] text-mist-900 block uppercase font-semibold">DEFENSE ACCURACY</span>
+                    <span class="text-[10px] text-mist-900 block uppercase font-semibold">ACCURACY RATE</span>
                     <span class="font-bold text-xs sm:text-sm text-signal font-display mt-0.5">{{ avg_accuracy }}%</span>
                 </div>
             </div>
@@ -125,7 +125,7 @@
                         CyberQuizAgent (GPT-5)
                     </div>
                     <div class="w-36 h-0.5 bg-white/10 mx-auto sm:mx-0"></div>
-                    <p class="text-[10px] text-mist-900 uppercase tracking-wider">Azure AI Defense Mentor</p>
+                    <p class="text-[10px] text-mist-900 uppercase tracking-wider">AI Cyber Mentor</p>
                 </div>
 
                 <!-- Center Digital Seal -->
@@ -140,17 +140,17 @@
                 <!-- Right Signature -->
                 <div class="text-center sm:text-right space-y-1">
                     <div class="text-lg sm:text-xl text-white font-display font-bold">
-                        Dean of Faculty
+                        Course Instructor
                     </div>
                     <div class="w-36 h-0.5 bg-white/10 mx-auto sm:ml-auto"></div>
-                    <p class="text-[10px] text-mist-900 uppercase tracking-wider">Oakridge Collegiate &bull; {{ issue_date }}</p>
+                    <p class="text-[10px] text-mist-900 uppercase tracking-wider">Instructor &bull; {{ issue_date }}</p>
                 </div>
 
             </div>
 
             <!-- Credential Serial -->
             <div class="text-center pt-2 text-[10px] font-mono text-mist-900">
-                Credential ID: <span class="text-signal font-bold">{{ cert_id }}</span> &bull; Authenticated by CyberSimulator Integrity Engine
+                Certificate ID: <span class="text-signal font-bold">{{ cert_id }}</span> &bull; Authenticated by CyberSimulator
             </div>
 
         </div>

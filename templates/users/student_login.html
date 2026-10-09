@@ -16,7 +16,7 @@
         <!-- Header Pill Badge -->
         <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-ink-850/80 backdrop-blur-md mb-6 shadow-lg text-xs font-mono text-mist-700">
             <span class="w-2 h-2 rounded-full bg-signal animate-pulse-slow"></span>
-            <span>ACTIVE ADMISSIONS GATE &bull; TERM II FORENSIC LAB</span>
+            <span>STUDENT ACCESS &bull; PASSWORDLESS SIGN-IN</span>
         </div>
 
         <!-- Main Card Container in Nexus Studio Glass -->
@@ -39,7 +39,7 @@
                         </span>
                     </div>
                     <p class="font-body text-mist-900 text-sm leading-relaxed">
-                        Welcome, cadet. Enter your classroom credentials to initialize your security training modules and live adversarial simulations.
+                        Enter your name, grade, and roll number to start your cybersecurity drills.
                     </p>
                 </div>
 
@@ -88,7 +88,7 @@
                             <span class="text-xs font-mono text-mist-900 mr-1">Quick select:</span>
                             <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setGradeSelect('7A')" type="button">7-A</button>
                             <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setGradeSelect('8A')" type="button">8-A</button>
-                            <button class="px-3 py-1 rounded-full border border-signal/60 bg-signal/15 text-signal text-xs font-mono font-bold transition shadow-sm cursor-pointer" onclick="setGradeSelect('8B')" type="button">8-B (Vance)</button>
+                            <button class="px-3 py-1 rounded-full border border-signal/60 bg-signal/15 text-signal text-xs font-mono font-bold transition shadow-sm cursor-pointer" onclick="setGradeSelect('8B')" type="button">8-B</button>
                             <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setGradeSelect('9C')" type="button">9-C</button>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                     <div class="flex flex-col gap-1.5">
                         <div class="flex items-center justify-between">
                             <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="rollNumber">Class Roll Number</label>
-                            <span class="text-[11px] font-mono text-mist-900">Desk ID Tag</span>
+                            <span class="text-[11px] font-mono text-mist-900">Assigned Number</span>
                         </div>
                         <div class="relative flex items-center">
                             <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">tag</span>
@@ -120,14 +120,14 @@
                         <div class="flex flex-col gap-0.5">
                             <p class="font-mono text-xs font-bold uppercase tracking-wider text-signal">No Password Required</p>
                             <p class="font-body text-xs text-mist-700 leading-relaxed">
-                                Homeroom proctors validate your honors, cyber badges, and drill completions directly via your designated desk roll number.
+                                Your quiz attempts, badges, and scores are tracked directly via your class roll number.
                             </p>
                         </div>
                     </div>
 
                     <!-- CTA Button -->
                     <button class="w-full h-14 bg-signal hover:bg-signal-dim text-ink-950 rounded-full font-display text-sm uppercase tracking-wider font-bold flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(232,255,71,0.25)] active:scale-[0.99] transition-all cursor-pointer group" id="signInBtn" type="submit">
-                        <span>Enter Safety Lab &amp; Dashboard</span>
+                        <span>Enter Dashboard</span>
                         <span class="material-symbols-outlined text-xl transition-transform group-hover:translate-x-1 font-bold">arrow_forward</span>
                     </button>
                 </form>
@@ -135,7 +135,7 @@
                 <!-- Divider -->
                 <div class="relative flex items-center justify-center my-1">
                     <div class="w-full h-[1px] bg-white/10"></div>
-                    <span class="absolute bg-ink-900 px-3 font-mono text-[10px] uppercase tracking-[0.2em] text-mist-900 font-semibold">Institutional Access</span>
+                    <span class="absolute bg-ink-900 px-3 font-mono text-[10px] uppercase tracking-[0.2em] text-mist-900 font-semibold">Teacher Access</span>
                 </div>
 
                 <!-- Secondary Links -->
@@ -145,10 +145,10 @@
                         <span>Forgotten seat or roll number?</span>
                     </button>
                     <div class="inline-flex items-center gap-2">
-                        <span class="font-mono text-[11px] text-mist-900">Faculty:</span>
+                        <span class="font-mono text-[11px] text-mist-900">Educators:</span>
                         <a href="{% url 'teacher_login' %}" class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 hover:border-signal/50 hover:text-signal transition inline-flex items-center gap-1.5 text-mist-700 font-mono text-xs">
                             <span class="material-symbols-outlined text-xs">school</span>
-                            <span>Faculty Portal &rarr;</span>
+                            <span>Teacher Portal &rarr;</span>
                         </a>
                     </div>
                 </div>
@@ -173,14 +173,14 @@
             <div class="flex items-start justify-between">
                 <div class="flex items-center gap-2">
                     <span class="material-symbols-outlined text-signal text-xl">badge</span>
-                    <h4 class="font-display text-base font-bold text-white">Locating Your Desk Roll ID</h4>
+                    <h4 class="font-display text-base font-bold text-white">Find Your Roll Number</h4>
                 </div>
                 <button class="text-mist-900 hover:text-white transition cursor-pointer" onclick="toggleHelpModal()" type="button">
                     <span class="material-symbols-outlined text-lg">close</span>
                 </button>
             </div>
             <p class="font-body text-xs text-mist-700 mt-2 leading-relaxed">
-                Your roll number is affixed to your assigned computer laboratory desk tag and on your Oakridge semester portfolio folder. If uncertain, verify with your homeroom teacher prior to logging in.
+                Your roll number is your assigned classroom seat number or student ID. Ask your teacher if unsure.
             </p>
         </div>
 
@@ -202,7 +202,7 @@
     function handleStudentSignIn(event) {
         const btn = document.getElementById('signInBtn');
         if (btn) {
-            btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-lg">sync</span><span>Verifying Roster Credentials...</span>`;
+            btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-lg">sync</span><span>Signing In...</span>`;
         }
     }
 </script>

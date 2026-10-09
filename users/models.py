@@ -35,6 +35,15 @@ class Student(models.Model):
         return round((total / total_possible) * 100, 1)
 
     @property
+    def total_score(self):
+        attempts = self.attempts.all()
+        return sum(a.score * 100 for a in attempts) if attempts.exists() else 0
+
+    @property
+    def badges_earned(self):
+        return [b for b in self.get_earned_badges() if b.get('earned')]
+
+    @property
     def rank_title(self):
         completed_topics = set(self.attempts.values_list('topic_id', flat=True))
         count = len(completed_topics)

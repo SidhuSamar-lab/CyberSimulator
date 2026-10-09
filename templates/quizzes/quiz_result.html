@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Provost Evaluation: {{ attempt.topic_title }} | CyberShield{% endblock %}
+{% block title %}Quiz Results: {{ attempt.topic_title }} | CyberShield{% endblock %}
 
 {% block content %}
 <div class="relative w-full overflow-hidden bg-ink-950 text-mist-100 min-h-screen">
@@ -22,17 +22,17 @@
                 <span class="text-white/20">/</span>
                 <span class="text-mist-700">{{ attempt.topic_title }}</span>
                 <span class="text-white/20">/</span>
-                <span class="text-signal font-bold">Evaluation Dossier</span>
+                <span class="text-signal font-bold">Results</span>
             </nav>
             
             <div class="flex items-center gap-2.5">
                 <div class="flex items-center gap-1.5 px-3 py-1 bg-ink-900 rounded-full border border-white/10 text-mist-700 text-xs font-mono">
                     <span class="material-symbols-outlined text-xs text-signal">verified</span>
-                    <span>AI EVALUATION COMPLETE</span>
+                    <span>COMPLETED</span>
                 </div>
                 <div class="flex items-center gap-1.5 px-3 py-1 bg-signal/15 text-signal rounded-full border border-signal/30 text-xs font-mono font-bold">
                     <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
-                    <span>HONOR BADGE LOGGED</span>
+                    <span>BADGE EARNED</span>
                 </div>
             </div>
         </div>
@@ -45,17 +45,17 @@
                 <div class="flex flex-col gap-2">
                     <div class="flex items-center gap-2 flex-wrap">
                         <span class="bg-ink-950 text-signal font-mono text-[10px] tracking-widest px-3 py-1 rounded-full font-bold uppercase border border-signal/30">
-                            VERIFIED EVALUATION
+                            RESULTS &bull; {{ attempt.topic_title|upper }}
                         </span>
                         <span class="bg-ink-950 text-mist-700 text-xs font-mono px-3 py-1 rounded-full border border-white/10">
-                            Forensic Telemetry Ledger
+                            Educational Feedback
                         </span>
                     </div>
                     <h1 class="font-display text-2xl sm:text-4xl text-white font-bold tracking-tight mt-1 leading-snug">
-                        {{ attempt.topic_title }}: Diagnostic Dossier
+                        {{ attempt.topic_title }}: Results
                     </h1>
                     <p class="font-body text-xs sm:text-sm text-mist-900">
-                        Cadet: <strong class="text-white">{{ attempt.student.name }}</strong> ({{ attempt.student.class_name }} &bull; Roll #{{ attempt.student.roll_number }})
+                        Student: <strong class="text-white">{{ attempt.student.name }}</strong> ({{ attempt.student.class_name }} &bull; Roll #{{ attempt.student.roll_number }})
                     </p>
                 </div>
 
@@ -85,16 +85,16 @@
                     
                     <div class="flex items-center justify-between pl-2">
                         <span class="font-mono text-xs font-bold {% if q.is_correct %}text-signal{% else %}text-ember{% endif %} uppercase tracking-widest">
-                            Scenario 0{{ forloop.counter }} Verification
+                            Question 0{{ forloop.counter }}
                         </span>
                         
                         {% if q.is_correct %}
                             <span class="inline-flex items-center gap-1.5 text-signal bg-signal/15 border border-signal/30 px-3 py-1 rounded-full font-mono text-xs font-bold">
-                                <span class="material-symbols-outlined text-sm font-bold">check</span> Mastered (+1 Pt)
+                                <span class="material-symbols-outlined text-sm font-bold">check</span> Correct (+1 Pt)
                             </span>
                         {% else %}
                             <span class="inline-flex items-center gap-1.5 text-ember bg-ember/15 border border-ember/30 px-3 py-1 rounded-full font-mono text-xs font-bold">
-                                <span class="material-symbols-outlined text-sm">close</span> Remediation Alert
+                                <span class="material-symbols-outlined text-sm">close</span> Incorrect
                             </span>
                         {% endif %}
                     </div>
@@ -106,13 +106,13 @@
                     <!-- Answer Breakdown Pills -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 pl-2 font-mono text-xs">
                         <div class="p-3.5 rounded-xl bg-ink-950 border border-white/5 flex flex-col">
-                            <span class="text-[10px] uppercase text-mist-900">Your Verdict:</span>
+                            <span class="text-[10px] uppercase text-mist-900">Your Answer:</span>
                             <span class="font-bold {% if q.is_correct %}text-signal{% else %}text-ember{% endif %} mt-1 text-sm">
                                 Option {{ q.selected_option }}
                             </span>
                         </div>
                         <div class="p-3.5 rounded-xl bg-ink-950 border border-white/5 flex flex-col">
-                            <span class="text-[10px] uppercase text-mist-900">Accredited Solution:</span>
+                            <span class="text-[10px] uppercase text-mist-900">Correct Answer:</span>
                             <span class="font-bold text-white mt-1 text-sm">
                                 Option {{ q.correct_option }}
                             </span>
@@ -123,10 +123,10 @@
                     <div class="p-4 rounded-xl bg-ink-950 border border-white/5 text-xs text-mist-700 leading-relaxed ml-2 font-body">
                         <div class="flex items-center gap-1.5 font-mono font-bold text-signal text-xs mb-1">
                             <span class="material-symbols-outlined text-sm">school</span>
-                            <span>Provost Forensic Rationale:</span>
+                            <span>Detailed Explanation:</span>
                         </div>
                         <p class="text-mist-100">
-                            {{ q.explanation|default:"Official defensive protocol prioritizes root-domain inspection, multifactor authentication integrity, and eliminating urgency coercion." }}
+                            {{ q.explanation|default:"Defensive best practices prioritize root-domain verification, multifactor authentication, and avoiding urgent prompt clicks." }}
                         </p>
                     </div>
 
@@ -145,7 +145,7 @@
                             <span class="material-symbols-outlined text-xl">psychology</span>
                         </div>
                         <div>
-                            <h3 class="font-display text-base font-bold text-white">Dean’s AI Critique</h3>
+                            <h3 class="font-display text-base font-bold text-white">AI Educational Feedback</h3>
                             <span class="font-mono text-[11px] text-signal">CyberQuizAgent &bull; GPT-5 Engine</span>
                         </div>
                     </div>
@@ -155,19 +155,19 @@
                         <div class="flex items-center gap-2">
                             <span class="material-symbols-outlined text-signal text-lg">workspace_premium</span>
                             <span class="text-white font-bold">
-                                {{ attempt.score }} / {{ attempt.total_questions }} Scenarios Mastered
+                                {{ attempt.score }} / {{ attempt.total_questions }} Questions Correct
                             </span>
                         </div>
                         <span class="bg-signal text-ink-950 font-bold px-3 py-1 rounded-full">
-                            +{{ attempt.score|add:"10" }} Honor Pts
+                            +{{ attempt.score|add:"10" }} Points
                         </span>
                     </div>
 
                     <!-- AI Critique Text -->
                     <div class="p-4 rounded-2xl bg-ink-950 border border-white/5 text-xs text-mist-700 leading-relaxed">
-                        <span class="font-mono text-xs font-bold text-signal block mb-2">CRITIQUE REPORT:</span>
+                        <span class="font-mono text-xs font-bold text-signal block mb-2">AI FEEDBACK &amp; TIPS:</span>
                         <p class="font-body text-mist-100 leading-relaxed">
-                            {{ attempt.ai_feedback|default:"Cadet showed sound instincts identifying anomalous domain structures. Continued drills will reinforce resilience against secondary social engineering decoys." }}
+                            {{ attempt.ai_feedback|default:"Great effort identifying threats. Regular practice will reinforce your ability to spot deceptive messages and social engineering attempts." }}
                         </p>
                     </div>
 
@@ -176,7 +176,7 @@
                         <div class="flex items-center justify-between">
                             <span class="font-mono text-xs font-bold text-signal uppercase tracking-wider flex items-center gap-1.5">
                                 <span class="material-symbols-outlined text-sm">forum</span>
-                                Consult AI Provost
+                                Ask AI Cyber Mentor
                             </span>
                             <span class="text-[10px] text-signal font-bold">GPT-5 LIVE</span>
                         </div>
@@ -184,7 +184,7 @@
                         <!-- Messages list -->
                         <div id="chat-messages" class="max-h-44 overflow-y-auto space-y-2 text-xs font-body pr-1">
                             <div class="p-3 rounded-xl bg-ink-900 border border-white/5 text-mist-700">
-                                <strong class="text-signal font-mono">Provost:</strong> Have any questions regarding the forensic exhibit or grading? Ask below.
+                                <strong class="text-signal font-mono">AI Mentor:</strong> Have questions about this quiz or cybersecurity concepts? Ask below.
                             </div>
                         </div>
 
@@ -192,11 +192,11 @@
                         <div class="flex items-center gap-2 pt-1">
                             <input type="text" 
                                    id="chat-input"
-                                   placeholder="Ask the provost a question..." 
+                                   placeholder="Ask a question..." 
                                    class="flex-1 bg-ink-900 border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder:text-mist-900 focus:outline-none focus:border-signal font-body">
                             <button type="button" 
-                                    id="chat-send"
-                                    class="px-4 py-2 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-mono text-xs font-bold transition-all cursor-pointer">
+                                   id="chat-send"
+                                   class="px-4 py-2 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-mono text-xs font-bold transition-all cursor-pointer">
                                 <span>Ask</span>
                             </button>
                         </div>
@@ -243,7 +243,7 @@
 
             const loadingMsg = document.createElement('div');
             loadingMsg.className = 'p-3 rounded-xl bg-ink-900 border border-white/5 text-mist-900 italic font-mono';
-            loadingMsg.textContent = 'Provost is reviewing institutional doctrine...';
+            loadingMsg.textContent = 'AI Mentor is thinking...';
             chatMessages.appendChild(loadingMsg);
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
@@ -265,10 +265,10 @@
 
                 const botMsg = document.createElement('div');
                 botMsg.className = 'p-3 rounded-xl bg-ink-900 border border-white/5 text-mist-100';
-                botMsg.innerHTML = `<strong class="text-signal font-mono">Provost:</strong> ${data.reply || 'Remain vigilant against typosquatting and deceptive senders.'}`;
+                botMsg.innerHTML = `<strong class="text-signal font-mono">AI Mentor:</strong> ${data.reply || 'Remain vigilant against suspicious links and deceptive senders.'}`;
                 chatMessages.appendChild(botMsg);
             } catch (err) {
-                loadingMsg.textContent = 'Provost: Network gateway timed out. Remember: never share credentials on untrusted domains.';
+                loadingMsg.textContent = 'AI Mentor: Connection timed out. Please try again.';
             }
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
