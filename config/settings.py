@@ -16,7 +16,7 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver,.azurewebsites.net,.streamlit.app,.streamlit.io,.vercel.app,*').split(',')
+    for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver,.azurewebsites.net,.onrender.com,.railway.app,.vercel.app,.streamlit.app,*').split(',')
     if host.strip()
 ]
 
@@ -132,6 +132,12 @@ STORAGES = {
     },
 }
 WHITENOISE_MANIFEST_STRICT = False
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv('CSRF_TRUSTED_ORIGINS', 'https://*.onrender.com,https://*.railway.app,https://*.azurewebsites.net,https://*.vercel.app,http://localhost:8000,http://127.0.0.1:8000').split(',')
+    if origin.strip()
+]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
