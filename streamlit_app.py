@@ -21,6 +21,11 @@ sys.path.insert(0, str(BASE_DIR))
 from dotenv import load_dotenv
 load_dotenv(BASE_DIR / '.env')
 
+# Default to Supabase Cloud PostgreSQL - Never save to local storage
+SUPABASE_DATABASE_URL = "postgresql://postgres.zdcebdeazxodmecjrkan:Samardeida%4022@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres"
+if not os.getenv('DATABASE_URL'):
+    os.environ['DATABASE_URL'] = SUPABASE_DATABASE_URL
+
 # Inject Streamlit secrets into environment if running on Streamlit Community Cloud
 try:
     if hasattr(st, "secrets"):

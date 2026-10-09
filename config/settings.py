@@ -67,32 +67,30 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
-# Connects to Supabase PostgreSQL when DATABASE_URL is provided; falls back to SQLite for local development & testing.
+# Supabase Cloud PostgreSQL Database Configuration
+# Cloud database only - no local storage or disk SQLite
 import dj_database_url
 import sys
 
-DATABASE_URL = os.getenv('DATABASE_URL', '').strip()
+SUPABASE_DATABASE_URL = "postgresql://postgres.zdcebdeazxodmecjrkan:Samardeida%4022@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres"
+DATABASE_URL = os.getenv('DATABASE_URL', '').strip() or SUPABASE_DATABASE_URL
+
 if 'test' in sys.argv:
+    # Isolated in-memory database for unit test runner (never touches disk)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db_test.sqlite3',
+            'NAME': ':memory:',
         }
     }
-elif DATABASE_URL:
+else:
+    # Production cloud database (Supabase PostgreSQL)
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
         )
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
     }
 
 # Password validation
