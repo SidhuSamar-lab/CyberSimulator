@@ -14,6 +14,13 @@ urlpatterns = [
     # Health check endpoint
     path('health/', views.health_check, name='health_check'),
     
+    # Next-Level Interactive Features
+    path('sandbox/phishing/', views.phishing_sandbox, name='phishing_sandbox'),
+    path('api/sandbox/evaluate/', views.sandbox_evaluate_api, name='sandbox_evaluate_api'),
+    path('api/chat/mentor/', views.chat_mentor_api, name='chat_mentor_api'),
+    path('leaderboard/', views.leaderboard_view, name='leaderboard_view'),
+    path('student/certificate/', views.student_certificate, name='student_certificate'),
+    
     # Teacher views
     path('teacher/dashboard/', views.teacher_dashboard, name='teacher_dashboard'),
     path('teacher/student/<int:student_id>/', views.teacher_student_detail, name='teacher_student_detail'),

@@ -503,6 +503,44 @@ class AzureAIFoundryClient:
 
         return f"{praise}\n\n{body}"
 
+    def chat_with_mentor(self, student_name: str, topic_title: str, user_message: str, history: list = None) -> str:
+        """
+        Interactive live chat with CyberQuizAgent (GPT-5).
+        Allows students to ask follow-up questions, request explanations, or ask for digital safety advice.
+        """
+        if self.is_configured:
+            try:
+                system_prompt = (
+                    "You are 'CyberQuizAgent', a warm, encouraging, and expert cybersecurity tutor for school students (ages 11-18). "
+                    f"You are conversing with a student named {student_name} about the topic '{topic_title}'. "
+                    "Keep your responses concise, friendly, engaging, and directly actionable. "
+                    "Use relatable examples (gaming, mobile phones, social media) and explain digital safety concepts in simple terms."
+                )
+
+                conversation_context = ""
+                if history:
+                    for msg in history[-4:]:
+                        role = "Student" if msg.get("role") == "user" else "Tutor"
+                        conversation_context += f"{role}: {msg.get('text', '')}\n"
+
+                prompt = (
+                    f"Previous Conversation:\n{conversation_context}\n"
+                    f"Student Question: {user_message}\n\n"
+                    "Provide a helpful, friendly 2-3 sentence answer explaining the concept clearly."
+                )
+
+                reply = self._call_azure(prompt=prompt, system_prompt=system_prompt)
+                if reply and len(reply.strip()) > 10:
+                    return reply.strip()
+            except Exception as e:
+                logger.warning(f"Live AI mentor chat failed ({e}). Returning fallback response.")
+
+        # Fallback mentor response
+        return (
+            f"Great question, {student_name}! Online scams almost always rely on urgency, fake authority, or enticing prizes. "
+            f"Whenever an app, email, or stranger asks for codes, passwords, or urgent clicks, always pause and double-check with an adult or teacher!"
+        )
+
 
 # Singleton instance
 ai_client = AzureAIFoundryClient()

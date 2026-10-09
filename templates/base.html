@@ -146,6 +146,13 @@
                         <span class="px-2 py-0.5 text-xs rounded-full bg-cyan-950 border border-cyan-800 text-cyan-400 font-mono">8</span>
                     </a>
                 {% endif %}
+                <a href="{% url 'phishing_sandbox' %}" id="nav-sandbox-link" class="text-slate-300 hover:text-cyan-400 transition-colors flex items-center space-x-1.5 py-2">
+                    <span>Phishing Sandbox</span>
+                    <span class="px-1.5 py-0.2 rounded text-[10px] font-mono bg-rose-950 border border-rose-800 text-rose-300">LAB</span>
+                </a>
+                <a href="{% url 'leaderboard_view' %}" id="nav-leaderboard-link" class="text-slate-300 hover:text-amber-400 transition-colors flex items-center space-x-1 py-2">
+                    <span>Leaderboard</span>
+                </a>
                 <a href="{% url 'teacher_dashboard' %}" id="nav-teacher-portal-link" class="text-slate-300 hover:text-purple-400 transition-colors flex items-center space-x-1.5 py-2">
                     <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -157,6 +164,12 @@
             <!-- User Auth Controls -->
             <div class="flex items-center space-x-3">
                 {% if current_student %}
+                    <!-- Certificate Quick Link -->
+                    <a href="{% url 'student_certificate' %}" id="nav-btn-certificate" class="hidden sm:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-purple-950/60 border border-purple-800/80 text-purple-300 text-xs font-semibold hover:bg-purple-900/60 transition-colors" title="View Certificate of Cyber Mastery">
+                        <span>🎓</span>
+                        <span>Certificate</span>
+                    </a>
+
                     <!-- Student Pill Profile -->
                     <div class="flex items-center space-x-2 bg-slate-900/90 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs">
                         <div class="w-7 h-7 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold font-mono">

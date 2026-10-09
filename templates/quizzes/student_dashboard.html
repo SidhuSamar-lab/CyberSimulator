@@ -104,6 +104,60 @@
         </div>
     </section>
 
+    <!-- Advanced Cyber Defense Labs & Competitions Banner -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Phishing Sandbox Card -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 border border-cyan-500/40 bg-gradient-to-br from-cyan-950/30 to-slate-900/80 flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-2xl">📬</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">INTERACTIVE LAB</span>
+                </div>
+                <h3 class="text-lg font-display font-bold text-white">Phishing Sandbox</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Examine simulated school & gaming emails, inspect raw server headers, and deconstruct spoofed URLs.
+                </p>
+            </div>
+            <a href="{% url 'phishing_sandbox' %}" class="cyber-btn-primary px-4 py-2.5 rounded-xl font-bold text-slate-950 text-xs flex items-center justify-center space-x-1 shadow-md shadow-cyan-500/20">
+                <span>Enter Sandbox &rarr;</span>
+            </a>
+        </div>
+
+        <!-- Leaderboard Arena Card -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 border border-purple-500/40 bg-gradient-to-br from-purple-950/30 to-slate-900/80 flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-2xl">🏆</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-purple-950 text-purple-300 border border-purple-800">COMPETITION</span>
+                </div>
+                <h3 class="text-lg font-display font-bold text-white">Classroom Arena</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    See how your class ({{ student.class_name }}) ranks against other grade sections in overall defense accuracy.
+                </p>
+            </div>
+            <a href="{% url 'leaderboard_view' %}" class="px-4 py-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800 border border-purple-700 text-purple-200 font-bold text-xs flex items-center justify-center space-x-1 transition-all">
+                <span>View Leaderboard &rarr;</span>
+            </a>
+        </div>
+
+        <!-- Certificate Card -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 border border-amber-500/40 bg-gradient-to-br from-amber-950/30 to-slate-900/80 flex flex-col justify-between space-y-4">
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-2xl">🎓</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-950 text-amber-300 border border-amber-800">CREDENTIAL</span>
+                </div>
+                <h3 class="text-lg font-display font-bold text-white">Mastery Certificate</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Generate and print your official credential verifying your rank as {{ rank_title }} with security seal.
+                </p>
+            </div>
+            <a href="{% url 'student_certificate' %}" class="px-4 py-2.5 rounded-xl bg-amber-950/60 hover:bg-amber-900 border border-amber-700 text-amber-300 font-bold text-xs flex items-center justify-center space-x-1 transition-all">
+                <span>Print Certificate &rarr;</span>
+            </a>
+        </div>
+    </section>
+
     <!-- 8 Topics Cards Grid -->
     <section class="space-y-6">
         <div class="flex items-center justify-between">

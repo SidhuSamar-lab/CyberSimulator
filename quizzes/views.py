@@ -1,12 +1,15 @@
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Avg, Count
+from django.utils import timezone
 from users.models import Student
 from .models import QuizAttempt, AttemptQuestion
 from .topics import CYBER_TOPICS, get_topic_by_id
 from .ai_service import ai_client
+from .sandbox_data import SANDBOX_EMAILS
 
 
 def is_teacher(user):
@@ -431,3 +434,189 @@ def health_check(request):
         'ai_agent': 'CyberQuizAgent (gpt-5)',
         'platform': 'CyberSimulator v1.0',
     })
+
+
+def phishing_sandbox(request):
+    """
+    Renders the interactive Phishing Sandbox & URL Inspector email client.
+    Students inspect realistic email threats, review network headers, hover to reveal
+    spoofed URL links, and classify messages.
+    """
+    student_id = request.session.get('student_id')
+    student = Student.objects.filter(id=student_id).first() if student_id else None
+
+    return render(request, 'quizzes/phishing_sandbox.html', {
+        'emails': SANDBOX_EMAILS,
+        'student': student,
+        'total_scenarios': len(SANDBOX_EMAILS),
+    })
+
+
+def sandbox_evaluate_api(request):
+    """
+    POST API evaluating a student's verdict on a sandbox email scenario.
+    Payload: { "email_id": "email-1", "verdict": "phishing" | "safe" }
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST method required'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        email_id = data.get('email_id')
+        verdict = data.get('verdict')  # 'phishing' or 'safe'
+
+        target = next((e for e in SANDBOX_EMAILS if e['id'] == email_id), None)
+        if not target:
+            return JsonResponse({'error': 'Scenario not found'}, status=404)
+
+        expected = 'phishing' if target['is_phishing'] else 'safe'
+        is_correct = (verdict == expected)
+
+        return JsonResponse({
+            'correct': is_correct,
+            'is_phishing': target['is_phishing'],
+            'expected': expected,
+            'verdict': verdict,
+            'red_flags': target['red_flags'],
+            'explanation': target['explanation'],
+            'hover_url': target['hover_url'],
+            'raw_headers': target['raw_headers'],
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+
+def chat_mentor_api(request):
+    """
+    POST API for interactive live AI consultation with CyberQuizAgent (GPT-5).
+    Payload: { "message": "...", "topic_title": "...", "history": [...] }
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST method required'}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        message = data.get('message', '').strip()
+        topic_title = data.get('topic_title', 'Cybersecurity Safety')
+        history = data.get('history', [])
+
+        if not message:
+            return JsonResponse({'error': 'Message cannot be empty'}, status=400)
+
+        student_name = "Student"
+        student_id = request.session.get('student_id')
+        if student_id:
+            student = Student.objects.filter(id=student_id).first()
+            if student:
+                student_name = student.name
+
+        reply = ai_client.chat_with_mentor(
+            student_name=student_name,
+            topic_title=topic_title,
+            user_message=message,
+            history=history,
+        )
+
+        return JsonResponse({
+            'reply': reply,
+            'student_name': student_name,
+            'model': 'CyberQuizAgent (gpt-5)'
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+
+def leaderboard_view(request):
+    """
+    Inter-Class Competition & Student Hall of Fame Leaderboard.
+    Aggregates performance by class section (e.g., Grade 9-A vs 9-B),
+    as well as top individual cyber defense scores.
+    """
+    student_id = request.session.get('student_id')
+    current_student = Student.objects.filter(id=student_id).first() if student_id else None
+
+    # Distinct class sections
+    class_names = Student.objects.values_list('class_name', flat=True).distinct()
+    class_rankings = []
+
+    for c_name in class_names:
+        students_in_class = Student.objects.filter(class_name=c_name)
+        student_count = students_in_class.count()
+        attempts_in_class = QuizAttempt.objects.filter(student__in=students_in_class)
+        attempts_count = attempts_in_class.count()
+
+        if attempts_count > 0:
+            avg_acc = attempts_in_class.aggregate(Avg('percentage'))['percentage__avg'] or 0.0
+            avg_acc = round(avg_acc, 1)
+        else:
+            avg_acc = 0.0
+
+        class_rankings.append({
+            'class_name': c_name,
+            'student_count': student_count,
+            'attempts_count': attempts_count,
+            'avg_accuracy': avg_acc,
+        })
+
+    # Sort classes by avg_accuracy descending, then by attempts_count descending
+    class_rankings.sort(key=lambda c: (c['avg_accuracy'], c['attempts_count']), reverse=True)
+
+    # Top individual students
+    all_students = Student.objects.annotate(
+        num_attempts=Count('attempts'),
+        calculated_avg=Avg('attempts__percentage')
+    ).filter(num_attempts__gt=0).order_by('-calculated_avg', '-num_attempts')[:10]
+
+    top_students = []
+    for s in all_students:
+        top_students.append({
+            'student': s,
+            'rank_title': s.rank_title,
+            'earned_badges_count': sum(1 for b in s.get_earned_badges() if b['earned']),
+            'total_attempts': s.num_attempts,
+            'avg_score': round(s.calculated_avg or 0.0, 1),
+        })
+
+    return render(request, 'quizzes/leaderboard.html', {
+        'class_rankings': class_rankings,
+        'top_students': top_students,
+        'current_student': current_student,
+    })
+
+
+def student_certificate(request):
+    """
+    Generates a personalized, print-ready Certificate of Cyber Mastery.
+    Features cryptographic verification hash, seal, student rank, and badge counts.
+    """
+    student_id = request.session.get('student_id')
+    if not student_id:
+        s_param = request.GET.get('id')
+        if s_param and s_param.isdigit():
+            student = get_object_or_404(Student, id=int(s_param))
+        else:
+            messages.info(request, "Please log in to view and print your Certificate of Cyber Mastery.")
+            return redirect('student_login')
+    else:
+        student = get_object_or_404(Student, id=student_id)
+
+    earned_badges = student.get_earned_badges()
+    badges_unlocked = sum(1 for b in earned_badges if b['earned'])
+    attempts = QuizAttempt.objects.filter(student=student)
+    total_quizzes = attempts.count()
+    avg_accuracy = student.average_score
+
+    # Unique certificate serial number based on student id and roll
+    cert_id = f"CS-CERT-2026-{student.id:04d}-{student.roll_number}"
+    issue_date = timezone.now().strftime("%B %d, %Y")
+
+    return render(request, 'quizzes/certificate.html', {
+        'student': student,
+        'cert_id': cert_id,
+        'issue_date': issue_date,
+        'rank_title': student.rank_title,
+        'badges_unlocked': badges_unlocked,
+        'total_quizzes': total_quizzes,
+        'avg_accuracy': avg_accuracy,
+    })
+

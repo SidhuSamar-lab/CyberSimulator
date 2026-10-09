@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}Certificate of Cyber Mastery | {{ student.name }} | CyberSimulator{% endblock %}
+
+{% block extra_head %}
+<style>
+    @media print {
+        header, footer, .no-print {
+            display: none !important;
+        }
+        body {
+            background: white !important;
+            color: black !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .certificate-container {
+            border: 4px double #0284c7 !important;
+            box-shadow: none !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            margin: 0 auto !important;
+            padding: 30px !important;
+            max-width: 100% !important;
+            page-break-inside: avoid;
+        }
+        .cert-border-gold {
+            border-color: #d97706 !important;
+        }
+        .print-text-dark {
+            color: #0f172a !important;
+        }
+        .print-text-muted {
+            color: #475569 !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Screen-Only Controls Bar -->
+    <div class="no-print glass-card rounded-2xl p-4 sm:p-5 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center space-x-3 text-xs sm:text-sm">
+            <a href="{% url 'student_dashboard' %}" class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center space-x-1">
+                <span>&larr; Student Dashboard</span>
+            </a>
+            <span class="text-slate-600">&bull;</span>
+            <span class="text-slate-300 font-mono">Verification: <strong class="text-cyan-400">{{ cert_id }}</strong></span>
+        </div>
+
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+            <button type="button" 
+                    id="btn-print-certificate"
+                    onclick="window.print()" 
+                    class="cyber-btn-primary px-6 py-2.5 rounded-xl font-bold text-slate-950 text-xs sm:text-sm shadow-lg shadow-cyan-500/20 flex items-center justify-center space-x-2 w-full sm:w-auto transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                <span>Print / Download Certificate</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- The Certificate Canvas -->
+    <div class="certificate-container glass-card rounded-3xl p-8 sm:p-14 border-4 border-double border-cyan-500/40 relative overflow-hidden shadow-2xl bg-slate-950/95 space-y-8">
+        
+        <!-- Watermark Background -->
+        <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+            <svg class="w-[500px] h-[500px]" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+            </svg>
+        </div>
+
+        <!-- Certificate Header -->
+        <div class="text-center space-y-3 relative z-10">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-[11px] font-mono tracking-widest uppercase bg-cyan-950/80 border border-cyan-800 text-cyan-400">
+                <span>CYBERSIMULATOR ACADEMY OF DIGITAL SAFETY</span>
+            </div>
+            
+            <h1 class="text-2xl sm:text-4xl font-display font-extrabold tracking-tight text-white uppercase print-text-dark">
+                Certificate of Cyber Mastery
+            </h1>
+            
+            <p class="text-xs sm:text-sm text-slate-400 font-mono tracking-widest uppercase print-text-muted">
+                Official Credential &bull; Digital Defense Excellence
+            </p>
+        </div>
+
+        <!-- Recipient Information -->
+        <div class="text-center space-y-4 py-4 relative z-10">
+            <p class="text-xs sm:text-sm text-slate-300 print-text-muted">
+                This certifies that student cadet
+            </p>
+
+            <div class="text-3xl sm:text-5xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-purple-400 print:text-sky-700 py-1">
+                {{ student.name }}
+            </div>
+
+            <p class="text-xs sm:text-sm text-slate-300 print-text-muted max-w-xl mx-auto leading-relaxed">
+                representing class <strong class="text-white print-text-dark">{{ student.class_name }}</strong> (Roll #{{ student.roll_number }}), has demonstrated critical knowledge in threat detection, phishing resistance, password protection, and digital hygiene.
+            </p>
+        </div>
+
+        <!-- Achievement Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto py-2 relative z-10">
+            <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
+                <span class="text-[10px] font-mono text-slate-400 block uppercase">CADET RANK</span>
+                <span class="font-bold text-xs sm:text-sm text-cyan-400 font-mono">{{ rank_title }}</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
+                <span class="text-[10px] font-mono text-slate-400 block uppercase">BADGES UNLOCKED</span>
+                <span class="font-bold text-xs sm:text-sm text-amber-400 font-mono">{{ badges_unlocked }} / 8</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
+                <span class="text-[10px] font-mono text-slate-400 block uppercase">QUIZZES PASSED</span>
+                <span class="font-bold text-xs sm:text-sm text-purple-400 font-mono">{{ total_quizzes }}</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-center">
+                <span class="text-[10px] font-mono text-slate-400 block uppercase">DEFENSE ACCURACY</span>
+                <span class="font-bold text-xs sm:text-sm text-emerald-400 font-mono">{{ avg_accuracy }}%</span>
+            </div>
+        </div>
+
+        <!-- Seal & Signatures Footer -->
+        <div class="pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
+            
+            <!-- Left Signature: AI Mentor -->
+            <div class="text-center sm:text-left space-y-1">
+                <div class="font-serif italic text-lg sm:text-xl text-cyan-400 font-medium tracking-wide">
+                    CyberQuizAgent (GPT-5)
+                </div>
+                <div class="w-36 h-0.5 bg-slate-700 mx-auto sm:mx-0"></div>
+                <p class="text-[10px] font-mono text-slate-400 uppercase">Azure AI Defense Mentor</p>
+            </div>
+
+            <!-- Center Digital Security Seal -->
+            <div class="w-20 h-20 rounded-full border-2 border-dashed border-cyan-400/60 bg-cyan-950/40 flex flex-col items-center justify-center p-2 text-center shadow-lg shadow-cyan-500/10">
+                <div class="text-xs">🛡️</div>
+                <span class="text-[8px] font-mono font-bold text-cyan-300 tracking-tighter uppercase leading-tight mt-0.5">
+                    VERIFIED SECURE
+                </span>
+                <span class="text-[7px] font-mono text-slate-400">2026</span>
+            </div>
+
+            <!-- Right Signature & Date -->
+            <div class="text-center sm:text-right space-y-1">
+                <div class="font-serif italic text-lg sm:text-xl text-purple-400 font-medium tracking-wide">
+                    Prof. Cyber Defense
+                </div>
+                <div class="w-36 h-0.5 bg-slate-700 mx-auto sm:ml-auto"></div>
+                <p class="text-[10px] font-mono text-slate-400 uppercase">Director of Education &bull; {{ issue_date }}</p>
+            </div>
+
+        </div>
+
+        <!-- Certificate Serial Identifier -->
+        <div class="text-center pt-2 text-[10px] font-mono text-slate-500">
+            Credential ID: <span class="text-slate-400">{{ cert_id }}</span> &bull; Verified by CyberSimulator Integrity Engine
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

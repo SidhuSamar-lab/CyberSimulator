@@ -174,3 +174,106 @@ class QuizzesTests(TestCase):
         data = response.json()
         self.assertIn('hint', data)
         self.assertIn('Look at the domain name carefully.', data['hint'])
+
+    def test_phishing_sandbox_view(self):
+        response = self.client.get('/sandbox/phishing/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Phishing Sandbox & URL Inspector")
+        self.assertContains(response, "Quarantine Inbox")
+        self.assertContains(response, "email-1")
+
+    def test_sandbox_evaluate_api(self):
+        # 1. Evaluate phishing email correctly
+        response = self.client.post(
+            '/api/sandbox/evaluate/',
+            data='{"email_id": "email-1", "verdict": "phishing"}',
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertTrue(data['correct'])
+        self.assertTrue(data['is_phishing'])
+        self.assertIn('red_flags', data)
+        self.assertTrue(len(data['red_flags']) > 0)
+
+        # 2. Evaluate legitimate email correctly
+        response2 = self.client.post(
+            '/api/sandbox/evaluate/',
+            data='{"email_id": "email-3", "verdict": "safe"}',
+            content_type='application/json'
+        )
+        self.assertEqual(response2.status_code, 200)
+        data2 = response2.json()
+        self.assertTrue(data2['correct'])
+        self.assertFalse(data2['is_phishing'])
+
+        # 3. Test wrong verdict
+        response3 = self.client.post(
+            '/api/sandbox/evaluate/',
+            data='{"email_id": "email-1", "verdict": "safe"}',
+            content_type='application/json'
+        )
+        self.assertEqual(response3.status_code, 200)
+        data3 = response3.json()
+        self.assertFalse(data3['correct'])
+
+    def test_chat_mentor_api(self):
+        # With active student session
+        session = self.client.session
+        session['student_id'] = self.student.id
+        session.save()
+
+        response = self.client.post(
+            '/api/chat/mentor/',
+            data='{"message": "How do I recognize a fake Discord Nitro gift?", "topic_title": "Phishing Scams"}',
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn('reply', data)
+        self.assertTrue(len(data['reply']) > 10)
+        self.assertEqual(data['student_name'], self.student.name)
+
+    def test_leaderboard_view(self):
+        # Create attempts for two students in different classes
+        student2 = Student.objects.create(name="Bill Gates", class_name="Grade 11-B", roll_number="42")
+        QuizAttempt.objects.create(
+            student=self.student,
+            topic_id='phishing',
+            topic_title='Phishing Scams',
+            score=3,
+            total_questions=3,
+            percentage=100.0
+        )
+        QuizAttempt.objects.create(
+            student=student2,
+            topic_id='phishing',
+            topic_title='Phishing Scams',
+            score=1,
+            total_questions=3,
+            percentage=33.3
+        )
+
+        response = self.client.get('/leaderboard/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Classroom Leaderboard")
+        self.assertContains(response, "Grade 11-A")
+        self.assertContains(response, "Grade 11-B")
+        self.assertContains(response, "Taylor Swift")
+
+    def test_student_certificate_view(self):
+        # Unauthenticated redirects to student login
+        response = self.client.get('/student/certificate/')
+        self.assertRedirects(response, '/student/login/')
+
+        # With student session
+        session = self.client.session
+        session['student_id'] = self.student.id
+        session.save()
+
+        response = self.client.get('/student/certificate/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Certificate of Cyber Mastery")
+        self.assertContains(response, "Taylor Swift")
+        self.assertContains(response, "CS-CERT-")
+

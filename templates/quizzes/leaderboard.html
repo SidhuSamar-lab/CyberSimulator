@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block title %}Classroom Leaderboard & Cyber Arena | CyberSimulator{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- Hero Header -->
+    <div class="glass-card rounded-3xl p-6 sm:p-10 border border-purple-500/30 text-center relative overflow-hidden shadow-2xl">
+        <div class="absolute -left-20 -top-20 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -right-20 -bottom-20 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-3xl mx-auto space-y-3 relative z-10">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-mono bg-purple-950/80 border border-purple-800 text-purple-300">
+                <span>🏆 INTER-CLASS CYBER DEFENSE ARENA</span>
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-display font-black text-white tracking-tight">
+                Classroom <span class="cyber-gradient-text">Leaderboard</span>
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                Which classroom has the sharpest cybersecurity awareness? Compare grade sections, track collective defense accuracy, and celebrate individual student cybersecurity champions.
+            </p>
+        </div>
+    </div>
+
+    <!-- Top 3 Class Podium -->
+    {% if class_rankings|length >= 3 %}
+        <div class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-800 space-y-6">
+            <h2 class="text-center font-display font-bold text-lg text-white uppercase tracking-wider flex items-center justify-center space-x-2">
+                <span>🎖️ Class Champions Podium</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end pt-4 max-w-4xl mx-auto">
+                
+                <!-- 2nd Place (Silver) -->
+                {% with second=class_rankings.1 %}
+                <div class="glass-card rounded-2xl p-6 border border-slate-700 bg-slate-900/80 text-center space-y-3 relative order-2 md:order-1">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-slate-700/50 border border-slate-500 text-slate-200 flex items-center justify-center text-xl font-bold font-mono">
+                        2
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">RUNNER UP</span>
+                        <h3 class="text-xl font-display font-extrabold text-white">{{ second.class_name }}</h3>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                        <div class="text-2xl font-bold font-mono text-slate-200">{{ second.avg_accuracy }}%</div>
+                        <div class="text-[10px] text-slate-400 font-mono">{{ second.attempts_count }} Quizzes &bull; {{ second.student_count }} Cadets</div>
+                    </div>
+                </div>
+                {% endwith %}
+
+                <!-- 1st Place (Gold Champion) -->
+                {% with first=class_rankings.0 %}
+                <div class="glass-card rounded-3xl p-8 border border-amber-500/50 bg-gradient-to-b from-amber-950/30 via-slate-900/90 to-slate-950 text-center space-y-4 relative order-1 md:order-2 shadow-2xl shadow-amber-500/10 -translate-y-2">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-mono font-black uppercase tracking-wider shadow-lg">
+                        👑 1ST PLACE CHAMPION
+                    </div>
+                    <div class="w-16 h-16 mx-auto rounded-full bg-amber-500/20 border-2 border-amber-400 text-amber-300 flex items-center justify-center text-3xl font-black font-mono shadow-lg shadow-amber-500/20">
+                        🥇
+                    </div>
+                    <div>
+                        <h3 class="text-2xl sm:text-3xl font-display font-black text-amber-300">{{ first.class_name }}</h3>
+                        <p class="text-xs text-amber-200/80 font-mono">Highest Cyber Readiness</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-950/90 border border-amber-500/30">
+                        <div class="text-4xl font-extrabold font-mono text-amber-400">{{ first.avg_accuracy }}%</div>
+                        <div class="text-xs text-slate-400 font-mono mt-1">{{ first.attempts_count }} Quizzes &bull; {{ first.student_count }} Cadets</div>
+                    </div>
+                </div>
+                {% endwith %}
+
+                <!-- 3rd Place (Bronze) -->
+                {% with third=class_rankings.2 %}
+                <div class="glass-card rounded-2xl p-6 border border-amber-900/40 bg-slate-900/80 text-center space-y-3 relative order-3">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-amber-950/60 border border-amber-800 text-amber-400 flex items-center justify-center text-xl font-bold font-mono">
+                        3
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-mono text-amber-600 uppercase tracking-widest">3RD PLACE</span>
+                        <h3 class="text-xl font-display font-extrabold text-white">{{ third.class_name }}</h3>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                        <div class="text-2xl font-bold font-mono text-amber-400">{{ third.avg_accuracy }}%</div>
+                        <div class="text-[10px] text-slate-400 font-mono">{{ third.attempts_count }} Quizzes &bull; {{ third.student_count }} Cadets</div>
+                    </div>
+                </div>
+                {% endwith %}
+
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Full Class Rankings Table & Individual Student Honors -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left: Classroom Performance Standings -->
+        <div class="lg:col-span-7 glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                    <h3 class="font-display font-bold text-lg text-white">Classroom League Table</h3>
+                    <p class="text-xs text-slate-400">Ranked by Average Defense Accuracy across all quiz attempts</p>
+                </div>
+                <span class="text-xs font-mono text-cyan-400 bg-cyan-950/60 px-2.5 py-1 rounded-full border border-cyan-800">
+                    {{ class_rankings|length }} Classes
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-slate-400 font-mono uppercase text-[10px]">
+                            <th class="py-3 px-3">Rank</th>
+                            <th class="py-3 px-3">Class</th>
+                            <th class="py-3 px-3 text-center">Cadets</th>
+                            <th class="py-3 px-3 text-center">Attempts</th>
+                            <th class="py-3 px-3 text-right">Avg Accuracy</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        {% for c in class_rankings %}
+                            <tr class="hover:bg-slate-800/30 transition-colors {% if current_student and current_student.class_name == c.class_name %}bg-cyan-950/20 border-l-2 border-cyan-400{% endif %}">
+                                <td class="py-3.5 px-3 font-mono font-bold">
+                                    {% if forloop.counter == 1 %}<span class="text-amber-400">#1 🥇</span>
+                                    {% elif forloop.counter == 2 %}<span class="text-slate-300">#2 🥈</span>
+                                    {% elif forloop.counter == 3 %}<span class="text-amber-600">#3 🥉</span>
+                                    {% else %}<span class="text-slate-500">#{{ forloop.counter }}</span>{% endif %}
+                                </td>
+                                <td class="py-3.5 px-3">
+                                    <div class="font-semibold text-white">{{ c.class_name }}</div>
+                                    {% if current_student and current_student.class_name == c.class_name %}
+                                        <span class="text-[10px] text-cyan-400 font-mono">(Your Class)</span>
+                                    {% endif %}
+                                </td>
+                                <td class="py-3.5 px-3 text-center font-mono text-slate-300">{{ c.student_count }}</td>
+                                <td class="py-3.5 px-3 text-center font-mono text-slate-300">{{ c.attempts_count }}</td>
+                                <td class="py-3.5 px-3 text-right">
+                                    <span class="inline-block px-2.5 py-1 rounded-full font-mono font-bold text-xs
+                                        {% if c.avg_accuracy >= 80 %}bg-emerald-950/80 text-emerald-300 border border-emerald-800
+                                        {% elif c.avg_accuracy >= 50 %}bg-cyan-950/80 text-cyan-300 border border-cyan-800
+                                        {% else %}bg-slate-900 text-slate-400 border border-slate-800{% endif %}">
+                                        {{ c.avg_accuracy }}%
+                                    </span>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="py-8 text-center text-slate-500 font-mono">
+                                    No classroom quiz attempts recorded yet.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Right: Top 10 Elite Student Honor Roll -->
+        <div class="lg:col-span-5 glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                    <h3 class="font-display font-bold text-lg text-white">Elite Cyber Guardians</h3>
+                    <p class="text-xs text-slate-400">Top individual student defenders</p>
+                </div>
+                <span class="text-xs font-mono text-purple-400 bg-purple-950/60 px-2.5 py-1 rounded-full border border-purple-800">
+                    Honor Roll
+                </span>
+            </div>
+
+            <div class="space-y-2.5">
+                {% for item in top_students %}
+                    <div class="p-3 rounded-xl border border-slate-800/80 bg-slate-900/60 flex items-center justify-between hover:bg-slate-800/60 transition-all">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg font-mono text-xs font-bold flex items-center justify-center flex-shrink-0
+                                {% if forloop.counter == 1 %}bg-amber-500/20 text-amber-300 border border-amber-500/50
+                                {% elif forloop.counter == 2 %}bg-slate-700/50 text-slate-200 border border-slate-500
+                                {% elif forloop.counter == 3 %}bg-amber-950/50 text-amber-500 border border-amber-800
+                                {% else %}bg-slate-900 text-slate-400 border border-slate-800{% endif %}">
+                                #{{ forloop.counter }}
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-white leading-tight">{{ item.student.name }}</h4>
+                                <div class="text-[10px] text-slate-400 font-mono">
+                                    {{ item.student.class_name }} &bull; {{ item.rank_title }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-right flex items-center space-x-3">
+                            <span class="text-[10px] font-mono text-amber-400" title="{{ item.earned_badges_count }} Badges Earned">
+                                🎖️ {{ item.earned_badges_count }}
+                            </span>
+                            <span class="px-2 py-0.5 rounded-lg bg-cyan-950 border border-cyan-800 text-cyan-300 font-mono font-bold text-xs">
+                                {{ item.avg_score }}%
+                            </span>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="py-8 text-center text-slate-500 font-mono text-xs">
+                        No students have completed quizzes yet.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
