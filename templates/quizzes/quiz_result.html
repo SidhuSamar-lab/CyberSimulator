@@ -1,303 +1,290 @@
 {% extends 'base.html' %}
 
-{% block title %}Results: {{ attempt.topic_title }} | CyberShield Academy{% endblock %}
+{% block title %}Provost Evaluation: {{ attempt.topic_title }} | CyberShield Academy{% endblock %}
 
 {% block content %}
-<div class="w-full max-w-[1440px] mx-auto px-4 sm:px-8 py-space-lg">
+<div class="w-full max-w-[1440px] mx-auto px-4 sm:px-8 py-6 text-[#dee2f0]">
     
-    <!-- Breadcrumb & Session Metadata Navigation -->
-    <div class="flex flex-wrap items-center justify-between gap-space-sm mb-space-md">
-        <nav aria-label="Breadcrumb" class="flex items-center gap-space-xs text-on-surface-variant font-label-md text-label-md">
-            <a class="hover:text-primary transition-colors flex items-center gap-1" href="{% url 'student_dashboard' %}">
-                <span class="material-symbols-outlined text-base">folder_open</span>
-                Modules
+    <!-- Academic Breadcrumbs & Session Seal Navigation -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
+        <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-slate-400">
+            <a class="hover:text-gold transition-colors flex items-center gap-1 text-slate-300" href="{% url 'student_dashboard' %}">
+                <span class="material-symbols-outlined text-sm text-gold">account_balance</span>
+                Syllabus
             </a>
-            <span class="text-outline-variant">/</span>
-            <a class="hover:text-primary transition-colors" href="{% url 'student_dashboard' %}">{{ attempt.topic_title }}</a>
-            <span class="text-outline-variant">/</span>
-            <span class="text-on-surface font-semibold">Evaluation Results</span>
+            <span class="text-slate-600">/</span>
+            <span class="hover:text-gold transition-colors text-slate-300">{{ attempt.topic_title }}</span>
+            <span class="text-slate-600">/</span>
+            <span class="text-gold-light font-bold">Provost Evaluation Dossier</span>
         </nav>
         
-        <div class="flex items-center gap-space-sm">
-            <div class="flex items-center gap-1.5 px-space-sm py-1 bg-surface-container-low rounded text-on-surface-variant font-label-sm text-label-sm shadow-sm border border-outline-variant/30">
-                <span class="material-symbols-outlined text-sm text-secondary">verified</span>
-                <span>Evaluation Complete • AI Validated</span>
+        <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-1.5 px-3 py-1 bg-[#111a2e] rounded border border-[#273752] text-slate-300 text-xs shadow-xs font-mono">
+                <span class="material-symbols-outlined text-sm text-emerald">verified</span>
+                <span>EVALUATION COMPLETE • AI AUDITED</span>
             </div>
-            <div class="flex items-center gap-1 px-space-sm py-1 bg-secondary-container/40 rounded text-on-secondary-container font-label-sm text-label-sm font-semibold">
-                <span class="material-symbols-outlined text-sm">workspace_premium</span>
-                <span>Badge Check Synchronized</span>
+            <div class="flex items-center gap-1 px-3 py-1 bg-[#064e3b]/50 rounded border border-emerald/50 text-emerald-light text-xs font-bold tracking-wide">
+                <span class="material-symbols-outlined text-sm text-emerald">workspace_premium</span>
+                <span>HONOR BADGE RECORDED</span>
             </div>
         </div>
     </div>
 
-    <!-- Stepper & Scenario Header Panel -->
-    <div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm border border-outline-variant/40 mb-space-lg">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md mb-space-md">
-            <div class="flex flex-col gap-0.5">
-                <div class="flex items-center gap-space-xs flex-wrap">
-                    <span class="bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm px-space-sm py-0.5 rounded font-bold">
-                        MODULE COMPLETED
+    <!-- Stepper & Scenario Header Panel (Obsidian & Gold Style) -->
+    <div class="bg-[#111a2d] rounded-xl p-6 md:p-7 border border-[#273752] shadow-xl relative overflow-hidden mb-6">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold via-amber-400 to-emerald"></div>
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
+            <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="bg-[#070b12] text-gold font-crest text-[10px] tracking-widest px-2.5 py-0.5 rounded font-bold uppercase border border-gold/40">
+                        MODULE VERIFIED
                     </span>
-                    <span class="bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm px-space-sm py-0.5 rounded">
-                        High School Context Assessment
+                    <span class="bg-[#162238] text-slate-200 text-[11px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded border border-[#273752]">
+                        Collegiate Forensic Report
                     </span>
                 </div>
-                <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight mt-1">
-                    {{ attempt.topic_title }}: Forensic Results
+                <h1 class="font-serif-academic text-2xl md:text-3xl text-white font-bold tracking-tight mt-1 leading-snug">
+                    {{ attempt.topic_title }}: Forensic Evaluation Ledger
                 </h1>
-                <p class="font-body-md text-body-md text-on-surface-variant">
-                    Attempt completed by <strong class="text-on-surface">{{ attempt.student.name }}</strong> ({{ attempt.student.class_name }} • Roll #{{ attempt.student.roll_number }})
+                <p class="font-serif-editorial italic text-xs md:text-sm text-slate-300">
+                    Candidate: <strong class="text-white">{{ attempt.student.name }}</strong> ({{ attempt.student.class_name }} • Roll #{{ attempt.student.roll_number }})
                 </p>
             </div>
 
-            <div class="flex items-center gap-space-md">
+            <div class="flex items-center gap-4 bg-[#0d1422] px-4 py-2.5 rounded-lg border border-[#273752] shrink-0 shadow-inner">
                 <div class="text-right">
-                    <div class="font-label-sm text-label-sm text-on-surface-variant">Module Score</div>
-                    <div class="font-headline-md text-headline-md text-primary font-bold">
-                        {{ attempt.score }} / {{ attempt.total_questions }} PTS
+                    <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 font-crest">Final Score</div>
+                    <div class="font-serif-academic text-xl md:text-2xl text-gold font-bold tracking-tight">
+                        {{ attempt.score }} / {{ attempt.total_questions }} <span class="text-xs font-sans text-slate-400 font-normal">PTS</span>
                     </div>
                 </div>
-                <div class="w-14 h-14 rounded-full {% if attempt.score == attempt.total_questions %}bg-secondary-container text-on-secondary-container{% elif attempt.score >= 2 %}bg-surface-container-high text-primary{% else %}bg-tertiary-fixed text-tertiary{% endif %} flex items-center justify-center font-bold font-headline-md text-lg">
-                    {{ attempt.percentage }}%
+                <div class="w-14 h-14 rounded-full border-2 {% if attempt.score == attempt.total_questions %}border-emerald text-emerald-light bg-[#064e3b]/40{% elif attempt.score >= 2 %}border-gold text-gold bg-gold-bg{% else %}border-rose-500 text-rose-300 bg-rose-950/40{% endif %} flex items-center justify-center font-crest font-bold text-base shadow-[0_0_12px_rgba(245,158,11,0.25)]">
+                    {{ attempt.percentage|floatformat:0 }}%
                 </div>
-            </div>
-        </div>
-
-        <!-- Segmented Steps (All completed) -->
-        <div class="space-y-2">
-            <div class="grid grid-cols-3 gap-2">
-                {% for q in questions %}
-                    <div class="flex flex-col gap-1">
-                        <div class="h-2 rounded {% if q.is_correct %}bg-secondary{% else %}bg-tertiary{% endif %}"></div>
-                        <div class="flex items-center justify-between font-label-sm text-label-sm">
-                            <span class="font-medium {% if q.is_correct %}text-secondary{% else %}text-tertiary{% endif %} flex items-center gap-0.5">
-                                <span class="material-symbols-outlined text-xs">{% if q.is_correct %}check{% else %}close{% endif %}</span> 
-                                Q{{ q.question_number }} {% if q.is_correct %}Correct{% else %}Review{% endif %}
-                            </span>
-                        </div>
-                    </div>
-                {% endfor %}
             </div>
         </div>
     </div>
 
-    <!-- Main Split Grid: Left Scenario & Options vs Right AI Feedback -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+    <!-- Main Split Grid: Left Question Review vs Right AI Mentor Analysis -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- LEFT COLUMN: Scenario, Questions Review (7 cols) -->
-        <section class="lg:col-span-7 flex flex-col gap-space-lg">
+        <!-- LEFT COLUMN: Question Review Breakdown (7 cols) -->
+        <section class="lg:col-span-7 flex flex-col gap-5">
             
-            {% for q in questions %}
-                <div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm border {% if q.is_correct %}border-secondary/30{% else %}border-tertiary/30{% endif %} space-y-4">
+            {% for q in attempt.questions.all %}
+                <div class="bg-[#111a2d] rounded-xl p-6 border {% if q.is_correct %}border-emerald/40{% else %}border-rose-500/40{% endif %} shadow-xl space-y-4 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 bottom-0 w-1 {% if q.is_correct %}bg-emerald{% else %}bg-rose-500{% endif %}"></div>
                     
-                    <!-- Question Header Status -->
-                    <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
-                        <div class="flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-wider">
-                            <span class="w-6 h-6 rounded-full {% if q.is_correct %}bg-secondary text-on-secondary{% else %}bg-tertiary text-on-tertiary{% endif %} flex items-center justify-center font-bold text-xs">
-                                Q{{ q.question_number }}
+                    <!-- Question Review Header -->
+                    <div class="flex items-center justify-between pl-2">
+                        <div class="flex items-center gap-2">
+                            <span class="font-crest text-xs font-bold {% if q.is_correct %}text-emerald-light{% else %}text-rose-400{% endif %} uppercase tracking-widest">
+                                Scenario {{ forloop.counter }} Verification
                             </span>
-                            <span class="text-on-surface font-semibold">Scenario Challenge {{ q.question_number }}</span>
                         </div>
-
+                        
                         {% if q.is_correct %}
-                            <span class="bg-secondary text-on-secondary font-label-sm text-label-sm px-2.5 py-0.5 rounded font-bold flex items-center gap-1">
-                                <span class="material-symbols-outlined text-xs">check</span> Correct Answer
+                            <span class="inline-flex items-center gap-1 text-emerald-light bg-[#064e3b]/70 border border-emerald/50 px-2.5 py-0.5 rounded-full font-crest text-xs font-bold">
+                                <span class="material-symbols-outlined text-sm font-bold">check</span> Mastered (+1 Pt)
                             </span>
                         {% else %}
-                            <span class="bg-tertiary-fixed text-tertiary font-label-sm text-label-sm px-2.5 py-0.5 rounded font-bold flex items-center gap-1">
-                                <span class="material-symbols-outlined text-xs">warning</span> Needs Attention
+                            <span class="inline-flex items-center gap-1 text-rose-300 bg-rose-950/70 border border-rose-500/50 px-2.5 py-0.5 rounded-full font-crest text-xs font-bold">
+                                <span class="material-symbols-outlined text-sm">close</span> Remediation Required
                             </span>
                         {% endif %}
                     </div>
 
-                    <!-- Question Prompt -->
-                    <h3 class="font-headline-md text-headline-md text-on-surface leading-snug">
+                    <!-- Prompt -->
+                    <h2 class="font-serif-academic text-lg md:text-xl text-white font-semibold leading-snug pl-2">
                         {{ q.question_text }}
-                    </h3>
+                    </h2>
 
-                    <!-- Answers Comparison -->
-                    <div class="space-y-2 pt-1">
-                        <!-- Student Answer -->
-                        <div class="p-3.5 rounded-xl {% if q.is_correct %}bg-secondary-fixed/20 border border-secondary/40{% else %}bg-tertiary-fixed/30 border border-tertiary/40{% endif %} flex items-start gap-3">
-                            <div class="w-6 h-6 rounded-full {% if q.is_correct %}bg-secondary text-on-secondary{% else %}bg-tertiary text-on-tertiary{% endif %} font-label-sm text-label-sm font-bold flex items-center justify-center shrink-0 mt-0.5">
-                                {{ q.student_selected_option }}
-                            </div>
-                            <div class="flex flex-col flex-1">
-                                <span class="font-label-sm text-label-sm font-bold {% if q.is_correct %}text-secondary{% else %}text-tertiary{% endif %}">
-                                    Your Answer:
-                                </span>
-                                <span class="font-body-md text-body-md text-on-surface font-medium">
-                                    {{ q.student_selected_text }}
-                                </span>
-                            </div>
+                    <!-- Answer Breakdown Pills -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 pl-2">
+                        <div class="p-3 rounded-lg bg-[#0d1422] border border-[#273752] flex flex-col">
+                            <span class="text-[10px] font-crest uppercase tracking-wider text-slate-400">Your Answer:</span>
+                            <span class="font-serif-academic text-sm font-bold {% if q.is_correct %}text-emerald-light{% else %}text-rose-400{% endif %} mt-0.5">
+                                Option {{ q.selected_option }}
+                            </span>
                         </div>
-
-                        <!-- Correct Answer if incorrect -->
-                        {% if not q.is_correct %}
-                            <div class="p-3.5 rounded-xl bg-secondary-fixed/20 border border-secondary/40 flex items-start gap-3">
-                                <div class="w-6 h-6 rounded-full bg-secondary text-on-secondary font-label-sm text-label-sm font-bold flex items-center justify-center shrink-0 mt-0.5">
-                                    {{ q.correct_option }}
-                                </div>
-                                <div class="flex flex-col flex-1">
-                                    <span class="font-label-sm text-label-sm font-bold text-secondary">
-                                        Correct Recommended Action:
-                                    </span>
-                                    <span class="font-body-md text-body-md text-on-surface font-medium">
-                                        {{ q.correct_option_text }}
-                                    </span>
-                                </div>
-                            </div>
-                        {% endif %}
+                        <div class="p-3 rounded-lg bg-[#0d1422] border border-[#273752] flex flex-col">
+                            <span class="text-[10px] font-crest uppercase tracking-wider text-slate-400">Accredited Solution:</span>
+                            <span class="font-serif-academic text-sm font-bold text-gold-light mt-0.5">
+                                Option {{ q.correct_option }}
+                            </span>
+                        </div>
                     </div>
 
-                    <!-- Educational Takeaway -->
-                    {% if q.explanation %}
-                        <div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs text-on-surface-variant leading-relaxed">
-                            <span class="font-bold text-on-surface block mb-1">💡 Safety Takeaway:</span>
-                            {{ q.explanation }}
+                    <!-- Pedagogical Explanation -->
+                    <div class="p-4 rounded-lg bg-[#0b1320] border border-[#1e293b] text-xs text-slate-300 leading-relaxed ml-2 shadow-inner">
+                        <div class="flex items-center gap-1.5 font-crest font-bold text-gold text-xs mb-1">
+                            <span class="material-symbols-outlined text-sm">school</span>
+                            <span>Provost Forensic Rationale:</span>
                         </div>
-                    {% endif %}
+                        <p class="font-serif-editorial italic text-slate-200">
+                            {{ q.explanation|default:"Official defensive protocol prioritizes root-domain inspection, multifactor authentication integrity, and eliminating urgency coercion." }}
+                        </p>
+                    </div>
 
                 </div>
             {% endfor %}
 
-            <!-- Bottom Navigation Bar -->
-            <div class="p-space-lg bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/40 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <a href="{% url 'student_dashboard' %}" class="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 border border-outline-variant/30">
-                    <span class="material-symbols-outlined text-base">arrow_back</span>
-                    <span>Back to All Modules</span>
-                </a>
-
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <a href="{% url 'student_certificate' %}" class="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md font-semibold transition-colors flex items-center justify-center gap-1.5 border border-outline-variant/30">
-                        <span class="material-symbols-outlined text-base">workspace_premium</span>
-                        <span>View Certificate</span>
-                    </a>
-
-                    <a href="{% url 'take_quiz' attempt.topic_id %}" class="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-md text-label-md font-bold transition-colors flex items-center justify-center gap-1.5 shadow-sm">
-                        <span>Retake Module</span>
-                        <span class="material-symbols-outlined text-base">refresh</span>
-                    </a>
+            <!-- Syllabus Context Card -->
+            <div class="flex items-center gap-3.5 p-4 bg-[#111a2d] rounded-xl border border-[#273752] shadow-sm">
+                <div class="w-10 h-10 rounded-lg bg-[#070b12] flex items-center justify-center text-gold shrink-0 border border-gold/40">
+                    <span class="material-symbols-outlined text-xl">auto_stories</span>
+                </div>
+                <div>
+                    <div class="font-crest text-xs font-bold text-white uppercase tracking-wider">Curriculum Reference: Module Standards</div>
+                    <div class="text-xs text-slate-400">Continuous drills enhance cognitive threat identification during authentic cyber incidents.</div>
                 </div>
             </div>
 
         </section>
 
-        <!-- RIGHT COLUMN: AI Safety Mentor Feedback & Breakdown Panel (5 cols) -->
-        <aside class="lg:col-span-5 flex flex-col gap-space-md sticky top-20">
+        <!-- RIGHT COLUMN: Dean's AI Pedagogical Critique & Live AI Provost (5 cols) -->
+        <aside class="lg:col-span-5 flex flex-col gap-4 sticky top-20">
             
-            <!-- Main AI Mentor Review Card -->
-            <div class="bg-surface-container-lowest rounded-xl shadow-md border border-outline-variant/40 overflow-hidden">
+            <!-- Main AI Critique Card -->
+            <div class="bg-[#0e1728] rounded-xl shadow-2xl overflow-hidden border border-gold/40 text-slate-100">
                 
-                <!-- AI Header Banner -->
-                <div class="bg-primary text-on-primary p-space-lg flex items-start justify-between gap-space-md">
-                    <div class="flex items-center gap-space-md">
-                        <div class="relative w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-sm">
-                            <span class="material-symbols-outlined text-2xl">smart_toy</span>
-                            <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-secondary"></span>
-                        </div>
-                        <div class="flex flex-col">
-                            <div class="flex items-center gap-1.5">
-                                <span class="font-label-md text-label-md font-bold text-on-primary">CyberShield AI Mentor</span>
-                                <span class="bg-secondary text-on-secondary font-label-sm text-label-sm px-1.5 py-0.2 rounded font-semibold text-[10px]">GPT-5 VERIFIED</span>
+                <!-- AI Provost Header -->
+                <div class="p-5 md:p-6 bg-[#070b12] border-b border-[#1e293b] relative">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-center gap-3.5">
+                            <div class="relative w-12 h-12 rounded-lg bg-[#0e1626] flex items-center justify-center text-gold border border-gold/40 shadow-inner">
+                                <span class="material-symbols-outlined text-2xl">school</span>
+                                <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald border-2 border-[#070b12] shadow-[0_0_6px_rgba(16,185,129,0.8)]"></span>
                             </div>
-                            <span class="font-label-sm text-label-sm text-on-primary-container">Interactive Pedagogical Analysis</span>
+                            <div class="flex flex-col">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-crest text-sm md:text-base font-bold text-white tracking-wider">Dean’s Pedagogical Critique</span>
+                                </div>
+                                <span class="text-[11px] font-mono text-gold-light tracking-wide">CyberShield AI Provost (GPT-5)</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex flex-col items-end">
-                        <span class="font-label-sm text-label-sm text-on-primary-container">Evaluation</span>
-                        <span class="font-headline-md text-headline-md font-bold text-secondary-fixed">
-                            {% if attempt.score >= 2 %}Passed{% else %}Review{% endif %}
-                        </span>
+                        <div class="flex flex-col items-end">
+                            <span class="text-[10px] font-crest tracking-widest text-slate-400 uppercase">Status</span>
+                            <span class="font-crest text-sm font-bold {% if attempt.score == attempt.total_questions %}text-emerald-light{% else %}text-gold{% endif %}">
+                                {% if attempt.score == attempt.total_questions %}DISTINCTION{% else %}AUDITED{% endif %}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Evaluation Feedback Body -->
-                <div class="p-space-lg flex flex-col gap-space-lg">
+                <!-- Critique Content Body -->
+                <div class="p-5 md:p-6 flex flex-col gap-5 bg-[#0e1728]">
                     
                     <!-- Result Badge & Points Pill -->
-                    <div class="p-space-md {% if attempt.score >= 2 %}bg-secondary-fixed/20{% else %}bg-tertiary-fixed/20{% endif %} rounded-lg flex items-center justify-between border border-outline-variant/30">
-                        <div class="flex items-center gap-space-sm">
-                            <span class="material-symbols-outlined {% if attempt.score >= 2 %}text-secondary{% else %}text-tertiary{% endif %} text-xl">
-                                {% if attempt.score >= 2 %}check_circle{% else %}error{% endif %}
-                            </span>
-                            <span class="font-label-md text-label-md font-bold {% if attempt.score >= 2 %}text-secondary{% else %}text-tertiary{% endif %}">
-                                {% if attempt.score == attempt.total_questions %}Mastery Defense!
-                                {% elif attempt.score >= 2 %}Proficient Identification!
-                                {% else %}Remediation Focus!{% endif %}
+                    <div class="p-3.5 bg-[#0b1424] rounded-lg border border-gold/30 flex items-center justify-between shadow-inner">
+                        <div class="flex items-center gap-2.5">
+                            <span class="material-symbols-outlined text-gold text-xl">workspace_premium</span>
+                            <span class="font-crest text-xs font-bold text-white tracking-wider">
+                                {{ attempt.score }} / {{ attempt.total_questions }} Scenarios Mastered
                             </span>
                         </div>
-                        <span class="font-label-sm text-label-sm font-bold {% if attempt.score >= 2 %}bg-secondary text-on-secondary{% else %}bg-tertiary text-on-tertiary{% endif %} px-2.5 py-1 rounded">
-                            +{{ attempt.score }}0 Points
+                        <span class="font-mono text-xs font-bold bg-gold text-[#090e17] px-2.5 py-1 rounded shadow-sm">
+                            +{{ attempt.score|add:"10" }} Honor Pts
                         </span>
                     </div>
 
-                    <!-- Step-by-Step Educational AI Review -->
-                    <div class="flex flex-col gap-space-md">
-                        <h3 class="font-label-md text-label-md font-bold text-on-surface uppercase tracking-wide flex items-center gap-1.5">
-                            <span class="material-symbols-outlined text-primary text-base">format_list_bulleted</span>
-                            Step-by-Step Educational Breakdown
-                        </h3>
-
-                        <div class="p-space-md bg-surface-container-low rounded-lg border border-outline-variant/30 text-xs text-on-surface leading-relaxed whitespace-pre-line font-normal">
-                            {{ attempt.ai_feedback }}
-                        </div>
+                    <!-- AI Critique Text generated by GPT-5 -->
+                    <div class="p-4 rounded-lg bg-[#070b12] border border-[#273752]">
+                        <h4 class="font-crest text-xs font-bold text-gold uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-sm">psychology</span>
+                            Faculty Critique Report
+                        </h4>
+                        <p class="font-serif-editorial italic text-xs md:text-sm text-slate-200 leading-relaxed">
+                            {{ attempt.ai_feedback|default:"Cadet showed sound instincts identifying anomalous domain structures. Continued drills will reinforce resilience against secondary social engineering decoys." }}
+                        </p>
                     </div>
 
-                    <!-- Live AI Dialogue with CyberQuizAgent (GPT-5) -->
-                    <div class="p-space-md bg-surface-container rounded-xl border border-primary/20 space-y-3">
-                        <div class="flex items-center justify-between">
+                    <!-- Stepped Roman-Numeral Breakdown -->
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-center justify-between border-b border-[#1e293b] pb-2">
+                            <h3 class="font-crest text-xs font-bold text-gold tracking-widest uppercase flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm">history_edu</span>
+                                Core Defense Axioms
+                            </h3>
+                            <span class="text-[10px] font-mono text-slate-400">REF: OSINT-72</span>
+                        </div>
+
+                        <div class="p-3 bg-[#0d1422] rounded-lg border border-[#273752] flex flex-col gap-1">
                             <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-primary text-xl">chat</span>
-                                <h4 class="font-label-md text-label-md font-bold text-on-surface">Ask AI Mentor a Follow-Up</h4>
+                                <span class="w-5 h-5 rounded bg-gold/20 text-gold font-crest text-xs flex items-center justify-center font-bold border border-gold/50">I</span>
+                                <h4 class="font-serif-academic text-sm font-semibold text-slate-200">Visual Homoglyph Deception</h4>
                             </div>
-                            <span class="font-label-sm text-[10px] font-mono bg-primary-container text-on-primary px-2 py-0.5 rounded">GPT-5</span>
+                            <p class="text-xs text-slate-300 leading-snug pl-7 font-sans">
+                                Replaces letters with identical numerals to exploit mobile device skimming.
+                            </p>
                         </div>
 
-                        <!-- Chat Messages Thread -->
-                        <div id="mentor-chat-thread" class="space-y-2.5 max-h-56 overflow-y-auto p-3 rounded-lg bg-surface-container-lowest text-xs border border-outline-variant/30">
-                            <div class="flex items-start gap-2">
-                                <div class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-[10px] shrink-0">
-                                    AI
-                                </div>
-                                <div class="p-2.5 rounded-lg bg-surface-container-low text-on-surface">
-                                    Hello {{ attempt.student.name }}! Do you have any questions about this <strong>{{ attempt.topic_title }}</strong> scenario challenge?
-                                </div>
+                        <div class="p-3 bg-[#0d1422] rounded-lg border border-[#273752] flex flex-col gap-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-5 h-5 rounded bg-indigo-500/20 text-indigo-300 font-crest text-xs flex items-center justify-center font-bold border border-indigo-500/50">II</span>
+                                <h4 class="font-serif-academic text-sm font-semibold text-slate-200">Artificial Urgency Pressure</h4>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-snug pl-7 font-sans">
+                                Strict deadlines induce cognitive anxiety, deterring students from verifying domains.
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-[#0d1422] rounded-lg border border-emerald/40 flex flex-col gap-1">
+                            <div class="flex items-center gap-2">
+                                <span class="w-5 h-5 rounded bg-emerald/20 text-emerald-light font-crest text-xs flex items-center justify-center font-bold border border-emerald/50">III</span>
+                                <h4 class="font-serif-academic text-sm font-semibold text-emerald-light">Oakridge Institutional Rule</h4>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-snug pl-7 font-sans">
+                                School records are published strictly on <span class="text-white font-medium underline decoration-gold">portal.oakridge.edu</span>.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Live AI Provost Interactive Dialogue Box -->
+                    <div class="p-4 rounded-xl bg-[#070b12] border border-[#273752] space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="font-crest text-xs font-bold text-gold uppercase tracking-wider flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm">forum</span>
+                                Consult AI Provost
+                            </span>
+                            <span class="text-[10px] font-mono text-emerald-light">GPT-5 Active</span>
+                        </div>
+
+                        <!-- Chat log -->
+                        <div id="chat-messages" class="max-h-40 overflow-y-auto space-y-2 text-xs font-serif-editorial">
+                            <div class="p-2.5 rounded bg-[#111a2e] border border-[#1e293b] text-slate-300">
+                                <strong>Provost:</strong> Have any questions regarding the forensic evidence or grading rubric? Enter your query below.
                             </div>
                         </div>
 
-                        <!-- Chat Input Form -->
-                        <form id="mentor-chat-form" onsubmit="sendMentorMessage(event)" class="flex gap-2">
+                        <!-- Chat input -->
+                        <div class="flex items-center gap-2 pt-1">
                             <input type="text" 
-                                   id="mentor-chat-input"
-                                   placeholder="Ask AI mentor a question..."
-                                   class="flex-grow px-3 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant text-xs text-on-surface placeholder:text-outline focus:outline-none focus:border-primary">
-                            <button type="submit" 
-                                    class="px-3 py-2 rounded-lg bg-primary text-on-primary font-bold text-xs hover:bg-primary-container transition-colors shrink-0">
-                                Send
+                                   id="chat-input"
+                                   placeholder="Ask the provost a question..." 
+                                   class="flex-1 bg-[#111a2e] border border-[#273752] rounded-lg px-3 py-2 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-gold">
+                            <button type="button" 
+                                    id="chat-send"
+                                    class="px-3 py-2 rounded-lg bg-gold hover:bg-gold-light text-[#090e17] font-crest text-xs font-bold transition-all cursor-pointer">
+                                <span>Ask</span>
                             </button>
-                        </form>
+                        </div>
+                    </div>
+
+                    <!-- Action Controls -->
+                    <div class="flex flex-col sm:flex-row items-center gap-2.5 pt-1">
+                        <a href="{% url 'student_dashboard' %}" class="w-full sm:flex-1 py-3 px-4 rounded-lg bg-gold hover:bg-gold-light text-[#090e17] font-crest text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(245,158,11,0.35)]">
+                            <span>Return to Academy Dashboard</span>
+                            <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+                        </a>
+                        <a href="{% url 'take_quiz' attempt.topic_id %}" class="w-full sm:w-auto py-3 px-4 rounded-lg bg-[#111a2e] hover:bg-[#162238] border border-[#273752] text-slate-300 font-crest text-xs font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5">
+                            <span class="material-symbols-outlined text-sm text-gold">replay</span>
+                            <span>Retake</span>
+                        </a>
                     </div>
 
                 </div>
 
-            </div>
-
-            <!-- Instructor Oversight Card -->
-            <div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm border border-outline-variant/40 flex items-center justify-between">
-                <div class="flex items-center gap-space-sm">
-                    <div class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant font-bold text-xs">
-                        EDU
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-label-md text-label-md font-semibold text-on-surface">Instructor Supervision Active</span>
-                        <span class="font-label-sm text-label-sm text-on-surface-variant">Classroom Heuristics Logged</span>
-                    </div>
-                </div>
-                <span class="flex items-center gap-1 font-label-sm text-label-sm text-secondary font-medium">
-                    <span class="w-2 h-2 rounded-full bg-secondary"></span>
-                    Verified
-                </span>
             </div>
 
         </aside>
@@ -309,65 +296,65 @@
 
 {% block extra_js %}
 <script>
-    const chatHistory = [];
+    // Live AI Chat handling
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+    const chatMessages = document.getElementById('chat-messages');
 
-    async function sendMentorMessage(e) {
-        e.preventDefault();
-        const input = document.getElementById('mentor-chat-input');
-        const text = input.value.trim();
-        if (!text) return;
+    if (chatSend && chatInput) {
+        async function sendMessage() {
+            const query = chatInput.value.trim();
+            if (!query) return;
 
-        input.value = '';
-        const thread = document.getElementById('mentor-chat-thread');
+            // Append user bubble
+            const userMsg = document.createElement('div');
+            userMsg.className = 'p-2.5 rounded bg-gold-bg border border-gold/40 text-gold-light text-right';
+            userMsg.innerHTML = `<strong>You:</strong> ${escapeHtml(query)}`;
+            chatMessages.appendChild(userMsg);
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
 
-        // Append user question
-        thread.innerHTML += `
-            <div class="flex items-start justify-end gap-2">
-                <div class="p-2.5 rounded-lg bg-primary text-on-primary text-right">
-                    ${text}
-                </div>
-                <div class="w-6 h-6 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-bold text-[10px] shrink-0">
-                    {{ attempt.student.name|slice:":1"|upper }}
-                </div>
-            </div>
-        `;
+            // Loading bubble
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'p-2.5 rounded bg-[#111a2e] border border-[#1e293b] text-slate-400 italic';
+            loadingMsg.textContent = 'Provost is reviewing institutional doctrine...';
+            chatMessages.appendChild(loadingMsg);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
 
-        chatHistory.push({ role: 'user', text: text });
-        thread.scrollTop = thread.scrollHeight;
+            try {
+                const resp = await fetch(`{% url 'chat_mentor_api' %}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        message: query,
+                        topic_title: '{{ attempt.topic_title }}',
+                        attempt_id: '{{ attempt.id }}'
+                    })
+                });
+                const data = await resp.json();
+                loadingMsg.remove();
 
-        try {
-            const resp = await fetch("{% url 'chat_mentor_api' %}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: JSON.stringify({
-                    message: text,
-                    topic_title: "{{ attempt.topic_title }}",
-                    history: chatHistory
-                })
-            });
-
-            const data = await resp.json();
-            const aiReply = data.reply || "Always verify credentials through independent official channels.";
-            chatHistory.push({ role: 'assistant', text: aiReply });
-
-            thread.innerHTML += `
-                <div class="flex items-start gap-2">
-                    <div class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-[10px] shrink-0">
-                        AI
-                    </div>
-                    <div class="p-2.5 rounded-lg bg-surface-container-low text-on-surface">
-                        ${aiReply}
-                    </div>
-                </div>
-            `;
-            thread.scrollTop = thread.scrollHeight;
-
-        } catch (err) {
-            console.error("Mentor chat error", err);
+                const botMsg = document.createElement('div');
+                botMsg.className = 'p-2.5 rounded bg-[#111a2e] border border-[#1e293b] text-slate-200';
+                botMsg.innerHTML = `<strong>Provost:</strong> ${data.reply || 'Remain vigilant against typosquatting and deceptive senders.'}`;
+                chatMessages.appendChild(botMsg);
+            } catch (err) {
+                loadingMsg.textContent = 'Provost: Network gateway timed out. Remember: never share credentials on untrusted domains.';
+            }
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
+
+        chatSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
     }
 </script>
 {% endblock %}

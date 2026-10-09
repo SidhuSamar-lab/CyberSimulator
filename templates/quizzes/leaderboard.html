@@ -1,31 +1,32 @@
 {% extends 'base.html' %}
 
-{% block title %}Classroom Leaderboard & Arena | CyberShield Academy{% endblock %}
+{% block title %}Classroom Leaderboard & Honor Roll | CyberShield Academy{% endblock %}
 
 {% block content %}
-<div class="max-w-[1440px] mx-auto px-4 sm:px-8 py-8 space-y-8">
+<div class="max-w-[1440px] mx-auto px-4 sm:px-8 py-8 space-y-8 text-[#dee2f0]">
 
     <!-- Hero Header -->
-    <div class="bg-surface-container-lowest rounded-2xl p-6 sm:p-10 border border-outline-variant/40 text-center shadow-sm relative overflow-hidden">
-        <div class="max-w-3xl mx-auto space-y-3">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-primary-fixed text-on-primary-fixed-variant uppercase tracking-wider">
-                <span class="material-symbols-outlined text-sm">trophy</span>
-                <span>INTER-CLASS CYBER DEFENSE ARENA</span>
+    <div class="bg-[#111a2d] rounded-2xl p-6 sm:p-10 border border-[#273752] text-center shadow-xl relative overflow-hidden">
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-gold/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="max-w-3xl mx-auto space-y-3 relative z-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-crest bg-[#0d1422] text-gold uppercase tracking-wider border border-gold/30">
+                <span class="material-symbols-outlined text-sm text-gold">trophy</span>
+                <span>INTER-COLLEGIATE CYBER DEFENSE ARENA</span>
             </div>
-            <h1 class="text-3xl sm:text-5xl font-display font-extrabold text-on-surface tracking-tight">
-                Classroom <span class="text-primary">Leaderboard</span>
+            <h1 class="text-3xl sm:text-5xl font-serif-title font-bold text-white tracking-tight">
+                Classroom <span class="text-gold">Leaderboard &amp; Honor Roll</span>
             </h1>
-            <p class="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                Which classroom has the sharpest cybersecurity awareness? Compare grade sections, track collective defense accuracy, and celebrate individual student cybersecurity champions.
+            <p class="font-serif-editorial italic text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl mx-auto">
+                Compare classroom defense accuracies, honor scholastic achievements, and track section leadership across Oakridge Collegiate.
             </p>
         </div>
     </div>
 
     <!-- Top 3 Class Podium -->
     {% if class_rankings|length >= 3 %}
-        <div class="bg-surface-container-lowest rounded-2xl p-6 sm:p-8 border border-outline-variant/40 shadow-sm space-y-6">
-            <h2 class="text-center font-display font-bold text-lg text-on-surface uppercase tracking-wider flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined text-primary">military_tech</span>
+        <div class="bg-[#111a2d] rounded-2xl p-6 sm:p-8 border border-[#273752] shadow-xl space-y-6">
+            <h2 class="text-center font-crest font-bold text-base text-gold uppercase tracking-widest flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-gold">military_tech</span>
                 <span>Classroom Champions Podium</span>
             </h2>
 
@@ -33,52 +34,52 @@
                 
                 <!-- 2nd Place (Silver) -->
                 {% with second=class_rankings.1 %}
-                <div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/50 text-center space-y-3 relative order-2 md:order-1">
-                    <div class="w-12 h-12 mx-auto rounded-full bg-surface-container-high border border-outline-variant text-on-surface flex items-center justify-center text-xl font-bold font-mono">
-                        2
+                <div class="bg-[#0d1422] rounded-xl p-6 border border-[#273752] text-center space-y-3 relative order-2 md:order-1 shadow-md">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-[#162238] border border-slate-500/40 text-slate-300 flex items-center justify-center text-lg font-serif font-bold">
+                        II
                     </div>
                     <div>
-                        <span class="text-[10px] font-mono text-on-surface-variant uppercase tracking-widest">RUNNER UP</span>
-                        <h3 class="text-xl font-display font-bold text-on-surface">{{ second.class_name }}</h3>
+                        <span class="text-[10px] font-crest text-slate-400 uppercase tracking-widest">RUNNER UP</span>
+                        <h3 class="text-lg font-serif-title font-bold text-white">{{ second.class_name }}</h3>
                     </div>
-                    <div class="p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/30">
-                        <div class="text-2xl font-bold font-mono text-on-surface">{{ second.avg_accuracy }}%</div>
-                        <div class="text-[10px] text-on-surface-variant font-mono">{{ second.attempts_count }} Quizzes &bull; {{ second.student_count }} Cadets</div>
+                    <div class="p-3 rounded-lg bg-[#070b12] border border-[#1e293b]">
+                        <div class="text-2xl font-bold font-mono text-slate-200">{{ second.avg_accuracy }}%</div>
+                        <div class="text-[10px] text-slate-400 font-mono">{{ second.attempts_count }} Quizzes &bull; {{ second.student_count }} Cadets</div>
                     </div>
                 </div>
                 {% endwith %}
 
                 <!-- 1st Place (Gold Champion) -->
                 {% with first=class_rankings.0 %}
-                <div class="bg-surface-container-low rounded-2xl p-8 border-2 border-primary/40 text-center space-y-4 relative order-1 md:order-2 shadow-md -translate-y-2">
-                    <div class="w-16 h-16 mx-auto rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center text-3xl font-black shadow-sm">
-                        🥇
+                <div class="bg-[#0e1728] rounded-2xl p-8 border-2 border-gold/60 text-center space-y-4 relative order-1 md:order-2 shadow-2xl -translate-y-2">
+                    <div class="w-16 h-16 mx-auto rounded-full bg-gold/20 border border-gold/60 text-gold flex items-center justify-center text-2xl font-serif font-black shadow-md">
+                        I
                     </div>
                     <div>
-                        <span class="text-[10px] font-mono text-secondary uppercase tracking-widest font-bold">1ST PLACE CHAMPION</span>
-                        <h3 class="text-2xl font-display font-black text-primary">{{ first.class_name }}</h3>
-                        <p class="text-xs text-on-surface-variant">Highest Collective Defense</p>
+                        <span class="text-[10px] font-crest text-gold uppercase tracking-widest font-bold">1ST PLACE CHAMPION</span>
+                        <h3 class="text-2xl font-serif-title font-bold text-gold-light">{{ first.class_name }}</h3>
+                        <p class="text-xs text-slate-400 font-serif-editorial italic">Highest Collective Defense</p>
                     </div>
-                    <div class="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/30 shadow-xs">
-                        <div class="text-4xl font-extrabold font-mono text-secondary">{{ first.avg_accuracy }}%</div>
-                        <div class="text-xs text-on-surface-variant font-mono mt-1">{{ first.attempts_count }} Quizzes &bull; {{ first.student_count }} Cadets</div>
+                    <div class="p-4 rounded-xl bg-[#070b12] border border-gold/40">
+                        <div class="text-3xl font-black font-mono text-gold">{{ first.avg_accuracy }}%</div>
+                        <div class="text-xs text-slate-400 font-mono mt-1">{{ first.attempts_count }} Quizzes Completed &bull; {{ first.student_count }} Cadets</div>
                     </div>
                 </div>
                 {% endwith %}
 
                 <!-- 3rd Place (Bronze) -->
                 {% with third=class_rankings.2 %}
-                <div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/50 text-center space-y-3 relative order-3">
-                    <div class="w-12 h-12 mx-auto rounded-full bg-tertiary-fixed text-tertiary flex items-center justify-center text-xl font-bold font-mono">
-                        3
+                <div class="bg-[#0d1422] rounded-xl p-6 border border-[#273752] text-center space-y-3 relative order-3 shadow-md">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-[#162238] border border-amber-700/40 text-amber-500 flex items-center justify-center text-lg font-serif font-bold">
+                        III
                     </div>
                     <div>
-                        <span class="text-[10px] font-mono text-on-surface-variant uppercase tracking-widest">3RD PLACE</span>
-                        <h3 class="text-xl font-display font-bold text-on-surface">{{ third.class_name }}</h3>
+                        <span class="text-[10px] font-crest text-slate-400 uppercase tracking-widest">3RD PLACE</span>
+                        <h3 class="text-lg font-serif-title font-bold text-white">{{ third.class_name }}</h3>
                     </div>
-                    <div class="p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/30">
-                        <div class="text-2xl font-bold font-mono text-on-surface">{{ third.avg_accuracy }}%</div>
-                        <div class="text-[10px] text-on-surface-variant font-mono">{{ third.attempts_count }} Quizzes &bull; {{ third.student_count }} Cadets</div>
+                    <div class="p-3 rounded-lg bg-[#070b12] border border-[#1e293b]">
+                        <div class="text-2xl font-bold font-mono text-slate-200">{{ third.avg_accuracy }}%</div>
+                        <div class="text-[10px] text-slate-400 font-mono">{{ third.attempts_count }} Quizzes &bull; {{ third.student_count }} Cadets</div>
                     </div>
                 </div>
                 {% endwith %}
@@ -87,118 +88,66 @@
         </div>
     {% endif %}
 
-    <!-- Full Class Rankings Table & Individual Student Honors -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Left: Classroom Performance Standings -->
-        <div class="lg:col-span-7 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/40 shadow-sm space-y-4">
-            <div class="flex items-center justify-between border-b border-outline-variant/30 pb-4">
-                <div>
-                    <h3 class="font-display font-bold text-lg text-on-surface">Classroom League Table</h3>
-                    <p class="text-xs text-on-surface-variant">Ranked by Average Defense Accuracy across all quiz attempts</p>
-                </div>
-                <span class="text-xs font-mono text-primary bg-surface-container px-2.5 py-1 rounded font-bold">
-                    {{ class_rankings|length }} Classes
-                </span>
+    <!-- Individual Cadet Honor Roll -->
+    <div class="bg-[#111a2d] rounded-2xl border border-[#273752] shadow-xl overflow-hidden">
+        <div class="p-6 border-b border-[#1e293b] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h2 class="font-serif-title text-xl font-bold text-white">Individual Cadet Honor Roll</h2>
+                <p class="text-xs text-slate-400">Ranked by total quizzes passed and badge mastery across Oakridge.</p>
             </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead>
-                        <tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-                            <th class="py-3 px-3">Rank</th>
-                            <th class="py-3 px-3">Class Section</th>
-                            <th class="py-3 px-3 text-center">Cadets</th>
-                            <th class="py-3 px-3 text-center">Attempts</th>
-                            <th class="py-3 px-3 text-right">Avg Accuracy</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-surface-container font-body-md text-body-md text-on-surface">
-                        {% for c in class_rankings %}
-                            <tr class="hover:bg-surface-container-low transition-colors {% if current_student and current_student.class_name == c.class_name %}bg-primary-fixed/20 border-l-4 border-primary{% endif %}">
-                                <td class="py-3.5 px-3 font-mono font-bold">
-                                    {% if forloop.counter == 1 %}<span class="text-secondary font-black">#1 🥇</span>
-                                    {% elif forloop.counter == 2 %}<span class="text-primary font-black">#2 🥈</span>
-                                    {% elif forloop.counter == 3 %}<span class="text-tertiary font-black">#3 🥉</span>
-                                    {% else %}<span class="text-on-surface-variant">#{{ forloop.counter }}</span>{% endif %}
-                                </td>
-                                <td class="py-3.5 px-3">
-                                    <div class="font-semibold text-on-surface">{{ c.class_name }}</div>
-                                    {% if current_student and current_student.class_name == c.class_name %}
-                                        <span class="text-[10px] text-primary font-mono font-bold">(Your Class)</span>
-                                    {% endif %}
-                                </td>
-                                <td class="py-3.5 px-3 text-center font-mono text-on-surface-variant">{{ c.student_count }}</td>
-                                <td class="py-3.5 px-3 text-center font-mono text-on-surface-variant">{{ c.attempts_count }}</td>
-                                <td class="py-3.5 px-3 text-right">
-                                    <span class="inline-block px-2.5 py-1 rounded-full font-mono font-bold text-xs
-                                        {% if c.avg_accuracy >= 80 %}bg-secondary-container text-on-secondary-container
-                                        {% elif c.avg_accuracy >= 50 %}bg-surface-container-high text-on-surface
-                                        {% else %}bg-tertiary-fixed text-tertiary{% endif %}">
-                                        {{ c.avg_accuracy }}%
-                                    </span>
-                                </td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="5" class="py-8 text-center text-on-surface-variant font-mono">
-                                    No classroom quiz attempts recorded yet.
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            <span class="px-3 py-1 rounded bg-[#0d1422] border border-[#273752] text-xs font-mono text-gold">
+                Top {{ top_students|length }} Cadets Listed
+            </span>
         </div>
 
-        <!-- Right: Top 10 Elite Student Honor Roll -->
-        <div class="lg:col-span-5 bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/40 shadow-sm space-y-4">
-            <div class="flex items-center justify-between border-b border-outline-variant/30 pb-4">
-                <div>
-                    <h3 class="font-display font-bold text-lg text-on-surface">Elite Cyber Guardians</h3>
-                    <p class="text-xs text-on-surface-variant">Top individual student defenders</p>
-                </div>
-                <span class="text-xs font-mono text-secondary bg-secondary-container/40 px-2.5 py-1 rounded font-bold">
-                    Honor Roll
-                </span>
-            </div>
-
-            <div class="space-y-2.5">
-                {% for item in top_students %}
-                    <div class="p-3 rounded-lg border border-outline-variant/30 bg-surface-container-low flex items-center justify-between hover:bg-surface-container transition-all">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full font-mono text-xs font-bold flex items-center justify-center shrink-0
-                                {% if forloop.counter == 1 %}bg-secondary text-on-secondary
-                                {% elif forloop.counter == 2 %}bg-primary text-on-primary
-                                {% elif forloop.counter == 3 %}bg-surface-container-high text-on-surface
-                                {% else %}bg-surface-container text-on-surface-variant{% endif %}">
-                                #{{ forloop.counter }}
-                            </div>
-                            <div>
-                                <h4 class="text-xs font-bold text-on-surface leading-tight">{{ item.student.name }}</h4>
-                                <div class="text-[10px] text-on-surface-variant font-mono">
-                                    {{ item.student.class_name }} &bull; {{ item.rank_title }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="text-right flex items-center gap-2">
-                            <span class="text-[10px] font-mono text-primary font-bold">
-                                🎖️ {{ item.earned_badges_count }}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-[#0b1320] border-b border-[#1e293b] font-cinzel text-[11px] text-slate-400 tracking-[0.12em] uppercase">
+                        <th class="py-3 px-6">Rank</th>
+                        <th class="py-3 px-4">Cadet Scholar</th>
+                        <th class="py-3 px-4">Section &amp; Roll</th>
+                        <th class="py-3 px-4">Badges Awarded</th>
+                        <th class="py-3 px-4">Quizzes Completed</th>
+                        <th class="py-3 px-6 text-right">Defense Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#1e293b] text-xs text-slate-200">
+                    {% for st in top_students %}
+                    <tr class="{% if forloop.counter <= 3 %}bg-[#142036]/50{% endif %} hover:bg-[#182742] transition-colors">
+                        <td class="py-3.5 px-6 font-serif font-bold text-sm {% if forloop.counter == 1 %}text-gold{% elif forloop.counter == 2 %}text-slate-300{% elif forloop.counter == 3 %}text-amber-600{% else %}text-slate-500{% endif %}">
+                            #{{ forloop.counter }}
+                        </td>
+                        <td class="py-3.5 px-4">
+                            <span class="font-serif-title text-sm font-bold text-white">{{ st.student.name }}</span>
+                        </td>
+                        <td class="py-3.5 px-4 font-mono text-[11px]">
+                            <span class="bg-[#162238] text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded font-semibold">
+                                #{{ st.student.roll_number }} • {{ st.student.class_name }}
                             </span>
-                            <span class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-mono font-bold text-xs">
-                                {{ item.avg_score }}%
+                        </td>
+                        <td class="py-3.5 px-4 font-mono">
+                            <span class="bg-[#064e3b]/70 text-emerald-300 border border-emerald-500/50 px-2 py-0.5 rounded font-bold text-[11px]">
+                                {{ st.earned_badges_count }} / 8 Badges
                             </span>
-                        </div>
-                    </div>
-                {% empty %}
-                    <div class="py-8 text-center text-on-surface-variant font-mono text-xs">
-                        No students have completed quizzes yet.
-                    </div>
-                {% endfor %}
-            </div>
+                        </td>
+                        <td class="py-3.5 px-4 font-mono text-slate-300">
+                            {{ st.total_attempts }} Completed
+                        </td>
+                        <td class="py-3.5 px-6 text-right font-mono font-bold text-gold text-sm">
+                            {{ st.avg_score }}%
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-slate-400 italic font-serif-editorial">
+                            No student examinations recorded yet. Take a quiz to populate the honor roll!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-
     </div>
 
 </div>

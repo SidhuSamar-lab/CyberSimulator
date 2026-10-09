@@ -10,15 +10,15 @@
         }
         body {
             background: #ffffff !important;
-            color: #131b2e !important;
+            color: #070b12 !important;
             padding: 0 !important;
             margin: 0 !important;
         }
         .certificate-container {
-            border: 4px double #4338ca !important;
+            border: 4px double #d97706 !important;
             box-shadow: none !important;
             background: #ffffff !important;
-            color: #131b2e !important;
+            color: #070b12 !important;
             margin: 0 auto !important;
             padding: 30px !important;
             max-width: 100% !important;
@@ -29,124 +29,124 @@
 {% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto space-y-6">
+<div class="max-w-4xl mx-auto space-y-6 py-6 text-[#dee2f0]">
 
     <!-- Screen-Only Controls Bar -->
-    <div class="no-print bg-surface-container-lowest rounded-xl p-4 sm:p-5 border border-outline-variant shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="no-print bg-[#111a2d] rounded-xl p-4 sm:p-5 border border-[#273752] shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center space-x-3 text-xs sm:text-sm">
-            <a href="{% url 'student_dashboard' %}" class="text-on-surface-variant hover:text-primary transition-colors flex items-center space-x-1 font-label-md">
+            <a href="{% url 'student_dashboard' %}" class="text-slate-400 hover:text-gold transition-colors flex items-center space-x-1 font-crest">
                 <span class="material-symbols-outlined text-base">arrow_back</span>
-                <span>Student Dashboard</span>
+                <span>Cadet Dossier</span>
             </a>
-            <span class="text-outline-variant">&bull;</span>
-            <span class="text-on-surface-variant font-label-sm">Verification: <strong class="text-primary font-mono">{{ cert_id }}</strong></span>
+            <span class="text-slate-600">&bull;</span>
+            <span class="text-slate-300 font-mono text-xs">Credentials Registry: <strong class="text-gold font-mono">{{ cert_id }}</strong></span>
         </div>
 
         <div class="flex items-center space-x-3 w-full sm:w-auto">
             <button type="button" 
                     id="btn-print-certificate"
                     onclick="window.print()" 
-                    class="bg-primary text-on-primary hover:bg-primary-container px-6 py-2.5 rounded-lg font-label-md text-label-md font-bold shadow-md flex items-center justify-center space-x-2 w-full sm:w-auto transition-all active:scale-[0.98] cursor-pointer">
+                    class="bg-gold hover:bg-gold-light text-[#090e17] px-6 py-2.5 rounded-lg font-crest text-xs uppercase tracking-wider font-bold shadow-lg shadow-gold/20 flex items-center justify-center space-x-2 w-full sm:w-auto transition-all active:scale-[0.98] cursor-pointer">
                 <span class="material-symbols-outlined text-base">print</span>
-                <span>Print / Download Certificate</span>
+                <span>Print / Download Diploma</span>
             </button>
         </div>
     </div>
 
-    <!-- The Certificate Canvas -->
-    <div class="certificate-container bg-surface-container-lowest rounded-2xl p-8 sm:p-14 border-4 border-double border-primary/30 relative overflow-hidden shadow-xl space-y-8 text-on-surface">
+    <!-- The Collegiate Certificate Canvas (Obsidian & Gold Luxury Diploma) -->
+    <div class="certificate-container bg-[#0e1626] rounded-2xl p-8 sm:p-14 border-4 border-double border-gold/60 relative overflow-hidden shadow-2xl space-y-8 text-slate-100">
         
         <!-- Watermark Background -->
-        <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-            <span class="material-symbols-outlined text-[400px] text-primary">verified_user</span>
+        <div class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none text-gold">
+            <span class="material-symbols-outlined text-[400px]">verified_user</span>
         </div>
 
         <!-- Certificate Header -->
         <div class="text-center space-y-3 relative z-10">
-            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-label-sm font-label-sm tracking-wider uppercase bg-surface-container-low border border-outline-variant text-on-surface-variant font-semibold">
-                <span class="w-2 h-2 rounded-full bg-secondary"></span>
-                <span>CYBERSHIELD ACADEMY • OAKRIDGE HIGH SCHOOL</span>
+            <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full text-[10.5px] font-crest tracking-[0.2em] uppercase bg-[#070b12] border border-gold/40 text-gold-light font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>
+                <span>CYBERSHIELD ACADEMY • OAKRIDGE COLLEGIATE CHAPTER</span>
             </div>
             
-            <h1 class="text-2xl sm:text-4xl font-headline-lg font-bold tracking-tight text-on-surface uppercase">
+            <h1 class="text-2xl sm:text-4xl font-serif-title font-bold tracking-tight text-white uppercase mt-2">
                 Certificate of Cyber Mastery
             </h1>
             
-            <p class="text-xs sm:text-sm text-on-surface-variant font-label-sm tracking-widest uppercase">
-                Official Credential &bull; Digital Defense & Safety Excellence
+            <p class="text-xs sm:text-sm text-slate-400 font-crest tracking-widest uppercase">
+                Official Credential &bull; Digital Defense &amp; Safety Distinction
             </p>
         </div>
 
         <!-- Recipient Information -->
         <div class="text-center space-y-4 py-4 relative z-10">
-            <p class="text-xs sm:text-sm text-on-surface-variant">
-                This certifies that student cadet
+            <p class="font-serif-editorial italic text-xs sm:text-sm text-slate-300">
+                This solemnly attests that scholar cadet
             </p>
 
-            <div class="text-3xl sm:text-5xl font-display-lg font-bold text-primary py-1 tracking-tight">
+            <div class="text-3xl sm:text-5xl font-serif-title font-bold text-gold py-1 tracking-tight drop-shadow-md">
                 {{ student.name }}
             </div>
 
-            <p class="text-xs sm:text-sm text-on-surface-variant max-w-xl mx-auto leading-relaxed">
-                representing class <strong class="text-on-surface font-semibold">{{ student.class_name }}</strong> (Roll #{{ student.roll_number }}), has demonstrated verified proficiency in threat detection, phishing triage, password entropy, and K-12 defensive computing safety.
+            <p class="font-serif-editorial text-xs sm:text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
+                representing class <strong class="text-white font-semibold">{{ student.class_name }}</strong> (Roll #{{ student.roll_number }}), has demonstrated verified mastery in threat detection, phishing triage, password entropy, and K-12 defensive computing safety.
             </p>
         </div>
 
         <!-- Achievement Metrics Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto py-2 relative z-10">
-            <div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant text-center">
-                <span class="text-[10px] font-label-sm text-on-surface-variant block uppercase font-semibold">CADET RANK</span>
-                <span class="font-bold text-xs sm:text-sm text-primary font-headline-md">{{ rank_title }}</span>
+            <div class="p-3 rounded-lg bg-[#070b12] border border-[#273752] text-center">
+                <span class="text-[10px] font-crest text-slate-400 block uppercase font-semibold">CADET RANK</span>
+                <span class="font-bold text-xs sm:text-sm text-gold font-serif-title">{{ rank_title }}</span>
             </div>
-            <div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant text-center">
-                <span class="text-[10px] font-label-sm text-on-surface-variant block uppercase font-semibold">BADGES UNLOCKED</span>
-                <span class="font-bold text-xs sm:text-sm text-secondary font-headline-md">{{ badges_unlocked }} / 8</span>
+            <div class="p-3 rounded-lg bg-[#070b12] border border-[#273752] text-center">
+                <span class="text-[10px] font-crest text-slate-400 block uppercase font-semibold">BADGES CONFERRED</span>
+                <span class="font-bold text-xs sm:text-sm text-emerald-light font-serif-title">{{ badges_unlocked }} / 8</span>
             </div>
-            <div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant text-center">
-                <span class="text-[10px] font-label-sm text-on-surface-variant block uppercase font-semibold">QUIZZES PASSED</span>
-                <span class="font-bold text-xs sm:text-sm text-primary-container font-headline-md">{{ total_quizzes }}</span>
+            <div class="p-3 rounded-lg bg-[#070b12] border border-[#273752] text-center">
+                <span class="text-[10px] font-crest text-slate-400 block uppercase font-semibold">DRILLS MASTERED</span>
+                <span class="font-bold text-xs sm:text-sm text-white font-serif-title">{{ total_quizzes }}</span>
             </div>
-            <div class="p-3 rounded-lg bg-surface-container-low border border-outline-variant text-center">
-                <span class="text-[10px] font-label-sm text-on-surface-variant block uppercase font-semibold">DEFENSE ACCURACY</span>
-                <span class="font-bold text-xs sm:text-sm text-secondary font-headline-md">{{ avg_accuracy }}%</span>
+            <div class="p-3 rounded-lg bg-[#070b12] border border-[#273752] text-center">
+                <span class="text-[10px] font-crest text-slate-400 block uppercase font-semibold">DEFENSE ACCURACY</span>
+                <span class="font-bold text-xs sm:text-sm text-gold-light font-serif-title">{{ avg_accuracy }}%</span>
             </div>
         </div>
 
         <!-- Seal & Signatures Footer -->
-        <div class="pt-8 border-t border-outline-variant flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
+        <div class="pt-8 border-t border-[#1e293b] flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
             
             <!-- Left Signature: AI Mentor -->
             <div class="text-center sm:text-left space-y-1">
-                <div class="font-serif italic text-lg sm:text-xl text-primary font-semibold tracking-wide">
+                <div class="font-serif italic text-lg sm:text-xl text-gold font-semibold tracking-wide">
                     CyberQuizAgent (GPT-5)
                 </div>
-                <div class="w-36 h-0.5 bg-outline-variant mx-auto sm:mx-0"></div>
-                <p class="text-[10px] font-label-sm text-on-surface-variant uppercase">Azure AI Defense Mentor</p>
+                <div class="w-36 h-0.5 bg-[#273752] mx-auto sm:mx-0"></div>
+                <p class="text-[10px] font-crest text-slate-400 uppercase tracking-wider">Azure AI Defense Mentor</p>
             </div>
 
             <!-- Center Digital Security Seal -->
-            <div class="w-20 h-20 rounded-full border-2 border-dashed border-secondary bg-secondary-container/30 flex flex-col items-center justify-center p-2 text-center shadow-md">
-                <span class="material-symbols-outlined text-secondary text-xl">verified</span>
-                <span class="text-[8px] font-label-sm font-bold text-on-secondary-container tracking-wider uppercase leading-tight mt-0.5">
+            <div class="w-20 h-20 rounded-full border-2 border-dashed border-gold bg-[#070b12] flex flex-col items-center justify-center p-2 text-center shadow-lg shadow-gold/10">
+                <span class="material-symbols-outlined text-gold text-xl">verified</span>
+                <span class="text-[8px] font-crest font-bold text-gold-light tracking-wider uppercase leading-tight mt-0.5">
                     VERIFIED SECURE
                 </span>
-                <span class="text-[7px] text-on-surface-variant">2026</span>
+                <span class="text-[7px] text-slate-400 font-mono">2026</span>
             </div>
 
             <!-- Right Signature & Date -->
             <div class="text-center sm:text-right space-y-1">
-                <div class="font-serif italic text-lg sm:text-xl text-primary font-semibold tracking-wide">
-                    Prof. Cyber Defense
+                <div class="font-serif italic text-lg sm:text-xl text-gold font-semibold tracking-wide">
+                    Dean of Academic Affairs
                 </div>
-                <div class="w-36 h-0.5 bg-outline-variant mx-auto sm:ml-auto"></div>
-                <p class="text-[10px] font-label-sm text-on-surface-variant uppercase">Director of Education &bull; {{ issue_date }}</p>
+                <div class="w-36 h-0.5 bg-[#273752] mx-auto sm:ml-auto"></div>
+                <p class="text-[10px] font-crest text-slate-400 uppercase tracking-wider">Oakridge Collegiate &bull; {{ issue_date }}</p>
             </div>
 
         </div>
 
         <!-- Certificate Serial Identifier -->
-        <div class="text-center pt-2 text-[10px] font-label-sm text-on-surface-variant">
-            Credential ID: <span class="text-on-surface font-mono font-semibold">{{ cert_id }}</span> &bull; Verified by CyberShield Integrity Engine
+        <div class="text-center pt-2 text-[10px] font-mono text-slate-500">
+            Credential ID: <span class="text-slate-300 font-mono font-semibold">{{ cert_id }}</span> &bull; Authenticated by CyberSimulator Integrity Engine
         </div>
 
     </div>

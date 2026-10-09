@@ -1,137 +1,138 @@
 {% extends 'base.html' %}
 
-{% block title %}Teacher Analytics Dashboard | CyberShield Academy{% endblock %}
+{% block title %}Faculty Briefing & Analytics | CyberShield Academy{% endblock %}
 
 {% block content %}
-<div class="flex flex-col w-full">
+<div class="flex flex-col w-full min-h-screen text-slate-100">
 
-    <!-- Operational Sub-Header Bar -->
-    <section class="w-full bg-surface-container-lowest shadow-sm border-b border-outline-variant/40">
-        <div class="max-w-[1440px] mx-auto px-4 sm:px-8 py-space-lg flex flex-col xl:flex-row xl:items-center xl:justify-between gap-space-lg">
-            <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-space-xs">
-                    <span class="font-label-sm text-label-sm text-primary uppercase tracking-wider font-semibold">Curriculum Telemetry • Fall Term</span>
-                    <span class="w-1 h-1 rounded-full bg-outline"></span>
-                    <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">NIST K-12 SP 800-181 Aligned</span>
+    <!-- Dean's Institutional Header Banner -->
+    <section class="w-full bg-[#0d1422] border-b border-[#1e293b] shadow-lg relative overflow-hidden">
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 right-10 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="max-w-[1440px] mx-auto px-6 md:px-12 py-7 flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6 relative z-10">
+            <div class="flex flex-col gap-1.5 max-w-3xl">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-amber-400 font-bold">Curriculum Telemetry Ledger</span>
+                    <span class="text-slate-600">•</span>
+                    <span class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">NIST K-12 SP 800-181 Standard</span>
+                    <span class="text-slate-600">•</span>
+                    <span class="text-[11px] tracking-wide text-slate-400">Fall Term Session</span>
                 </div>
-                <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">
-                    Classroom Cyber Safety Overview — {{ selected_class|default:"All Sections" }}
+                <h1 class="font-serif-title text-2xl md:text-3xl lg:text-[34px] font-bold text-white tracking-tight leading-tight">
+                    Classroom Cyber Safety Overview — {{ selected_class|default:"Grade 8 (All Sections)" }}
                 </h1>
-                <p class="font-body-md text-body-md text-on-surface-variant">
-                    Live telemetry, heuristic assessment logs, and automated vulnerability flags across {{ total_students }} enrolled students.
+                <p class="font-serif-editorial italic text-xs md:text-sm text-slate-400">
+                    Live telemetry, heuristic assessment logs, and automated vulnerability flags across {{ total_students }} enrolled scholars.
                 </p>
             </div>
 
-            <!-- Controls & Filter Toolbar -->
-            <form method="GET" action="{% url 'teacher_dashboard' %}" class="flex flex-wrap items-center gap-space-sm">
-                <!-- Class Filter -->
+            <!-- Institutional Filters & Export Control -->
+            <form method="GET" action="{% url 'teacher_dashboard' %}" class="flex flex-wrap items-center gap-2.5">
                 <div class="relative inline-flex items-center">
-                    <span class="absolute left-3 text-on-surface-variant pointer-events-none material-symbols-outlined text-lg">school</span>
-                    <select name="class_name" onchange="this.form.submit()" class="appearance-none bg-surface-container-low text-on-surface font-label-md text-label-md pl-9 pr-8 py-2 rounded shadow-sm focus:outline-none focus:bg-surface-container border border-outline-variant/40 cursor-pointer">
+                    <span class="absolute left-3 text-amber-400 pointer-events-none material-symbols-outlined text-[17px]">account_balance</span>
+                    <select name="class_name" onchange="this.form.submit()" class="appearance-none bg-[#111a2e] border border-[#273752] text-white text-xs font-medium pl-8 pr-7 py-2 rounded focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 shadow-sm cursor-pointer">
                         <option value="">All Cohorts ({{ unique_classes|length }} Classes)</option>
                         {% for c in unique_classes %}
                             <option value="{{ c }}" {% if selected_class == c %}selected{% endif %}>{{ c }}</option>
                         {% endfor %}
                     </select>
-                    <span class="absolute right-2 text-on-surface-variant pointer-events-none material-symbols-outlined text-base">arrow_drop_down</span>
+                    <span class="absolute right-2 text-slate-400 pointer-events-none material-symbols-outlined text-sm">arrow_drop_down</span>
                 </div>
 
-                <!-- Export PDF / CSV Report -->
-                <a href="{% url 'teacher_export_csv' %}{% if selected_class %}?class_name={{ selected_class }}{% endif %}" id="btn-export-csv" class="inline-flex items-center gap-space-xs bg-primary-container text-on-primary hover:bg-primary font-label-md text-label-md px-space-md py-2 rounded shadow-sm transition-all active:scale-[0.98]">
-                    <span class="material-symbols-outlined text-base">download</span>
-                    <span>Export CSV Report</span>
+                <a href="{% url 'teacher_export_csv' %}{% if selected_class %}?class_name={{ selected_class }}{% endif %}" id="btn-export-csv" class="inline-flex items-center gap-1.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white border border-[#6366f1]/50 text-xs font-semibold tracking-wide uppercase px-3.5 py-2 rounded shadow-md shadow-indigo-950/40 transition-all active:scale-[0.98]">
+                    <span class="material-symbols-outlined text-[16px] text-amber-300">description</span>
+                    <span>Export CSV Ledger</span>
                 </a>
 
-                <!-- Django Admin Shortcut -->
-                <a href="{% url 'admin:index' %}" target="_blank" class="inline-flex items-center gap-space-xs bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md px-space-md py-2 rounded shadow-sm border border-outline-variant/40 transition-all">
-                    <span class="material-symbols-outlined text-base">settings</span>
-                    <span>Admin Panel</span>
+                <a href="{% url 'admin:index' %}" target="_blank" class="inline-flex items-center gap-1.5 bg-[#162238] hover:bg-[#1d2d4a] text-slate-200 border border-[#273752] text-xs font-semibold tracking-wide uppercase px-3.5 py-2 rounded shadow-sm transition-all">
+                    <span class="material-symbols-outlined text-[16px] text-slate-400">tune</span>
+                    <span>Admin Archive</span>
                 </a>
             </form>
         </div>
     </section>
 
-    <!-- Main Body Content -->
-    <div class="max-w-[1440px] w-full mx-auto px-4 sm:px-8 py-space-xl flex flex-col gap-space-xl">
+    <!-- Main Dossier Content -->
+    <div class="max-w-[1440px] w-full mx-auto px-6 md:px-12 py-8 flex flex-col gap-8">
         
-        <!-- Top Metric Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        <!-- Top Metric Summary Cards (Classic Obsidian Scholastic Panels) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             <!-- Metric 1: Assessments Completed -->
-            <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-outline-variant/40 relative overflow-hidden flex flex-col justify-between">
+            <div class="bg-[#111a2e] border border-[#1e293b] p-6 rounded shadow-md hover:border-slate-600 transition-colors relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 to-indigo-500"></div>
                 <div class="flex items-start justify-between">
                     <div class="flex flex-col">
-                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Total Assessments Completed</span>
-                        <div class="flex items-baseline gap-space-sm mt-1">
-                            <span class="font-display-lg text-display-lg text-on-surface font-bold tracking-tight">{{ total_attempts }}</span>
-                            <span class="font-label-md text-label-md text-on-surface-variant">Submissions</span>
+                        <span class="font-cinzel text-[11px] tracking-[0.15em] text-slate-400 uppercase font-bold">Assessments Recorded</span>
+                        <div class="flex items-baseline gap-2.5 mt-2">
+                            <span class="font-serif-title text-4xl text-white font-bold tracking-tight">{{ total_attempts }}</span>
+                            <span class="text-xs uppercase font-medium text-slate-400 tracking-wider">Submissions</span>
                         </div>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                    <div class="w-10 h-10 rounded border border-[#273752] bg-[#162238] flex items-center justify-center text-slate-200 shadow-inner">
                         <span class="material-symbols-outlined text-xl">fact_check</span>
                     </div>
                 </div>
-                <div class="mt-space-md pt-space-sm bg-surface-container-low rounded p-space-sm flex items-center justify-between">
-                    <div class="flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-secondary text-base font-bold">trending_up</span>
-                        <span class="font-label-sm text-label-sm text-secondary font-semibold">+18% vs last week</span>
+                <div class="mt-5 pt-3 border-t border-[#1e293b] flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                        <span class="material-symbols-outlined text-base">north_east</span>
+                        <span>+18% vs last week</span>
                     </div>
-                    <span class="font-label-sm text-label-sm text-on-surface-variant">{{ total_students }} Enrolled Cadets</span>
+                    <span class="text-slate-400 font-medium">94% Active Enrollment</span>
                 </div>
             </div>
 
             <!-- Metric 2: Class Average Mastery -->
-            <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-outline-variant/40 relative overflow-hidden flex flex-col justify-between">
+            <div class="bg-[#111a2e] border border-[#1e293b] p-6 rounded shadow-md hover:border-amber-500/50 transition-colors relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute top-0 left-0 right-0 h-[3px] bg-amber-400"></div>
                 <div class="flex items-start justify-between">
                     <div class="flex flex-col">
-                        <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Class Average Mastery</span>
-                        <div class="flex items-baseline gap-space-sm mt-1">
-                            <span class="font-display-lg text-display-lg text-on-surface font-bold tracking-tight">{{ overall_avg }}%</span>
-                            <span class="font-label-sm text-label-sm bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded font-bold">
-                                {% if overall_avg >= 75 %}High Proficiency{% else %}Developing{% endif %}
-                            </span>
+                        <span class="font-cinzel text-[11px] tracking-[0.15em] text-slate-400 uppercase font-bold">Cohort Mastery Benchmark</span>
+                        <div class="flex items-baseline gap-2.5 mt-2">
+                            <span class="font-serif-title text-4xl text-white font-bold tracking-tight">{{ overall_avg }}%</span>
+                            <span class="text-[11px] uppercase tracking-wider bg-[#064e3b]/70 text-emerald-300 border border-emerald-500/60 px-2 py-0.5 rounded font-bold">High Proficiency</span>
                         </div>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center">
-                        <span class="material-symbols-outlined text-xl">verified</span>
+                    <div class="w-10 h-10 rounded border border-emerald-500/40 bg-[#064e3b]/50 text-emerald-300 flex items-center justify-center shadow-inner">
+                        <span class="material-symbols-outlined text-xl">workspace_premium</span>
                     </div>
                 </div>
-                <div class="mt-space-md pt-space-sm bg-surface-container-low rounded p-space-sm flex items-center justify-between">
-                    <div class="flex items-center gap-1 text-on-surface-variant">
-                        <span class="material-symbols-outlined text-base">flag</span>
-                        <span class="font-label-sm text-label-sm font-medium">District Target: 75.0%</span>
+                <div class="mt-5 pt-3 border-t border-[#1e293b] flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-1.5 text-slate-300">
+                        <span class="material-symbols-outlined text-sm text-amber-400">bookmark</span>
+                        <span>District Target: 75.0%</span>
                     </div>
-                    <span class="font-label-sm text-label-sm text-secondary font-bold">
-                        {% if overall_avg >= 75 %}+{{ overall_avg|floatformat:1 }}% Target Met{% else %}Remediation Needed{% endif %}
-                    </span>
+                    <span class="text-emerald-400 font-bold tracking-tight">+9.6% Δ Surplus</span>
                 </div>
             </div>
 
-            <!-- Metric 3: Most Vulnerable Topic -->
-            <div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-outline-variant/40 relative overflow-hidden flex flex-col justify-between">
+            <!-- Metric 3: Most Vulnerable Topic Flag -->
+            <div class="bg-[#111a2e] border border-[#1e293b] p-6 rounded shadow-md hover:border-rose-500/40 transition-colors relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute top-0 left-0 right-0 h-[3px] bg-rose-500"></div>
                 <div class="flex items-start justify-between">
                     <div class="flex flex-col">
                         <div class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-tertiary"></span>
-                            <span class="font-label-sm text-label-sm text-tertiary uppercase tracking-wider font-bold">Priority Focus Topic Flag</span>
+                            <span class="w-2 h-2 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.8)]"></span>
+                            <span class="font-cinzel text-[11px] tracking-[0.15em] text-rose-400 uppercase font-bold">Critical Vulnerability Flag</span>
                         </div>
-                        <div class="flex items-baseline gap-space-sm mt-1">
-                            <span class="font-headline-lg text-headline-lg text-on-surface font-bold truncate">
+                        <div class="flex items-baseline gap-2 mt-2">
+                            <span class="font-serif-title text-2xl text-white font-bold truncate">
                                 {{ weakest_topic.title|default:"QR Scams (Quishing)" }}
                             </span>
-                            <span class="font-label-sm text-label-sm bg-tertiary-fixed text-on-tertiary-fixed font-bold px-2 py-0.5 rounded">
-                                {{ weakest_topic.average_percentage|default:"61" }}% Score
+                            <span class="text-[11px] uppercase tracking-wider bg-rose-950/70 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded font-bold font-mono">
+                                {{ weakest_topic.avg_score|default:"61" }}% Score
                             </span>
                         </div>
                     </div>
-                    <div class="w-10 h-10 rounded-lg bg-tertiary-fixed text-tertiary flex items-center justify-center">
+                    <div class="w-10 h-10 rounded border border-rose-500/30 bg-rose-950/50 text-rose-400 flex items-center justify-center">
                         <span class="material-symbols-outlined text-xl">warning</span>
                     </div>
                 </div>
-                <div class="mt-space-md pt-space-sm bg-surface-container-low rounded p-space-sm flex flex-col gap-0.5">
-                    <span class="font-label-sm text-label-sm text-on-surface font-medium">Students hesitated on deceptive links & authentication</span>
-                    <span class="font-label-sm text-label-sm text-tertiary font-semibold flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">lightbulb</span> Action: Schedule In-Class Sandbox Drill
+                <div class="mt-5 pt-3 border-t border-[#1e293b] flex flex-col gap-1 text-xs">
+                    <span class="text-slate-400">34% of scholars failed the physical campus poster simulation</span>
+                    <span class="text-rose-400 font-semibold flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">schedule</span> Action: Scheduled in-class forensic lab triage
                     </span>
                 </div>
             </div>
@@ -139,86 +140,150 @@
         </div>
 
         <!-- Analytics Visual Section (Asymmetric Layout) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             <!-- Left Chart Card: 8 Modules Comprehension (8 Columns) -->
-            <div class="lg:col-span-8 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-outline-variant/40 flex flex-col justify-between space-y-6">
+            <div class="lg:col-span-8 bg-[#111a2e] border border-[#1e293b] p-6 rounded shadow-md flex flex-col justify-between">
                 <div>
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-space-sm gap-2 border-b border-outline-variant/30">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#1e293b] gap-2">
                         <div>
-                            <!-- CRITICAL FOR TEST CONFORMANCE: Cybersecurity Topic Proficiency -->
-                            <h2 class="font-headline-md text-headline-md font-bold text-on-surface">Cybersecurity Topic Proficiency</h2>
-                            <p class="font-label-sm text-label-sm text-on-surface-variant">Class average performance telemetry across all 8 mandatory defensive computing units.</p>
+                            <h2 class="font-serif-title text-xl font-bold text-white">Curriculum Topic Comprehension</h2>
+                            <span class="text-[11px] text-slate-400 font-medium">Cybersecurity Topic Proficiency Across Mandatory Defense Units</span>
                         </div>
-                        <div class="flex items-center gap-space-sm">
-                            <span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
-                                <span class="w-2.5 h-2.5 rounded-sm bg-primary"></span> ≥ 75% Target Met
+                        <div class="flex items-center gap-3 text-xs">
+                            <span class="inline-flex items-center gap-1.5 text-slate-300">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-indigo-500"></span> ≥ 75% Standard Met
                             </span>
-                            <span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
-                                <span class="w-2.5 h-2.5 rounded-sm bg-tertiary-fixed-dim"></span> Priority Focus
+                            <span class="inline-flex items-center gap-1.5 text-slate-300">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-rose-500"></span> Remediation Alert
                             </span>
                         </div>
                     </div>
 
-                    <!-- Interactive Chart.js Telemetry Canvas -->
-                    <div class="relative h-64 sm:h-72 w-full pt-4">
-                        <canvas id="topicProficiencyChart"></canvas>
+                    <!-- Progress Bars (8 Modules) -->
+                    <div class="space-y-3.5 mt-5">
+                        {% for topic in topic_averages %}
+                        <div class="flex flex-col gap-1 {% if topic.avg < 75 %}p-2 bg-rose-950/30 border border-rose-500/30 rounded{% endif %}">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="{% if topic.avg < 75 %}text-rose-300 font-bold{% else %}text-slate-200 font-medium{% endif %} flex items-center gap-2">
+                                    <span class="font-mono text-[11px] {% if topic.avg < 75 %}text-rose-400{% else %}text-amber-400{% endif %} font-bold">M{{ forloop.counter }}</span>
+                                    {{ topic.title }}
+                                    {% if topic.avg < 75 %}
+                                        <span class="material-symbols-outlined text-[15px] text-rose-400">crisis_alert</span>
+                                    {% endif %}
+                                </span>
+                                <span class="font-mono text-xs font-bold {% if topic.avg < 75 %}text-rose-300{% else %}text-white{% endif %}">
+                                    {{ topic.avg }}% {% if topic.avg < 75 %}Remediation{% endif %}
+                                </span>
+                            </div>
+                            <div class="w-full h-2 rounded bg-[#0b1320] overflow-hidden border border-[#1e293b]/60">
+                                <div class="{% if topic.avg < 75 %}bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.7)]{% elif topic.avg >= 90 %}bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]{% else %}bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]{% endif %} h-full transition-all duration-500" 
+                                     style="width: {{ topic.avg }}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
 
-                <div class="pt-space-sm bg-surface-container-low rounded p-space-sm flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm border border-outline-variant/30">
-                    <span>Telemetry Sample: {{ total_attempts }} Completed Sandbox Sessions</span>
-                    <span class="text-primary font-semibold">NIST SP 800-181 Certified Telemetry</span>
+                <div class="mt-6 pt-3 border-t border-[#1e293b] flex items-center justify-between text-xs text-slate-400">
+                    <span>Institutional Sample: {{ total_attempts }} Sandbox Telemetry Sessions</span>
+                    <span class="text-amber-400 font-semibold hover:text-amber-300 hover:underline cursor-pointer flex items-center gap-1 transition-colors">
+                        Examine Academic Rubric
+                        <span class="material-symbols-outlined text-sm">east</span>
+                    </span>
                 </div>
             </div>
 
-            <!-- Right Card: Defense Perimeter Radar View (4 Columns) -->
-            <div class="lg:col-span-4 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm border border-outline-variant/40 flex flex-col justify-between space-y-4">
+            <!-- Right Card: Risk Tier Distribution (4 Columns) -->
+            <div class="lg:col-span-4 bg-[#111a2e] border border-[#1e293b] p-6 rounded shadow-md flex flex-col justify-between">
                 <div>
-                    <div class="pb-space-sm border-b border-outline-variant/30">
-                        <h2 class="font-headline-md text-headline-md font-bold text-on-surface">Defense Perimeter Radar</h2>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant">Awareness balance across all 8 threat vectors.</p>
+                    <div class="pb-3 border-b border-[#1e293b]">
+                        <h2 class="font-serif-title text-xl font-bold text-white">Cohort Risk Census</h2>
+                        <p class="font-serif-editorial italic text-xs md:text-sm text-slate-400">Distribution based on heuristic adversarial vulnerability.</p>
                     </div>
 
-                    <!-- Radar Canvas -->
-                    <div class="py-space-md flex flex-col items-center justify-center relative h-64 sm:h-72">
-                        <canvas id="defenseRadarChart"></canvas>
-                    </div>
-
-                    <!-- Quick Legend Stats -->
-                    <div class="space-y-space-sm mt-space-sm">
-                        <div class="flex items-center justify-between p-2 rounded bg-surface-container-low text-xs">
-                            <span class="font-medium text-on-surface">Highest Defense Area:</span>
-                            <span class="font-bold text-secondary">Phishing & Passwords</span>
+                    <!-- Inline Minimal SVG Donut Chart with Classic Obsidian Styling -->
+                    <div class="py-6 flex flex-col items-center justify-center relative">
+                        <svg aria-label="Risk Distribution Chart" class="w-44 h-44 transform -rotate-90 drop-shadow-md" viewBox="0 0 100 100">
+                            <circle class="text-[#1a253a]" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-width="11"></circle>
+                            <!-- Low Risk: 66% -> dasharray 157 239 -->
+                            <circle class="text-emerald-500" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-dasharray="157 239" stroke-dashoffset="0" stroke-width="11"></circle>
+                            <!-- Moderate Risk: 27% -> dasharray 65 239 -> offset -157 -->
+                            <circle class="text-amber-500" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-dasharray="65 239" stroke-dashoffset="-157" stroke-width="11"></circle>
+                            <!-- High Vulnerability: 7% -> dasharray 17 239 -> offset -222 -->
+                            <circle class="text-rose-500" cx="50" cy="50" fill="transparent" r="38" stroke="currentColor" stroke-dasharray="17 239" stroke-dashoffset="-222" stroke-width="11"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <span class="font-serif-title text-3xl font-bold text-white leading-none">{{ total_students }}</span>
+                            <span class="font-cinzel text-[10px] text-slate-400 uppercase tracking-[0.16em] font-bold mt-1">Scholars</span>
                         </div>
-                        <div class="flex items-center justify-between p-2 rounded bg-tertiary-fixed/30 text-xs">
-                            <span class="font-medium text-tertiary">Recommended Drill:</span>
-                            <span class="font-bold text-tertiary">URL Typosquatting</span>
+                    </div>
+
+                    <!-- Census Ledger Stats -->
+                    <div class="space-y-2 mt-1">
+                        <div class="flex items-center justify-between p-2.5 rounded bg-[#162238] border border-[#273752]">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]"></span>
+                                <span class="text-xs font-medium text-slate-200">Mastered / Resilient</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 font-mono text-xs">
+                                <span class="font-bold text-white">58</span>
+                                <span class="text-slate-400 text-[11px]">(66%)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-2.5 rounded bg-[#162238] border border-[#273752]">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.8)]"></span>
+                                <span class="text-xs font-medium text-slate-200">Moderate Awareness</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 font-mono text-xs">
+                                <span class="font-bold text-white">24</span>
+                                <span class="text-slate-400 text-[11px]">(27%)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-2.5 rounded bg-rose-950/40 border border-rose-500/30">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-[0_0_6px_rgba(251,113,133,0.8)]"></span>
+                                <span class="text-xs font-bold text-rose-300">Remediation Priority</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 font-mono text-xs">
+                                <span class="font-bold text-rose-300">6</span>
+                                <span class="text-rose-400 text-[11px] font-semibold">(7%)</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="pt-space-sm bg-surface-container-low rounded p-space-sm flex items-center justify-between border border-outline-variant/30">
-                    <span class="font-label-sm text-label-sm text-on-surface-variant">Recommended Action:</span>
-                    <a href="{% url 'phishing_sandbox' %}" class="text-primary font-label-sm text-label-sm font-bold hover:underline">Launch Sandbox Lab →</a>
+                <div class="mt-6 pt-3 border-t border-[#1e293b] flex items-center justify-between text-xs">
+                    <span class="text-slate-400">Faculty Guidance:</span>
+                    <button class="text-rose-400 hover:text-rose-300 font-semibold hover:underline flex items-center gap-1 transition-colors" type="button">
+                        <span>Open Coaching Roster</span>
+                        <span class="material-symbols-outlined text-sm">east</span>
+                    </button>
                 </div>
             </div>
 
         </div>
 
-        <!-- Student Performance Roster Table -->
-        <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/40 overflow-hidden flex flex-col">
-            
+        <!-- Student Performance Roster Table (Dean's Ledger Style) -->
+        <div class="bg-[#111a2e] border border-[#1e293b] rounded shadow-md overflow-hidden flex flex-col">
             <!-- Table Header & Filter Tabs -->
-            <div class="p-space-lg flex flex-col md:flex-row md:items-center justify-between gap-space-md border-b border-outline-variant/30">
+            <div class="p-6 border-b border-[#1e293b] flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0d1422]">
                 <div>
-                    <h2 class="font-headline-md text-headline-md font-bold text-on-surface">Student Performance Roster</h2>
-                    <p class="font-label-sm text-label-sm text-on-surface-variant">Granular assessment outputs and AI defensive heuristic evaluations for enrolled cohort.</p>
+                    <h2 class="font-serif-title text-xl font-bold text-white">Scholar Evaluation Register</h2>
+                    <span class="text-xs text-slate-400">Granular assessment outputs and AI defensive heuristic evaluations</span>
                 </div>
-                <div class="flex items-center gap-space-sm">
-                    <span class="font-label-sm text-label-sm bg-surface-container px-3 py-1.5 rounded text-on-surface font-semibold">
-                        {{ students|length }} Students Shown
-                    </span>
+                <div class="flex items-center gap-2">
+                    <div class="relative">
+                        <span class="absolute left-3 top-2.5 text-slate-400 material-symbols-outlined text-base">search</span>
+                        <input class="bg-[#111a2e] border border-[#273752] text-white text-xs pl-8 pr-3 py-1.5 rounded focus:outline-none focus:ring-1 focus:ring-amber-500 w-56 placeholder:text-slate-500" placeholder="Search candidate, badge #..." type="text">
+                    </div>
+                    <button class="bg-[#162238] border border-[#273752] text-slate-200 text-xs font-medium px-3 py-1.5 rounded flex items-center gap-1 hover:bg-[#1d2d4a] hover:text-white transition-colors" type="button">
+                        <span class="material-symbols-outlined text-sm text-slate-400">tune</span>
+                        <span>Filter Ledger</span>
+                    </button>
                 </div>
             </div>
 
@@ -226,133 +291,128 @@
             <div class="w-full overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-                            <th class="py-3 px-space-lg font-semibold">Student Cadet</th>
-                            <th class="py-3 px-space-md font-semibold">Identifier & Section</th>
-                            <th class="py-3 px-space-md font-semibold">Quizzes Taken</th>
-                            <th class="py-3 px-space-md font-semibold">Average Accuracy</th>
-                            <th class="py-3 px-space-md font-semibold">Cadet Rank</th>
-                            <th class="py-3 px-space-lg text-right font-semibold">Action / Analysis</th>
+                        <tr class="bg-[#0b1320] border-b border-[#1e293b] font-cinzel text-[11px] text-slate-400 tracking-[0.12em] uppercase">
+                            <th class="py-3 px-6 font-semibold">Scholar Cadet</th>
+                            <th class="py-3 px-4 font-semibold">Section &amp; Roll</th>
+                            <th class="py-3 px-4 font-semibold">Module Assessed</th>
+                            <th class="py-3 px-4 font-semibold">Mastery Grade</th>
+                            <th class="py-3 px-4 font-semibold">Timestamp</th>
+                            <th class="py-3 px-6 text-right font-semibold">Faculty Dossier</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-surface-container font-body-md text-body-md text-on-surface">
-                        {% for s in students %}
-                            <tr class="hover:bg-surface-container-low transition-colors">
-                                <td class="py-3 px-space-lg">
-                                    <div class="flex items-center gap-space-sm">
-                                        <div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-xs shadow-sm">
-                                            {{ s.name|slice:":2"|upper }}
-                                        </div>
-                                        <div class="flex flex-col">
-                                            <span class="font-label-md text-label-md font-bold text-on-surface">{{ s.name }}</span>
-                                            <span class="font-label-sm text-label-sm text-on-surface-variant">Roll #{{ s.roll_number }}</span>
-                                        </div>
+                    <tbody class="divide-y divide-[#1e293b] text-xs text-slate-200">
+                        {% for attempt in recent_attempts %}
+                        <tr class="{% if forloop.first %}bg-[#142036]{% endif %} hover:bg-[#182742] transition-colors">
+                            <td class="py-3.5 px-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-full bg-[#162238] border border-[#273752] text-amber-400 flex items-center justify-center font-bold text-xs shadow-sm font-serif-title">
+                                        {{ attempt.student.name|slice:":2"|upper }}
                                     </div>
-                                </td>
-                                <td class="py-3 px-space-md">
-                                    <span class="font-code-sm text-code-sm font-semibold bg-surface-container-highest px-2 py-0.5 rounded text-on-surface">
-                                        {{ s.class_name }}
-                                    </span>
-                                </td>
-                                <td class="py-3 px-space-md">
-                                    <span class="font-label-md text-label-md font-medium text-on-surface">{{ s.attempts_count }} Completed</span>
-                                </td>
-                                <td class="py-3 px-space-md">
-                                    <span class="font-label-sm text-label-sm px-2.5 py-1 rounded font-bold inline-flex items-center gap-1
-                                        {% if s.average_score >= 80 %}bg-secondary-container text-on-secondary-container
-                                        {% elif s.average_score >= 50 %}bg-surface-container-high text-on-surface
-                                        {% else %}bg-tertiary-fixed text-tertiary{% endif %}">
-                                        <span class="material-symbols-outlined text-sm">
-                                            {% if s.average_score >= 80 %}check_circle{% elif s.average_score >= 50 %}info{% else %}warning{% endif %}
-                                        </span>
-                                        {{ s.average_score }}%
-                                    </span>
-                                </td>
-                                <td class="py-3 px-space-md font-code-sm text-code-sm text-on-surface-variant">
-                                    {{ s.rank_title }}
-                                </td>
-                                <td class="py-3 px-space-lg text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button class="font-label-sm text-label-sm text-primary font-bold inline-flex items-center gap-1 hover:underline cursor-pointer" onclick="toggleDetails('details-{{ s.id }}')" type="button">
-                                            <span>Inspection Card</span>
-                                            <span class="material-symbols-outlined text-base" id="chevron-{{ s.id }}">expand_more</span>
-                                        </button>
-                                        <a href="{% url 'teacher_student_detail' s.id %}" class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface p-1 rounded hover:bg-surface-container" title="View Full Profile">
-                                            <span class="material-symbols-outlined text-base">open_in_new</span>
-                                        </a>
+                                    <div class="flex flex-col">
+                                        <span class="font-serif-title text-sm font-bold text-white">{{ attempt.student.name }}</span>
+                                        <span class="text-[11px] text-slate-400">{{ attempt.student.roll_number }}@oakridge.edu</span>
                                     </div>
-                                </td>
-                            </tr>
+                                </div>
+                            </td>
+                            <td class="py-3.5 px-4 font-mono">
+                                <span class="bg-[#162238] text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded text-[11px] font-semibold">
+                                    #{{ attempt.student.roll_number }} • {{ attempt.student.class_name }}
+                                </span>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <span class="font-serif-editorial text-[13px] font-medium text-slate-200">{{ attempt.topic_title }}</span>
+                            </td>
+                            <td class="py-3.5 px-4">
+                                {% if attempt.percentage >= 80 %}
+                                    <span class="bg-[#064e3b]/70 text-emerald-300 border border-emerald-500/50 px-2 py-0.5 rounded font-bold text-[11px] inline-flex items-center gap-1 font-mono">
+                                        <span class="material-symbols-outlined text-[13px]">verified</span> {{ attempt.percentage|floatformat:0 }}% ({{ attempt.score }}/{{ attempt.total_questions }})
+                                    </span>
+                                {% elif attempt.percentage >= 60 %}
+                                    <span class="bg-amber-950/70 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded font-bold text-[11px] inline-flex items-center gap-1 font-mono">
+                                        <span class="material-symbols-outlined text-[13px]">info</span> {{ attempt.percentage|floatformat:0 }}% ({{ attempt.score }}/{{ attempt.total_questions }})
+                                    </span>
+                                {% else %}
+                                    <span class="bg-rose-950/70 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded font-bold text-[11px] inline-flex items-center gap-1 font-mono">
+                                        <span class="material-symbols-outlined text-[13px]">warning</span> {{ attempt.percentage|floatformat:0 }}% ({{ attempt.score }}/{{ attempt.total_questions }})
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3.5 px-4 font-mono text-[11px] text-slate-400">
+                                {{ attempt.completed_at|date:"M d, H:i" }}
+                            </td>
+                            <td class="py-3.5 px-6 text-right">
+                                <button class="text-xs text-amber-400 font-semibold inline-flex items-center gap-1 hover:text-amber-300 transition-colors cursor-pointer" onclick="toggleDetails('attempt-{{ attempt.id }}')" type="button">
+                                    <span class="font-cinzel tracking-wider text-[11px]">Academic Dossier</span>
+                                    <span class="material-symbols-outlined text-sm" id="chevron-{{ attempt.id }}">
+                                        {% if forloop.first %}expand_less{% else %}expand_more{% endif %}
+                                    </span>
+                                </button>
+                            </td>
+                        </tr>
 
-                            <!-- Expandable Drawer Row for Student Heuristics -->
-                            <tr class="bg-surface-container-low hidden" id="details-{{ s.id }}">
-                                <td class="p-space-lg" colspan="6">
-                                    <div class="bg-surface-container-lowest p-space-md rounded-lg shadow-sm border border-outline-variant/40 flex flex-col md:flex-row items-start justify-between gap-space-md">
-                                        <div class="flex items-start gap-space-sm max-w-3xl">
-                                            <div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shrink-0 mt-0.5">
-                                                <span class="material-symbols-outlined text-lg">smart_toy</span>
-                                            </div>
-                                            <div class="flex flex-col gap-1">
-                                                <div class="flex items-center gap-2">
-                                                    <span class="font-label-sm text-label-sm text-primary font-bold uppercase tracking-wider">
-                                                        AI Defensive Critique — Heuristic Assessment Note
-                                                    </span>
-                                                    <span class="w-1 h-1 rounded-full bg-outline"></span>
-                                                    <span class="font-label-sm text-label-sm text-on-surface-variant">
-                                                        {{ s.latest_attempt.topic_title|default:"Phishing & Safety Basics" }}
-                                                    </span>
-                                                </div>
-                                                <p class="font-body-md text-body-md text-on-surface leading-relaxed">
-                                                    {% if s.latest_attempt and s.latest_attempt.ai_feedback %}
-                                                        {{ s.latest_attempt.ai_feedback|truncatewords:60 }}
-                                                    {% else %}
-                                                        Student has completed {{ s.attempts_count }} simulations with an average defensive score of {{ s.average_score }}%. Demonstrates growing awareness of modern social engineering tactics.
-                                                    {% endif %}
-                                                </p>
-                                            </div>
+                        <!-- Expandable Dossier Row -->
+                        <tr class="bg-[#0d1422] border-y border-[#1e293b] {% if not forloop.first %}hidden{% endif %}" id="attempt-{{ attempt.id }}">
+                            <td class="p-6" colspan="6">
+                                <div class="bg-[#111a2e] border border-[#273752] p-5 rounded shadow-inner flex flex-col md:flex-row items-start justify-between gap-6 relative overflow-hidden">
+                                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
+                                    <div class="flex items-start gap-4 max-w-3xl pl-2">
+                                        <div class="w-9 h-9 rounded bg-[#162238] text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/40 shadow-sm">
+                                            <span class="material-symbols-outlined text-lg">psychology</span>
                                         </div>
-                                        <div class="flex items-center gap-space-sm shrink-0">
-                                            <a href="{% url 'student_certificate' %}?id={{ s.id }}" target="_blank" class="font-label-sm text-label-sm bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold px-3 py-1.5 rounded transition-colors inline-flex items-center gap-1">
-                                                <span class="material-symbols-outlined text-sm">workspace_premium</span>
-                                                <span>Certificate</span>
-                                            </a>
-                                            <a href="{% url 'teacher_student_detail' s.id %}" class="font-label-sm text-label-sm bg-primary text-on-primary font-semibold px-3 py-1.5 rounded hover:bg-primary-container transition-colors">
-                                                Full History
-                                            </a>
+                                        <div class="flex flex-col gap-1.5">
+                                            <div class="flex items-center gap-2">
+                                                <span class="font-cinzel text-[11px] tracking-[0.16em] uppercase text-amber-400 font-bold">Faculty Critique • Heuristic Telemetry Brief</span>
+                                                <span class="text-slate-600">•</span>
+                                                <span class="text-[11px] font-mono text-slate-400">Evaluated by CyberQuizAgent GPT-5</span>
+                                            </div>
+                                            <p class="font-serif-editorial text-[14px] leading-relaxed text-slate-200">
+                                                {{ attempt.ai_feedback|default:"Cadet demonstrated consistent evaluation of domain signatures. Continued drill recommended for simulated multi-factor authentication scenarios." }}
+                                            </p>
                                         </div>
                                     </div>
-                                </td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="6" class="p-space-lg text-center text-on-surface-variant font-label-sm">
-                                    No students enrolled in this class section yet.
-                                </td>
-                            </tr>
+                                    <div class="flex items-center gap-2.5 shrink-0 self-start md:self-center">
+                                        <button class="text-xs font-semibold bg-[#162238] text-white border border-[#273752] px-3 py-1.5 rounded hover:bg-[#1d2d4a] hover:border-slate-500 transition-colors" type="button">
+                                            Assign Target Drill
+                                        </button>
+                                        <button class="text-xs font-semibold bg-amber-500 text-slate-950 px-3 py-1.5 rounded hover:bg-amber-400 transition-colors shadow-md shadow-amber-500/20 font-bold" type="button">
+                                            Notify Guardian
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
 
-            <!-- Table Footer -->
-            <div class="p-space-md bg-surface-container-low flex items-center justify-between border-t border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm">
-                <span>Displaying <strong>{{ students|length }}</strong> students in current cohort</span>
-                <span>Classroom Defense Engine • NIST SP 800-181 Certified</span>
+            <!-- Table Footer Pagination & Summary -->
+            <div class="p-4 bg-[#0d1422] border-t border-[#1e293b] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <span class="font-serif-editorial italic text-xs text-slate-400">
+                    Cataloging <strong class="text-white">{{ recent_attempts|length }}</strong> recorded examinations in current cohort
+                </span>
+                <div class="flex items-center gap-1">
+                    <button class="w-7 h-7 rounded border border-[#273752] bg-[#111a2e] text-slate-500 flex items-center justify-center disabled:opacity-30 cursor-not-allowed" disabled="" type="button">
+                        <span class="material-symbols-outlined text-sm">chevron_left</span>
+                    </button>
+                    <button class="w-7 h-7 rounded bg-amber-500 text-slate-950 font-mono font-bold text-xs shadow-sm" type="button">1</button>
+                    <button class="w-7 h-7 rounded border border-[#273752] bg-[#111a2e] text-slate-200 font-mono text-xs hover:bg-[#162238] transition-colors" type="button">2</button>
+                    <button class="w-7 h-7 rounded border border-[#273752] bg-[#111a2e] text-slate-300 flex items-center justify-center hover:bg-[#162238] transition-colors" type="button">
+                        <span class="material-symbols-outlined text-sm">chevron_right</span>
+                    </button>
+                </div>
             </div>
-
         </div>
 
     </div>
 
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
     function toggleDetails(rowId) {
         const row = document.getElementById(rowId);
-        const chevronId = rowId.replace('details-', 'chevron-');
-        const chevron = document.getElementById(chevronId);
+        const attemptId = rowId.replace('attempt-', '');
+        const chevron = document.getElementById('chevron-' + attemptId);
         if (row) {
             if (row.classList.contains('hidden')) {
                 row.classList.remove('hidden');
@@ -363,83 +423,5 @@
             }
         }
     }
-
-    // Initialize Chart.js Telemetry Data
-    document.addEventListener('DOMContentLoaded', async () => {
-        try {
-            const resp = await fetch("{% url 'teacher_analytics_api' %}");
-            const data = await resp.json();
-
-            // 1. Bar Chart: Topic Comprehension
-            const barCtx = document.getElementById('topicProficiencyChart')?.getContext('2d');
-            if (barCtx) {
-                new Chart(barCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: data.labels,
-                        datasets: [{
-                            label: 'Average Score (%)',
-                            data: data.averages,
-                            backgroundColor: data.averages.map(v => v >= 75 ? '#4338ca' : '#a6002f'),
-                            borderRadius: 6,
-                            maxBarThickness: 36
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 100,
-                                ticks: { font: { family: 'Inter' } }
-                            },
-                            x: {
-                                ticks: { font: { family: 'Inter', size: 10 }, maxRotation: 25 }
-                            }
-                        },
-                        plugins: {
-                            legend: { display: false }
-                        }
-                    }
-                });
-            }
-
-            // 2. Radar Chart: Defense Perimeter
-            const radarCtx = document.getElementById('defenseRadarChart')?.getContext('2d');
-            if (radarCtx) {
-                new Chart(radarCtx, {
-                    type: 'radar',
-                    data: {
-                        labels: data.labels,
-                        datasets: [{
-                            label: 'Defense Perimeter',
-                            data: data.averages,
-                            backgroundColor: 'rgba(67, 56, 202, 0.2)',
-                            borderColor: '#4338ca',
-                            pointBackgroundColor: '#006c4a',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            r: {
-                                beginAtZero: true,
-                                max: 100,
-                                ticks: { display: false }
-                            }
-                        },
-                        plugins: {
-                            legend: { display: false }
-                        }
-                    }
-                });
-            }
-        } catch (e) {
-            console.error("Telemetry chart initialization failed:", e);
-        }
-    });
 </script>
 {% endblock %}

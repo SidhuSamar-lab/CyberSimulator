@@ -1,48 +1,48 @@
 {% extends 'base.html' %}
 
-{% block title %}Teacher Portal Login | CyberShield Academy{% endblock %}
+{% block title %}Faculty Access Sign-In | CyberShield Academy{% endblock %}
 
 {% block content %}
-<div class="min-h-[calc(100vh-8rem)] w-full flex items-center justify-center p-gutter">
-    <div class="flex flex-col w-full items-center justify-center py-6 px-4">
+<div class="min-h-[calc(100vh-8rem)] w-full flex items-center justify-center p-4 sm:p-8" style="background-image: radial-gradient(circle at 50% 0%, #152238 0%, #090e17 75%);">
+    <div class="flex flex-col w-full items-center justify-center py-6 px-2">
         
         <div class="relative w-full max-w-md flex flex-col items-center">
             
             <header class="w-full flex flex-col items-center text-center mb-6">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low mb-3 shadow-sm border border-outline-variant/30">
-                    <span class="w-2 h-2 rounded-full bg-primary"></span>
-                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Faculty & Administration</span>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#121b2d] mb-3 shadow-sm border border-gold/30">
+                    <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>
+                    <span class="font-crest text-[10px] uppercase tracking-wider text-gold-light font-semibold">Faculty &amp; Provost Ledger</span>
                 </div>
                 <div class="flex items-center gap-3 justify-center mb-2">
-                    <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-md">
+                    <div class="w-10 h-10 rounded-lg bg-[#111a2e] border border-gold/40 flex items-center justify-center text-gold shadow-md">
                         <span class="material-symbols-outlined text-[24px]">school</span>
                     </div>
                     <div class="text-left">
-                        <h1 class="font-headline-md text-headline-md text-on-surface tracking-tight leading-none">Teacher Analytics Portal</h1>
-                        <p class="font-label-sm text-label-sm text-on-surface-variant font-medium mt-0.5">Oakridge High School Administration</p>
+                        <h1 class="font-serif-title text-xl font-bold text-white tracking-tight leading-none">Faculty Analytics Portal</h1>
+                        <p class="font-crest text-[10px] uppercase tracking-wider text-slate-400 font-medium mt-0.5">Oakridge Collegiate Chapter</p>
                     </div>
                 </div>
             </header>
 
-            <div class="w-full bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden border border-outline-variant/40">
-                <div class="h-1.5 w-full bg-primary"></div>
+            <div class="w-full bg-[#121b2d]/95 backdrop-blur-md rounded-xl shadow-2xl overflow-hidden border border-[#24334d]">
+                <div class="h-1.5 w-full bg-gradient-to-r from-amber-600 via-gold to-amber-600"></div>
                 
                 <div class="p-6 md:p-8 flex flex-col gap-6">
-                    <div class="flex flex-col gap-1.5">
-                        <h2 class="font-headline-md text-headline-md text-on-surface">Educator Sign-In</h2>
-                        <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-                            Log in to inspect student quiz attempts, review topic vulnerabilities, and export CSV reports.
+                    <div class="flex flex-col gap-1.5 border-b border-[#24334d] pb-4">
+                        <h2 class="font-serif-title text-2xl font-bold text-white">Dean &amp; Faculty Sign-In</h2>
+                        <p class="font-serif-editorial italic text-xs text-slate-300 leading-relaxed">
+                            Log in to inspect student quiz attempts, review topic vulnerabilities, and export CSV ledger reports.
                         </p>
                     </div>
 
                     <form method="POST" action="{% url 'teacher_login' %}" class="flex flex-col gap-5" id="teacher-login-form">
                         {% csrf_token %}
 
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-md text-label-md font-semibold text-on-surface" for="id_username">Teacher Username</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="font-crest text-xs uppercase tracking-wider font-semibold text-slate-200" for="id_username">Faculty Username</label>
                             <div class="relative flex items-center">
-                                <span class="material-symbols-outlined absolute left-3.5 text-outline text-[20px] pointer-events-none">badge</span>
-                                <input class="w-full h-11 pl-11 pr-4 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest border border-outline-variant/50 focus:border-primary shadow-sm transition-all" 
+                                <span class="material-symbols-outlined absolute left-3.5 text-slate-400 text-[20px] pointer-events-none">badge</span>
+                                <input class="w-full h-11 pl-11 pr-4 bg-[#0a101d] border border-[#2a3b54] rounded-lg font-sans text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold shadow-inner transition-all" 
                                        id="id_username" 
                                        name="username" 
                                        placeholder="ms_carter or prof_jones" 
@@ -52,41 +52,31 @@
                             </div>
                         </div>
 
-                        <div class="flex flex-col gap-2">
-                            <label class="font-label-md text-label-md font-semibold text-on-surface" for="id_password">Password</label>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="font-crest text-xs uppercase tracking-wider font-semibold text-slate-200" for="id_password">Security Key / Password</label>
                             <div class="relative flex items-center">
-                                <span class="material-symbols-outlined absolute left-3.5 text-outline text-[20px] pointer-events-none">lock</span>
-                                <input class="w-full h-11 pl-11 pr-4 bg-surface-container-low rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest border border-outline-variant/50 focus:border-primary shadow-sm transition-all" 
+                                <span class="material-symbols-outlined absolute left-3.5 text-slate-400 text-[20px] pointer-events-none">lock</span>
+                                <input class="w-full h-11 pl-11 pr-4 bg-[#0a101d] border border-[#2a3b54] rounded-lg font-sans text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold shadow-inner transition-all" 
                                        id="id_password" 
                                        name="password" 
-                                       placeholder="••••••••••••" 
                                        required="" 
                                        type="password"/>
                             </div>
                         </div>
 
-                        <button class="w-full h-12 bg-primary-container text-on-primary rounded-lg font-headline-md text-headline-md font-semibold flex items-center justify-center gap-2 shadow-md hover:bg-primary transition duration-150 cursor-pointer" 
-                                id="btn-submit-teacher-login" 
-                                type="submit">
-                            <span>Open Teacher Analytics</span>
-                            <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                        <button type="submit" 
+                                id="btn-teacher-submit"
+                                class="w-full h-11 rounded-lg bg-gold hover:bg-gold-light text-[#090e17] font-crest text-xs uppercase tracking-wider font-bold transition-all shadow-lg shadow-gold/20 flex items-center justify-center gap-2 cursor-pointer mt-2">
+                            <span>Authenticate Faculty Access</span>
+                            <span class="material-symbols-outlined text-base">arrow_forward</span>
                         </button>
                     </form>
 
-                    <div class="mt-4 pt-4 border-t border-outline-variant/30 text-center">
-                        <span class="font-label-sm text-label-sm text-on-surface-variant">Are you a student cadet?</span>
-                        <a href="{% url 'student_login' %}" class="font-label-sm text-label-sm text-primary font-bold hover:underline block mt-1">
-                            Switch to Student Frictionless Sign-In →
+                    <div class="pt-2 text-center border-t border-[#24334d]">
+                        <a href="{% url 'student_login' %}" class="text-xs text-slate-400 hover:text-gold transition font-serif-editorial italic">
+                            &larr; Switch to Student Sign-In
                         </a>
                     </div>
-                </div>
-
-                <div class="bg-surface-container-low px-6 py-3 flex items-center justify-between border-t border-outline-variant/30 text-on-surface-variant font-label-sm text-label-sm">
-                    <span class="flex items-center gap-1">
-                        <span class="material-symbols-outlined text-sm text-secondary">verified</span>
-                        FERPA Compliant
-                    </span>
-                    <span>Staff Access Only</span>
                 </div>
             </div>
 
