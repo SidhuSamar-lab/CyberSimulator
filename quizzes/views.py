@@ -442,6 +442,8 @@ def health_check(request):
     System and cloud health check endpoint for monitoring & uptime.
     """
     from django.db import connection
+    from config.supabase_client import is_supabase_configured
+
     db_ok = True
     try:
         connection.ensure_connection()
@@ -451,6 +453,8 @@ def health_check(request):
     return JsonResponse({
         'status': 'healthy' if db_ok else 'degraded',
         'database': 'connected' if db_ok else 'error',
+        'database_engine': connection.vendor,
+        'supabase_configured': is_supabase_configured(),
         'ai_agent': 'CyberQuizAgent (gpt-5)',
         'platform': 'CyberSimulator v1.0',
     })

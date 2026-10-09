@@ -67,13 +67,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
-# Use SQLite by default for development; can be configured for PostgreSQL via DATABASE_URL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Connects to Supabase PostgreSQL when DATABASE_URL is provided; falls back to SQLite for local development.
+import dj_database_url
+
+DATABASE_URL = os.getenv('DATABASE_URL', '').strip()
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -124,3 +136,8 @@ AZURE_AI_ENDPOINT = os.getenv('AZURE_AI_ENDPOINT', '').strip()
 AZURE_AI_KEY = os.getenv('AZURE_AI_KEY', '').strip()
 AZURE_AI_DEPLOYMENT_NAME = os.getenv('AZURE_AI_DEPLOYMENT_NAME', 'gpt-4o-mini').strip()
 AZURE_AI_API_VERSION = os.getenv('AZURE_AI_API_VERSION', '2024-06-01').strip()
+
+# Supabase Configuration
+SUPABASE_URL = os.getenv('SUPABASE_URL', '').strip()
+SUPABASE_KEY = os.getenv('SUPABASE_KEY', os.getenv('SUPABASE_ANON_KEY', '')).strip()
+
