@@ -7,6 +7,7 @@ import os
 import sys
 import io
 import csv
+import textwrap
 from datetime import datetime
 from pathlib import Path
 import streamlit as st
@@ -60,22 +61,30 @@ try:
 except Exception:
     pass
 
+# Helper to render clean raw HTML without Markdown code-block interpretation
+def render_html(html_str: str):
+    clean = textwrap.dedent(html_str).strip()
+    if hasattr(st, "html"):
+        st.html(clean)
+    else:
+        st.markdown(clean, unsafe_allow_html=True)
+
+
 # -------------------------------------------------------------
 # STREAMLIT PAGE CONFIG & GLOBAL STYLING
 # -------------------------------------------------------------
 st.set_page_config(
-    page_title="CyberShield | Interactive Cybersecurity Threat Laboratory",
+    page_title="CyberShield | Interactive Threat Defense Platform",
     page_icon="🛡️",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # Custom Nexus Studio Signature CSS
-st.markdown("""
+render_html("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800;900&display=swap');
     
-    /* Global Base */
     html, body, [class*="css"], div, span, p {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
@@ -87,11 +96,11 @@ st.markdown("""
     
     /* Clean up default Streamlit chrome */
     #MainMenu, footer, header {
-        visibility: hidden;
-        height: 0;
+        visibility: hidden !important;
+        height: 0 !important;
     }
     .block-container {
-        padding-top: 2rem !important;
+        padding-top: 1.5rem !important;
         padding-bottom: 4rem !important;
         max-width: 1280px !important;
     }
@@ -99,6 +108,7 @@ st.markdown("""
     /* Headings */
     h1, h2, h3, h4 {
         color: #ffffff !important;
+        font-family: 'Space Grotesk', 'Inter', sans-serif !important;
         font-weight: 800 !important;
         letter-spacing: -0.025em !important;
     }
@@ -106,31 +116,16 @@ st.markdown("""
     /* Hero Display Headline */
     .hero-title {
         font-family: 'Space Grotesk', 'Inter', sans-serif;
-        font-size: clamp(2.5rem, 5vw, 4.5rem);
+        font-size: clamp(2.8rem, 6vw, 4.8rem);
         font-weight: 900;
         line-height: 0.95;
         letter-spacing: -0.04em;
+        margin-top: 0.5rem;
         margin-bottom: 1.5rem;
     }
     .hero-highlight {
         color: #e8ff47;
-        text-shadow: 0 0 35px rgba(232, 255, 71, 0.4);
-    }
-    
-    /* Ambient Glow Blobs */
-    .ambient-glow {
-        position: relative;
-    }
-    .ambient-glow::before {
-        content: '';
-        position: absolute;
-        top: -40px;
-        left: 20%;
-        width: 400px;
-        height: 400px;
-        background: radial-gradient(circle, rgba(232, 255, 71, 0.08) 0%, transparent 70%);
-        pointer-events: none;
-        z-index: 0;
+        text-shadow: 0 0 35px rgba(232, 255, 71, 0.45);
     }
     
     /* Nexus Cards */
@@ -139,13 +134,9 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 18px;
         padding: 24px;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         transition: all 0.25s ease;
-    }
-    .nexus-card:hover {
-        border-color: rgba(232, 255, 71, 0.25);
-        transform: translateY(-2px);
     }
     
     .nexus-card-active {
@@ -167,27 +158,13 @@ st.markdown("""
         color: #9898b8;
         font-family: 'JetBrains Mono', monospace;
         font-size: 0.75rem;
-        padding: 4px 14px;
+        padding: 6px 16px;
         border-radius: 9999px;
     }
     .cyber-pill-signal {
         background: rgba(232, 255, 71, 0.12);
         border-color: rgba(232, 255, 71, 0.35);
         color: #e8ff47;
-    }
-    
-    /* Metrics */
-    div[data-testid="stMetricValue"] {
-        color: #e8ff47 !important;
-        font-family: 'Space Grotesk', sans-serif !important;
-        font-weight: 800 !important;
-    }
-    div[data-testid="stMetricLabel"] {
-        color: #9898b8 !important;
-        font-family: 'JetBrains Mono', monospace !important;
-        font-size: 0.75rem !important;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
     }
     
     /* Buttons */
@@ -199,7 +176,7 @@ st.markdown("""
         font-size: 0.95rem !important;
         border-radius: 9999px !important;
         border: none !important;
-        padding: 0.6rem 2rem !important;
+        padding: 0.6rem 1.8rem !important;
         box-shadow: 0 0 25px rgba(232, 255, 71, 0.25) !important;
         transition: all 0.2s ease !important;
     }
@@ -209,35 +186,19 @@ st.markdown("""
         transform: translateY(-2px) scale(1.01) !important;
     }
     
-    /* Radio, Select, Inputs */
-    .stRadio label, .stSelectbox label, .stTextInput label {
-        color: #c4c4d8 !important;
-        font-weight: 600 !important;
-        font-size: 0.85rem !important;
-    }
-    div[data-baseweb="select"] > div {
+    /* Inputs, Radio, Select */
+    div[data-baseweb="select"] > div, div[data-baseweb="input"] > div {
         background-color: #080812 !important;
         border-color: rgba(255, 255, 255, 0.12) !important;
         color: #ffffff !important;
         border-radius: 12px !important;
-    }
-    div[data-baseweb="input"] > div {
-        background-color: #080812 !important;
-        border-color: rgba(255, 255, 255, 0.12) !important;
-        color: #ffffff !important;
-        border-radius: 12px !important;
-    }
-    
-    /* Code / Monospace */
-    code, pre {
-        font-family: 'JetBrains Mono', monospace !important;
     }
 </style>
-""", unsafe_allow_html=True)
+""")
 
 
 # -------------------------------------------------------------
-# SESSION STATE INITIALIZATION (Resilient & Stateful)
+# SESSION STATE INITIALIZATION
 # -------------------------------------------------------------
 if 'current_student_id' not in st.session_state:
     first_student = Student.objects.first()
@@ -272,20 +233,6 @@ def get_current_student():
 
 current_student = get_current_student()
 
-
-# -------------------------------------------------------------
-# TOP NAVIGATION & SIDEBAR CONTROLS
-# -------------------------------------------------------------
-st.sidebar.markdown("""
-<div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08);">
-    <div style="background: #e8ff47; width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 16px #e8ff47;"></div>
-    <div>
-        <div style="font-size: 1.3rem; font-weight: 900; color: #ffffff; letter-spacing: -0.03em;">CYBERSHIELD</div>
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #9898b8;">DEFENSE ACADEMY &bull; v2.4</div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
 nav_options = [
     "🏠 Home",
     "🛡️ Student Hub",
@@ -296,17 +243,41 @@ nav_options = [
     "⚙️ Diagnostics"
 ]
 
-selected_page = st.sidebar.radio(
-    "Navigation Menu",
-    nav_options,
-    index=nav_options.index(st.session_state.active_page) if st.session_state.active_page in nav_options else 0,
-    label_visibility="collapsed"
-)
-st.session_state.active_page = selected_page
 
-# Student Switcher in Sidebar
-st.sidebar.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)
-st.sidebar.markdown("<p style='font-family: monospace; font-size: 0.75rem; color: #9898b8; margin-bottom: 6px;'>ACTIVE STUDENT PROFILE:</p>", unsafe_allow_html=True)
+# -------------------------------------------------------------
+# TOP NAVIGATION BAR (Always visible & interactive)
+# -------------------------------------------------------------
+render_html(f"""
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0 16px 0; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="background: #e8ff47; width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 16px #e8ff47;"></div>
+        <div>
+            <span style="font-size: 1.35rem; font-weight: 900; color: #ffffff; letter-spacing: -0.03em;">CYBERSHIELD</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #9898b8; margin-left: 8px;">DEFENSE ACADEMY</span>
+        </div>
+    </div>
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: #c4c4d8;">
+        STUDENT: <strong style="color: #e8ff47;">{current_student.name if current_student else 'Guest'}</strong> ({current_student.class_name if current_student else 'No Class'})
+    </div>
+</div>
+""")
+
+# Sleek Top Nav Buttons Row
+nav_cols = st.columns(len(nav_options))
+for i, p_name in enumerate(nav_options):
+    is_active = (st.session_state.active_page == p_name)
+    label = f"● {p_name}" if is_active else p_name
+    if nav_cols[i].button(label, key=f"topnav_{i}", use_container_width=True):
+        st.session_state.active_page = p_name
+        st.rerun()
+
+
+# Sidebar Quick Controls
+st.sidebar.markdown("""
+<div style="font-size: 1.1rem; font-weight: 800; color: #ffffff; margin-bottom: 14px;">
+    ⚡ QUICK CONTROLS
+</div>
+""", unsafe_allow_html=True)
 
 all_students = list(Student.objects.all().order_by('class_name', 'name'))
 if all_students:
@@ -318,13 +289,12 @@ if all_students:
                 current_idx = i
                 break
                 
-    chosen_label = st.sidebar.selectbox("Switch Student", student_labels, index=current_idx, label_visibility="collapsed")
+    chosen_label = st.sidebar.selectbox("Active Student Profile:", student_labels, index=current_idx)
     chosen_student_obj = all_students[student_labels.index(chosen_label)]
     if chosen_student_obj.id != st.session_state.current_student_id:
         st.session_state.current_student_id = chosen_student_obj.id
         st.rerun()
 
-# Database & Engine Badge
 db_vendor = connection.vendor.upper()
 st.sidebar.markdown(f"""
 <div style="margin-top: 30px; padding: 14px; background: #080812; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;">
@@ -340,9 +310,9 @@ st.sidebar.markdown(f"""
 # PAGE 1: 🏠 HOME (Landing Page / Hero Section)
 # =============================================================
 if st.session_state.active_page == "🏠 Home":
-    st.markdown("""
-    <div class="ambient-glow" style="padding-top: 10px;">
-        <div class="cyber-pill cyber-pill-signal" style="margin-bottom: 24px;">
+    render_html("""
+    <div style="padding-top: 10px; margin-bottom: 25px;">
+        <div class="cyber-pill cyber-pill-signal" style="margin-bottom: 20px;">
             <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#e8ff47; box-shadow:0 0 10px #e8ff47;"></span>
             <span>Interactive Defense Platform &bull; Powered by GPT-5 &bull; No Passwords Required</span>
         </div>
@@ -353,11 +323,11 @@ if st.session_state.active_page == "🏠 Home":
             <span style="color: #ffffff;">that holds.</span>
         </div>
         
-        <p style="color: #c4c4d8; font-size: 1.15rem; max-width: 720px; line-height: 1.6; margin-bottom: 30px;">
+        <p style="color: #c4c4d8; font-size: 1.15rem; max-width: 740px; line-height: 1.6; margin-bottom: 25px;">
             Interactive cybersecurity quizzes built specifically for students. Spot deceptive phishing lures, master strong password habits, outsmart AI deepfakes, and build real-world digital resilience with instant mentor evaluations.
         </p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     c1, c2, c3 = st.columns([1.5, 1.5, 3])
     with c1:
@@ -369,48 +339,49 @@ if st.session_state.active_page == "🏠 Home":
             st.session_state.active_page = "🏆 Leaderboard"
             st.rerun()
 
-    st.markdown("<div style='margin-top: 40px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='margin-top: 35px;'></div>", unsafe_allow_html=True)
 
     # Telemetry KPI Row
     k1, k2, k3, k4 = st.columns(4)
     with k1:
-        st.markdown("""
+        render_html("""
         <div class="nexus-card" style="text-align: center;">
             <div style="font-size: 2rem; font-weight: 900; color: #e8ff47;">8 Modules</div>
             <div style="font-family: monospace; font-size: 0.75rem; color: #9898b8; margin-top: 4px;">100% CURRICULUM ALIGNED</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with k2:
-        st.markdown("""
+        render_html("""
         <div class="nexus-card" style="text-align: center;">
             <div style="font-size: 2rem; font-weight: 900; color: #ffffff;">Zero Passwords</div>
             <div style="font-family: monospace; font-size: 0.75rem; color: #9898b8; margin-top: 4px;">FRICTIONLESS ENROLLMENT</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with k3:
-        st.markdown("""
+        render_html("""
         <div class="nexus-card" style="text-align: center;">
             <div style="font-size: 2rem; font-weight: 900; color: #34d399;">GPT-5 AI</div>
             <div style="font-family: monospace; font-size: 0.75rem; color: #9898b8; margin-top: 4px;">DYNAMIC SCENARIOS & FEEDBACK</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
     with k4:
-        st.markdown("""
+        render_html("""
         <div class="nexus-card" style="text-align: center;">
             <div style="font-size: 2rem; font-weight: 900; color: #ff6b35;">PostgreSQL</div>
             <div style="font-family: monospace; font-size: 0.75rem; color: #9898b8; margin-top: 4px;">SUPABASE CLOUD DATABASE</div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     # 8 Topics Directory
-    st.markdown("<h2 style='margin-top: 25px; margin-bottom: 15px;'>📚 8 Core Threat Defense Modules</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='color: #9898b8; margin-bottom: 25px;'>Select any topic below to jump directly into an interactive AI challenge.</p>", unsafe_allow_html=True)
+    st.markdown("<h2 style='margin-top: 30px; margin-bottom: 12px;'>📚 8 Core Threat Defense Modules</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #9898b8; margin-bottom: 22px;'>Select any topic below to jump directly into an interactive AI challenge.</p>", unsafe_allow_html=True)
 
     topic_cols = st.columns(2)
     for i, topic in enumerate(CYBER_TOPICS):
         col = topic_cols[i % 2]
         with col:
-            st.markdown(f"""
+            concepts_html = " ".join([f"<span class='cyber-pill' style='font-size:0.7rem; margin-right:4px; margin-bottom:4px;'>&bull; {kc}</span>" for kc in topic.get('key_concepts', [])[:2]])
+            render_html(f"""
             <div class="nexus-card">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
                     <div>
@@ -420,11 +391,11 @@ if st.session_state.active_page == "🏠 Home":
                     <span style="font-size: 1.8rem;">🛡️</span>
                 </div>
                 <p style="color: #c4c4d8; font-size: 0.88rem; line-height: 1.5; margin-bottom: 14px;">{topic['description']}</p>
-                <div style="margin-bottom: 16px;">
-                    {" ".join([f"<span class='cyber-pill' style='font-size:0.7rem; margin-right:4px; margin-bottom:4px;'>&bull; {kc}</span>" for kc in topic.get('key_concepts', [])[:2]])}
+                <div style="margin-bottom: 14px;">
+                    {concepts_html}
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
             if st.button(f"Challenge Topic: {topic['title']}", key=f"btn_topic_hero_{topic['id']}"):
                 st.session_state.active_quiz_topic_id = topic['id']
                 st.session_state.active_quiz_questions = None
@@ -440,7 +411,6 @@ elif st.session_state.active_page == "🛡️ Student Hub":
     st.markdown("<h1 style='margin-bottom: 4px;'>🛡️ Student Defense Terminal</h1>", unsafe_allow_html=True)
     st.markdown("<p style='color: #9898b8; margin-bottom: 25px;'>Master cybersecurity defense concepts, unlock distinction badges, and elevate your class rank.</p>", unsafe_allow_html=True)
 
-    # 1. Enrolled Student Quick Login / Register
     with st.expander("👤 Need to register a new student or change identity? Click here"):
         r1, r2, r3, r4 = st.columns([2, 2, 2, 1.5])
         with r1:
@@ -468,11 +438,10 @@ elif st.session_state.active_page == "🛡️ Student Hub":
     if not current_student:
         st.warning("No student profile found. Please enroll above.")
     else:
-        # Student Profile Hero Card
         earned_badges = current_student.get_earned_badges()
         unlocked_count = sum(1 for b in earned_badges if b['earned'])
         
-        st.markdown(f"""
+        render_html(f"""
         <div class="nexus-card-active">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
                 <div>
@@ -500,7 +469,7 @@ elif st.session_state.active_page == "🛡️ Student Hub":
                 </div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
         # 8 Distinction Badges Shelf
         st.markdown("<h3 style='margin-top: 30px; margin-bottom: 12px;'>🏅 Cyber Distinction Badges (8 Curriculum Milestones)</h3>", unsafe_allow_html=True)
@@ -514,14 +483,14 @@ elif st.session_state.active_page == "🛡️ Student Hub":
                 opacity = "1" if is_earned else "0.55"
                 status_text = "<span style='color:#e8ff47; font-weight:bold;'>UNLOCKED</span>" if is_earned else "<span style='color:#9898b8;'>LOCKED</span>"
                 
-                st.markdown(f"""
+                render_html(f"""
                 <div style="background:{bg_color}; border:1px solid {border_color}; border-radius:14px; padding:16px; margin-bottom:14px; opacity:{opacity}; text-align:center;">
                     <div style="font-size: 2.2rem; margin-bottom: 6px;">{b['icon']}</div>
                     <div style="font-weight: 700; color: #ffffff; font-size: 0.95rem;">{b['title']}</div>
                     <div style="font-size: 0.75rem; color: #9898b8; margin-top: 4px; min-height: 34px;">{b['desc']}</div>
                     <div style="font-family: monospace; font-size: 0.7rem; margin-top: 10px;">{status_text}</div>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
 
         # Topic Launch Grid
         st.markdown("<h3 style='margin-top: 25px; margin-bottom: 14px;'>📚 Threat Defense Curriculum Directory</h3>", unsafe_allow_html=True)
@@ -536,7 +505,7 @@ elif st.session_state.active_page == "🛡️ Student Hub":
                 best_att = t_attempts.order_by('-score').first() if has_taken else None
                 score_str = f"{best_att.score}/{best_att.total_questions} ({best_att.percentage}%)" if best_att else "Not attempted yet"
                 
-                st.markdown(f"""
+                render_html(f"""
                 <div class="nexus-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <h4 style="margin: 0; font-size: 1.15rem;">{topic['title']}</h4>
@@ -549,7 +518,7 @@ elif st.session_state.active_page == "🛡️ Student Hub":
                         Best Record: <strong style="color: {'#e8ff47' if has_taken else '#ffffff'};">{score_str}</strong>
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+                """)
                 if st.button(f"Start {topic['title']} Challenge", key=f"btn_topic_dash_{topic['id']}"):
                     st.session_state.active_quiz_topic_id = topic['id']
                     st.session_state.active_quiz_questions = None
@@ -566,11 +535,9 @@ elif st.session_state.active_page == "📝 Quiz Arena":
     if not current_student:
         st.warning("Please select or enroll a student first in the Student Hub.")
     else:
-        # Determine topic
         topic_id = st.session_state.active_quiz_topic_id or CYBER_TOPICS[0]['id']
         topic = get_topic_by_id(topic_id) or CYBER_TOPICS[0]
 
-        # Topic Selector Bar
         st.markdown("<h1 style='margin-bottom: 4px;'>📝 Interactive Threat Defense Arena</h1>", unsafe_allow_html=True)
         st.markdown(f"<p style='color: #9898b8; margin-bottom: 20px;'>Active Student: <strong style='color:#ffffff;'>{current_student.name}</strong> ({current_student.class_name})</p>", unsafe_allow_html=True)
 
@@ -589,15 +556,15 @@ elif st.session_state.active_page == "📝 Quiz Arena":
             st.session_state.quiz_result_data = None
             st.rerun()
 
-        st.markdown(f"""
+        render_html(f"""
         <div class="nexus-card-active" style="margin-top: 15px;">
             <div style="font-family: monospace; font-size: 0.75rem; color: #e8ff47; margin-bottom: 4px;">CURRENT SCENARIO:</div>
             <h2 style="margin: 0; font-size: 1.6rem;">{topic['title']}</h2>
             <p style="color: #c4c4d8; font-size: 0.95rem; margin-top: 8px; margin-bottom: 0;">{topic['description']}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
-        # RESULTS VIEW (If a quiz was just completed)
+        # RESULTS VIEW
         if st.session_state.quiz_result_data is not None:
             res = st.session_state.quiz_result_data
             score = res['score']
@@ -612,8 +579,7 @@ elif st.session_state.active_page == "📝 Quiz Arena":
             else:
                 st.info(f"Quiz Completed! Score: {score}/{total} ({percentage}%)")
 
-            # AI Mentor Card
-            st.markdown(f"""
+            render_html(f"""
             <div class="nexus-card" style="border-color: rgba(232, 255, 71, 0.4); background: #0d0d1f;">
                 <div style="display: flex; align-items: center; gap: 8px; font-family: monospace; color: #e8ff47; font-size: 0.85rem; font-weight: bold; margin-bottom: 12px;">
                     <span>🤖</span>
@@ -623,9 +589,8 @@ elif st.session_state.active_page == "📝 Quiz Arena":
                     {feedback}
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
-            # Question by question review
             if items_review:
                 st.markdown("### 📋 Question Review & Educational Analysis")
                 for item in items_review:
@@ -634,7 +599,7 @@ elif st.session_state.active_page == "📝 Quiz Arena":
                     status_badge = "✅ CORRECT" if is_c else "❌ INCORRECT"
                     status_color = "#34d399" if is_c else "#ff6b35"
                     
-                    st.markdown(f"""
+                    render_html(f"""
                     <div style="background:#080812; border:1px solid {card_border}; border-radius:14px; padding:18px; margin-bottom:14px;">
                         <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
                             <span style="font-weight:700; color:#ffffff;">{item.get('question_text')}</span>
@@ -647,7 +612,7 @@ elif st.session_state.active_page == "📝 Quiz Arena":
                             💡 <em>{item.get('explanation')}</em>
                         </div>
                     </div>
-                    """, unsafe_allow_html=True)
+                    """)
 
             btn_col1, btn_col2, btn_col3 = st.columns(3)
             with btn_col1:
@@ -666,7 +631,6 @@ elif st.session_state.active_page == "📝 Quiz Arena":
 
         # ACTIVE QUIZ TAKING
         else:
-            # Generate questions if not yet loaded
             if st.session_state.active_quiz_questions is None:
                 st.markdown("<div style='text-align: center; padding: 30px;'>", unsafe_allow_html=True)
                 if st.button(f"🚀 Generate Dynamic Scenarios for {topic['title']}", key="btn_generate_scenarios"):
@@ -681,14 +645,14 @@ elif st.session_state.active_page == "📝 Quiz Arena":
 
                 selected_answers = {}
                 for idx, q in enumerate(questions, start=1):
-                    st.markdown(f"""
+                    render_html(f"""
                     <div style="background: #0d0d1f; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; margin-bottom: 20px;">
                         <div style="font-family: monospace; font-size: 0.8rem; color: #e8ff47; margin-bottom: 6px;">SCENARIO {idx} OF 3:</div>
                         <div style="font-size: 1.1rem; font-weight: 700; color: #ffffff; line-height: 1.45; margin-bottom: 16px;">
                             {q['question_text']}
                         </div>
                     </div>
-                    """, unsafe_allow_html=True)
+                    """)
 
                     options_dict = {
                         f"A) {q['option_a']}": "A",
@@ -737,7 +701,6 @@ elif st.session_state.active_page == "📝 Quiz Arena":
                             items_review=items_review
                         )
 
-                        # Save Attempt and Questions to Supabase PostgreSQL!
                         attempt = QuizAttempt.objects.create(
                             student=current_student,
                             topic_id=topic['id'],
@@ -784,7 +747,6 @@ elif st.session_state.active_page == "🏆 Leaderboard":
 
     all_students = Student.objects.all()
 
-    # Class Rankings Podium
     class_groups = {}
     for s in all_students:
         if s.class_name not in class_groups:
@@ -807,34 +769,33 @@ elif st.session_state.active_page == "🏆 Leaderboard":
         st.markdown("<h3 style='margin-bottom: 16px;'>🏅 Top Cohort Standings</h3>", unsafe_allow_html=True)
         c1, c2, c3 = st.columns(3)
         with c1:
-            st.markdown(f"""
+            render_html(f"""
             <div class="nexus-card" style="border-color: rgba(255, 255, 255, 0.3); text-align: center;">
                 <div style="color: #9898b8; font-family: monospace; font-size: 0.8rem;">🥈 2ND PLACE</div>
                 <h3 style="margin: 8px 0;">{class_stats[1]['class_name']}</h3>
                 <div style="font-size: 2.2rem; font-weight: 900; color: #ffffff;">{class_stats[1]['avg_accuracy']}%</div>
                 <div style="color: #9898b8; font-size: 0.75rem; margin-top: 4px;">{class_stats[1]['total_attempts']} Quizzes &bull; {class_stats[1]['student_count']} Students</div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
         with c2:
-            st.markdown(f"""
+            render_html(f"""
             <div class="nexus-card-active" style="border-color: #e8ff47; text-align: center; transform: scale(1.03);">
                 <div style="color: #e8ff47; font-family: monospace; font-size: 0.8rem; font-weight: bold;">🥇 1ST PLACE</div>
                 <h3 style="margin: 8px 0; color: #e8ff47;">{class_stats[0]['class_name']}</h3>
                 <div style="font-size: 2.4rem; font-weight: 900; color: #e8ff47;">{class_stats[0]['avg_accuracy']}%</div>
                 <div style="color: #9898b8; font-size: 0.75rem; margin-top: 4px;">{class_stats[0]['total_attempts']} Quizzes &bull; {class_stats[0]['student_count']} Students</div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
         with c3:
-            st.markdown(f"""
+            render_html(f"""
             <div class="nexus-card" style="border-color: rgba(255, 107, 53, 0.4); text-align: center;">
                 <div style="color: #ff6b35; font-family: monospace; font-size: 0.8rem;">🥉 3RD PLACE</div>
                 <h3 style="margin: 8px 0;">{class_stats[2]['class_name']}</h3>
                 <div style="font-size: 2.2rem; font-weight: 900; color: #ffffff;">{class_stats[2]['avg_accuracy']}%</div>
                 <div style="color: #9898b8; font-size: 0.75rem; margin-top: 4px;">{class_stats[2]['total_attempts']} Quizzes &bull; {class_stats[2]['student_count']} Students</div>
             </div>
-            """, unsafe_allow_html=True)
+            """)
 
-    # Individual Student Standings
     st.markdown("<h3 style='margin-top: 35px; margin-bottom: 16px;'>🏆 Individual Student Rankings</h3>", unsafe_allow_html=True)
     ranked_students = sorted(all_students, key=lambda s: (s.total_score, s.average_score), reverse=True)
 
@@ -869,8 +830,7 @@ elif st.session_state.active_page == "📜 Certificate":
         unlocked_count = sum(1 for b in earned_badges if b['earned'])
         now_str = datetime.now().strftime("%B %d, %Y")
 
-        # Visual Certificate Render
-        st.markdown(f"""
+        render_html(f"""
         <div style="background: radial-gradient(circle, #0e0e24 0%, #060610 100%); border: 3px solid #e8ff47; border-radius: 24px; padding: 48px; max-width: 900px; margin: 0 auto; box-shadow: 0 0 50px rgba(232, 255, 71, 0.2); text-align: center; position: relative;">
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #e8ff47; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px;">
                 NATIONAL CYBERSECURITY EDUCATION INITIATIVE
@@ -911,7 +871,7 @@ elif st.session_state.active_page == "📜 Certificate":
                 </div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
         st.markdown("<div style='margin-top: 30px; text-align: center;'>", unsafe_allow_html=True)
         st.info("💡 Tip: Use your browser's Print feature (`Cmd + P` or `Ctrl + P`) to save or print this official certificate as PDF.")
@@ -942,7 +902,6 @@ elif st.session_state.active_page == "📊 Teacher Portal":
 
         st.markdown("---")
 
-        # Topic Breakdown Chart
         st.markdown("### 📈 Cybersecurity Topic Proficiency")
         topic_counts = {}
         for t in CYBER_TOPICS:
@@ -953,7 +912,6 @@ elif st.session_state.active_page == "📊 Teacher Portal":
         df_topics = pd.DataFrame(list(topic_counts.items()), columns=["Topic", "Average Accuracy (%)"])
         st.bar_chart(df_topics.set_index("Topic"))
 
-        # Student Roster & Attempt Inspector
         st.markdown("### 👥 Student Roster & Attempt Inspector")
         class_filter = st.selectbox("Filter by Class:", ["All Classes"] + sorted(list(set(all_students.values_list('class_name', flat=True)))))
 
@@ -966,7 +924,7 @@ elif st.session_state.active_page == "📊 Teacher Portal":
                     st.write("No attempts recorded yet.")
                 else:
                     for att in attempts:
-                        st.markdown(f"""
+                        render_html(f"""
                         <div style="background: #080812; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px; margin-bottom: 10px;">
                             <div style="display: flex; justify-content: space-between;">
                                 <strong style="color: #ffffff;">{att.topic_title}</strong>
@@ -975,9 +933,8 @@ elif st.session_state.active_page == "📊 Teacher Portal":
                             <div style="color: #9898b8; font-size: 0.8rem; margin: 4px 0;">Completed: {att.completed_at.strftime('%Y-%m-%d %H:%M')}</div>
                             <div style="color: #c4c4d8; font-size: 0.88rem; margin-top: 8px;"><em>AI Mentor Feedback:</em> {att.ai_feedback}</div>
                         </div>
-                        """, unsafe_allow_html=True)
+                        """)
 
-        # CSV Export
         st.markdown("### 📥 Export Student Performance Data")
         output = io.StringIO()
         writer = csv.writer(output)
@@ -1003,7 +960,7 @@ elif st.session_state.active_page == "⚙️ Diagnostics":
 
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown(f"""
+        render_html(f"""
         <div class="nexus-card">
             <h4>🗄️ Database Connection</h4>
             <p><strong>Provider:</strong> Supabase Cloud</p>
@@ -1012,10 +969,10 @@ elif st.session_state.active_page == "⚙️ Diagnostics":
             <p><strong>Quiz Attempts Recorded:</strong> {QuizAttempt.objects.count()}</p>
             <p><strong>Status:</strong> <span style="color: #e8ff47; font-weight: bold;">● CONNECTED & LIVE</span></p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with col2:
-        st.markdown(f"""
+        render_html(f"""
         <div class="nexus-card">
             <h4>🤖 AI Agent Integration</h4>
             <p><strong>Provider:</strong> Azure AI Foundry</p>
@@ -1024,4 +981,4 @@ elif st.session_state.active_page == "⚙️ Diagnostics":
             <p><strong>Configured:</strong> {'YES' if ai_client.is_configured else 'NO (Curated fallback pool active)'}</p>
             <p><strong>Status:</strong> <span style="color: #34d399; font-weight: bold;">● HEALTHY & READY</span></p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
