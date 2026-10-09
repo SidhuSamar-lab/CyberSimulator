@@ -216,12 +216,6 @@
                         Curriculum
                         <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if request.resolver_match.url_name == 'home' %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
                     </a>
-                    <a href="{% url 'phishing_sandbox' %}" 
-                       id="nav-sandbox-link"
-                       class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if request.resolver_match.url_name == 'phishing_sandbox' %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
-                        Defensive Lab
-                        <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if request.resolver_match.url_name == 'phishing_sandbox' %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
-                    </a>
                     <a href="{% url 'leaderboard_view' %}" 
                        id="nav-leaderboard-link"
                        class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if request.resolver_match.url_name == 'leaderboard_view' %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
@@ -243,7 +237,7 @@
                 <!-- Status Pill -->
                 <div class="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full bg-ink-800 border border-white/10 text-mist-900 font-mono text-xs">
                     <span class="w-1.5 h-1.5 rounded-full bg-signal animate-pulse-slow"></span>
-                    <span>Live Lab</span>
+                    <span>System Online</span>
                 </div>
 
                 <!-- Switch Role Button -->
@@ -333,7 +327,7 @@
             </div>
             <div class="flex items-center gap-6 text-xs font-mono text-mist-900">
                 <a class="hover:text-white transition-colors" href="{% url 'home' %}">Charter</a>
-                <a class="hover:text-white transition-colors" href="{% url 'phishing_sandbox' %}">Sandbox</a>
+                <a class="hover:text-white transition-colors" href="{% url 'leaderboard_view' %}">Leaderboard</a>
                 <a class="hover:text-white transition-colors" href="{% url 'health_check' %}">Status</a>
                 <span class="text-mist-900/60">© 2025 CyberShield</span>
             </div>

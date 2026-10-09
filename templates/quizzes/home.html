@@ -46,9 +46,9 @@
                 </a>
             {% endif %}
 
-            <a href="{% url 'phishing_sandbox' %}" class="px-8 py-4 rounded-full border border-white/10 hover:border-signal/50 text-white hover:text-signal font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm text-signal">mark_email_unread</span>
-                <span>Quarantine Sandbox</span>
+            <a href="{% url 'leaderboard_view' %}" class="px-8 py-4 rounded-full border border-white/10 hover:border-signal/50 text-white hover:text-signal font-mono text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm text-signal">trophy</span>
+                <span>Classroom Honor Roll</span>
             </a>
 
             <a href="{% url 'teacher_dashboard' %}" class="px-6 py-4 text-mist-700 hover:text-white font-mono text-xs uppercase tracking-wider transition-colors flex items-center gap-1.5">
@@ -172,64 +172,7 @@
 
     </section>
 
-    <!-- Interactive Quarantine Lab Teaser Section -->
-    <section class="max-w-7xl mx-auto px-6 md:px-12 py-20 relative z-10">
-        <div class="bg-gradient-to-br from-ink-850 to-ink-900 border border-white/10 rounded-3xl p-8 md:p-14 relative overflow-hidden shadow-2xl">
-            <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-signal/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-                <div class="lg:col-span-7 space-y-6">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ink-950 border border-white/10 text-signal font-mono text-xs uppercase">
-                        <span class="material-symbols-outlined text-sm">science</span>
-                        <span>Forensic Specimen Sandbox</span>
-                    </div>
-
-                    <h2 class="font-display text-3xl sm:text-5xl font-bold text-white tracking-tight leading-tight">
-                        Quarantine suspicious emails.<br />
-                        Inspect root domains in real time.
-                    </h2>
-
-                    <p class="font-body text-mist-900 text-base leading-relaxed max-w-xl">
-                        Our browser-based sandbox lets students interact with simulated spoofed messages without endangering school devices. Inspect RFC headers, reveal hidden URL redirects, and earn forensic credentials.
-                    </p>
-
-                    <div class="flex flex-wrap items-center gap-4 pt-2">
-                        <a href="{% url 'phishing_sandbox' %}" class="px-6 py-3 rounded-full bg-signal text-ink-950 font-display font-bold text-xs uppercase tracking-wider hover:bg-signal-dim transition-all shadow-md">
-                            Launch Quarantine Sandbox &rarr;
-                        </a>
-                        <a href="{% url 'leaderboard_view' %}" class="px-6 py-3 rounded-full border border-white/10 hover:border-white/30 text-white font-mono text-xs uppercase tracking-wider transition-all">
-                            View Cadet Leaderboard
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Preview Mock Window -->
-                <div class="lg:col-span-5 bg-ink-950 border border-white/10 rounded-2xl p-5 shadow-inner space-y-3 font-mono text-xs">
-                    <div class="flex items-center justify-between pb-3 border-b border-white/10 text-mist-900">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-ember"></span>
-                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                            <span class="w-2.5 h-2.5 rounded-full bg-signal"></span>
-                            <span class="ml-2 text-white text-[11px]">sandbox-rfc5322.eml</span>
-                        </div>
-                        <span class="text-signal text-[10px]">LIVE PARSER</span>
-                    </div>
-                    <div class="space-y-1.5 text-mist-700 text-[11px]">
-                        <p><span class="text-mist-900">From:</span> IT Helpdesk &lt;security@oakridge-sch00l.net&gt;</p>
-                        <p><span class="text-mist-900">Return-Path:</span> &lt;bounce@relay.digitalquish.ru&gt;</p>
-                        <p><span class="text-mist-900">Authentication-Results:</span> <span class="text-ember font-bold">spf=fail (domain mismatch)</span></p>
-                    </div>
-                    <div class="p-3 rounded-lg bg-ink-900 border border-ember/30 text-white text-[11px] leading-relaxed">
-                        “Urgent: Semester grades available at <span class="text-signal underline font-bold">http://oakridge-sch00l.net/login</span>. Verify identity in 24h.”
-                    </div>
-                    <div class="flex items-center justify-between text-[10px] text-signal font-bold pt-1">
-                        <span>&bull; HOMOGLYPH FLAGGED: "00" instead of "oo"</span>
-                        <span class="text-mist-900">Verdict: PHISHING</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Bottom CTA Banner -->
     <section class="max-w-7xl mx-auto px-6 md:px-12 py-24 text-center relative z-10 border-t border-white/10">

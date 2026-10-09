@@ -9,7 +9,6 @@ from users.models import Student
 from .models import QuizAttempt, AttemptQuestion
 from .topics import CYBER_TOPICS, get_topic_by_id
 from .ai_service import ai_client
-from .sandbox_data import SANDBOX_EMAILS
 
 
 def is_teacher(user):
@@ -436,54 +435,6 @@ def health_check(request):
     })
 
 
-def phishing_sandbox(request):
-    """
-    Renders the interactive Phishing Sandbox & URL Inspector email client.
-    Students inspect realistic email threats, review network headers, hover to reveal
-    spoofed URL links, and classify messages.
-    """
-    student_id = request.session.get('student_id')
-    student = Student.objects.filter(id=student_id).first() if student_id else None
-
-    return render(request, 'quizzes/phishing_sandbox.html', {
-        'emails': SANDBOX_EMAILS,
-        'student': student,
-        'total_scenarios': len(SANDBOX_EMAILS),
-    })
-
-
-def sandbox_evaluate_api(request):
-    """
-    POST API evaluating a student's verdict on a sandbox email scenario.
-    Payload: { "email_id": "email-1", "verdict": "phishing" | "safe" }
-    """
-    if request.method != 'POST':
-        return JsonResponse({'error': 'POST method required'}, status=405)
-
-    try:
-        data = json.loads(request.body)
-        email_id = data.get('email_id')
-        verdict = data.get('verdict')  # 'phishing' or 'safe'
-
-        target = next((e for e in SANDBOX_EMAILS if e['id'] == email_id), None)
-        if not target:
-            return JsonResponse({'error': 'Scenario not found'}, status=404)
-
-        expected = 'phishing' if target['is_phishing'] else 'safe'
-        is_correct = (verdict == expected)
-
-        return JsonResponse({
-            'correct': is_correct,
-            'is_phishing': target['is_phishing'],
-            'expected': expected,
-            'verdict': verdict,
-            'red_flags': target['red_flags'],
-            'explanation': target['explanation'],
-            'hover_url': target['hover_url'],
-            'raw_headers': target['raw_headers'],
-        })
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
 
 
 def chat_mentor_api(request):

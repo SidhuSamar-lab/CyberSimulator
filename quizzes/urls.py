@@ -15,8 +15,6 @@ urlpatterns = [
     path('health/', views.health_check, name='health_check'),
     
     # Next-Level Interactive Features
-    path('sandbox/phishing/', views.phishing_sandbox, name='phishing_sandbox'),
-    path('api/sandbox/evaluate/', views.sandbox_evaluate_api, name='sandbox_evaluate_api'),
     path('api/chat/mentor/', views.chat_mentor_api, name='chat_mentor_api'),
     path('leaderboard/', views.leaderboard_view, name='leaderboard_view'),
     path('student/certificate/', views.student_certificate, name='student_certificate'),
