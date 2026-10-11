@@ -123,8 +123,10 @@ class AppStateManager:
         if hasattr(st, "query_params"):
             qp_slug = REVERSE_PAGE_LOOKUP.get(page_name, "home")
             st.query_params["page"] = qp_slug
+            st.session_state.last_seen_qp_page = qp_slug
             if topic_id:
                 st.query_params["topic"] = topic_id
+                st.session_state.last_seen_qp_topic = topic_id
 
     @classmethod
     def resolve_current_student(cls, all_students: List[Student]) -> Optional[Student]:

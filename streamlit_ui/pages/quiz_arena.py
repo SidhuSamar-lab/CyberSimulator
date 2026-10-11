@@ -17,25 +17,58 @@ def render_quiz_arena(current_student: Optional[Student], all_students: List[Stu
     if not current_student and st.session_state.auth_role == "teacher" and all_students:
         current_student = all_students[0]
 
+    topic_id = st.session_state.active_quiz_topic_id or CYBER_TOPICS[0]['id']
+    topic = get_topic_by_id(topic_id) or CYBER_TOPICS[0]
+
     if not current_student:
-        st.info("Please sign in as a student cadet to enter the Quiz Arena.")
-        col_qa1, col_qa2, col_qa3 = st.columns(3)
-        with col_qa1:
-            if st.button("🔑 Sign In as Student", key="btn_qa_require_login", type="primary", use_container_width=True):
-                AppStateManager.navigate_to("🔑 Student Sign-In")
+        st.markdown(f"""
+        <div style="background: #080812; border: 1px solid rgba(232, 255, 71, 0.35); border-radius: 20px; padding: 28px 24px; max-width: 640px; margin: 20px auto 28px auto; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; margin-bottom: 8px;">
+                CADET IDENTIFICATION &bull; {html.escape(topic['title'].upper())}
+            </div>
+            <h2 style="font-family: 'Clash Display', sans-serif; font-size: 2rem; margin: 0 0 10px 0; color: #ffffff;">Enter Cadet Info to Launch Drill</h2>
+            <p style="color: #9898b8; font-size: 0.95rem; margin: 0 auto; max-width: 480px; line-height: 1.5;">
+                Enter your student credentials below to track your answers and receive personalized AI feedback.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        with st.container():
+            with st.form("quick_quiz_cadet_form"):
+                qa_name = st.text_input("Full Name", placeholder="e.g. Alex Chen", key="qa_cadet_name")
+                qa_class = st.selectbox("Grade & Section", ["8B", "7A", "8A", "9C", "Grade 9-A", "Grade 9-B", "Grade 10-A"], key="qa_cadet_class")
+                qa_roll = st.text_input("Class Roll Number", placeholder="e.g. 24", key="qa_cadet_roll")
+                btn_start = st.form_submit_button(f"⚡ Start {topic['title']} Drill →", type="primary", use_container_width=True)
+
+                if btn_start:
+                    if not qa_name.strip():
+                        st.error("Please enter your name.")
+                    elif not qa_roll.strip():
+                        st.error("Please enter your roll number.")
+                    else:
+                        student_obj, _ = Student.objects.get_or_create(
+                            roll_number=qa_roll.strip(),
+                            class_name=qa_class.strip(),
+                            defaults={'name': qa_name.strip()}
+                        )
+                        AppStateManager.set_student_session(student_obj.id)
+                        st.rerun()
+
+        col_g1, col_g2 = st.columns(2)
+        with col_g1:
+            if st.button("⚡ Practice as Guest Cadet", key="btn_quick_guest_drill", type="secondary", use_container_width=True):
+                guest_obj, _ = Student.objects.get_or_create(
+                    roll_number="00",
+                    class_name="Guest Cohort",
+                    defaults={'name': "Cadet Guest"}
+                )
+                AppStateManager.set_student_session(guest_obj.id)
                 st.rerun()
-        with col_qa2:
-            if st.button("🎓 Teacher Portal", key="btn_qa_goto_teacher", type="secondary", use_container_width=True):
-                AppStateManager.navigate_to("🎓 Teacher Sign-In")
-                st.rerun()
-        with col_qa3:
+        with col_g2:
             if st.button("← Back to Curriculum", key="btn_qa_back_home", type="secondary", use_container_width=True):
                 AppStateManager.navigate_to("🏠 Home")
                 st.rerun()
         return
-
-    topic_id = st.session_state.active_quiz_topic_id or CYBER_TOPICS[0]['id']
-    topic = get_topic_by_id(topic_id) or CYBER_TOPICS[0]
 
     # RESULTS VIEW (1:1 with quiz_result.html)
     if st.session_state.quiz_result_data is not None:
@@ -236,14 +269,11 @@ def _render_active_quiz_view(student: Student, topic: dict) -> None:
     """)
 
     if st.session_state.active_quiz_questions is None:
-        st.markdown("<div style='text-align: center; padding: 40px;'>", unsafe_allow_html=True)
-        if st.button(f"🚀 Formulate Challenge: {topic['title']}", key="btn_generate_scenarios"):
-            with st.spinner("🤖 CyberQuizAgent (GPT-5) is formulating real-world scenario challenges..."):
-                questions = QuizService.get_quiz_questions(topic['id'], count=3)
-                st.session_state.active_quiz_questions = questions
-                st.session_state.quiz_attempt_nonce += 1
-                st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
+        with st.spinner("🤖 CyberQuizAgent is formulating real-world scenario challenges..."):
+            questions = QuizService.get_quiz_questions(topic['id'], count=3)
+            st.session_state.active_quiz_questions = questions
+            st.session_state.quiz_attempt_nonce += 1
+            st.rerun()
     else:
         questions = st.session_state.active_quiz_questions
         nonce = st.session_state.quiz_attempt_nonce

@@ -177,4 +177,3 @@ def render_teacher_signin() -> None:
                 AppStateManager.navigate_to("🔑 Student Sign-In")
                 st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)

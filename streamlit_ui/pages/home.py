@@ -68,40 +68,68 @@ def render_home_page(current_student: Optional[Student]) -> None:
         </h1>
 
         <!-- Subtitle with Curriculum Focus -->
-        <p style="font-family: 'Cabinet Grotesk', sans-serif; color: #9898b8; font-size: 1.25rem; max-width: 720px; line-height: 1.65; margin: 0 0 36px 0;">
+        <p style="font-family: 'Cabinet Grotesk', sans-serif; color: #9898b8; font-size: 1.25rem; max-width: 720px; line-height: 1.65; margin: 0 0 24px 0;">
             Interactive cybersecurity curriculum & simulation drills designed for students. Spot deceptive phishing lures, master strong password habits, outsmart AI deepfakes, and build real-world digital resilience.
         </p>
-
-        <!-- CTA Buttons: Unified Secondary Action (Audit Issues #1 & #2) -->
-        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 40px;">
-            {cta_buttons_html}
-        </div>
-
-        <!-- Telemetry Stats Row: Balanced 4-Column Quantitative Grid with Uniform Gutters (Audit Issues #4, #5, #6) -->
-        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; padding-top: 28px; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 10px;">
-            <div>
-                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">8</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Core Topics</div>
-            </div>
-            <div>
-                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">100%</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Passwordless</div>
-            </div>
-            <div>
-                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">{total_quizzes_count}+</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Quizzes Taken</div>
-            </div>
-            <div>
-                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">24/7</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">AI Mentorship</div>
-            </div>
-        </div>
     </section>
     """
     if hasattr(st, "html"):
         st.html(hero_html)
     else:
         st.markdown(hero_html, unsafe_allow_html=True)
+
+    # Hero Action Buttons (Streamlit Native Interactive Widgets)
+    col_cta1, col_cta2, col_cta3 = st.columns([4, 4, 4])
+    with col_cta1:
+        if auth_role == "student" and current_student:
+            if st.button("🛡️ Open Cadet Dashboard →", key="btn_hero_open_dash", type="primary", use_container_width=True):
+                AppStateManager.navigate_to("🛡️ Student Hub")
+                st.rerun()
+        elif auth_role == "teacher":
+            if st.button("📊 Enter Teacher Portal →", key="btn_hero_teacher_portal", type="primary", use_container_width=True):
+                AppStateManager.navigate_to("📊 Teacher Portal")
+                st.rerun()
+        else:
+            if st.button("🚀 Start Learning (No Passwords) →", key="btn_hero_start_learning", type="primary", use_container_width=True):
+                AppStateManager.navigate_to("🔑 Student Sign-In")
+                st.rerun()
+
+    with col_cta2:
+        if st.button("🏆 Academy Leaderboard", key="btn_hero_leaderboard", type="secondary", use_container_width=True):
+            AppStateManager.navigate_to("🏆 Leaderboard")
+            st.rerun()
+
+    with col_cta3:
+        if auth_role != "teacher":
+            if st.button("🎓 Teacher Portal", key="btn_hero_goto_teacher", type="secondary", use_container_width=True):
+                AppStateManager.navigate_to("🎓 Teacher Sign-In")
+                st.rerun()
+
+    # Telemetry Stats Row
+    stats_html = f"""
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; padding: 28px 0; border-top: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin: 30px 0 20px 0;">
+        <div>
+            <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">8</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Core Topics</div>
+        </div>
+        <div>
+            <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">100%</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Passwordless</div>
+        </div>
+        <div>
+            <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">{total_quizzes_count}+</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Quizzes Taken</div>
+        </div>
+        <div>
+            <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">24/7</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">AI Mentorship</div>
+        </div>
+    </div>
+    """
+    if hasattr(st, "html"):
+        st.html(stats_html)
+    else:
+        st.markdown(stats_html, unsafe_allow_html=True)
 
     # Telemetry Marquee
     render_marquee_ticker()
@@ -126,22 +154,19 @@ def render_home_page(current_student: Optional[Student]) -> None:
         with c:
             topic_icon = t.get('material_icon') or t.get('icon', 'shield')
             topic_card_html = f"""
-            <div style="background: #0d0d1f; border-radius: 16px; padding: 22px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 20px; min-height: 250px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease;">
+            <div style="background: #0d0d1f; border-radius: 16px; padding: 20px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 12px; min-height: 200px; display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                         <div class="topic-icon-box" style="color: #e8ff47; width: 38px; height: 38px;">
                             <span class="material-symbols-outlined" style="font-size: 22px;">{topic_icon}</span>
                         </div>
                         <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #666680;">#{idx + 1:02d}</span>
                     </div>
-                    <h3 style="font-family: 'Clash Display', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 8px 0; line-height: 1.2;">{html.escape(t['title'])}</h3>
-                    <p style="font-family: 'Cabinet Grotesk', sans-serif; font-size: 0.85rem; color: #9898b8; line-height: 1.5; margin: 0;">{html.escape(t['description'])}</p>
+                    <h3 style="font-family: 'Clash Display', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 6px 0; line-height: 1.2;">{html.escape(t['title'])}</h3>
+                    <p style="font-family: 'Cabinet Grotesk', sans-serif; font-size: 0.82rem; color: #9898b8; line-height: 1.5; margin: 0;">{html.escape(t['description'])}</p>
                 </div>
-                <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between;">
-                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #e8ff47;">{html.escape(t.get('badge_name', 'Defender'))}</span>
-                    <a href="?page=quiz_arena&topic={t['id']}" target="_self" class="topic-btn topic-btn-start" style="padding: 4px 12px; font-size: 0.68rem;">
-                        <span>Start Drill</span> <span>&rarr;</span>
-                    </a>
+                <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: #e8ff47;">Badge: {html.escape(t.get('badge_name', 'Defender'))}</span>
                 </div>
             </div>
             """
@@ -150,5 +175,10 @@ def render_home_page(current_student: Optional[Student]) -> None:
             else:
                 st.markdown(topic_card_html, unsafe_allow_html=True)
 
+            if st.button(f"⚡ Start {t['title']} →", key=f"btn_start_drill_{t['id']}", type="primary", use_container_width=True):
+                AppStateManager.navigate_to("📝 Quiz Arena", topic_id=t['id'])
+                st.rerun()
+
 
 render_home = render_home_page
+

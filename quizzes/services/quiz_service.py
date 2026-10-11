@@ -114,17 +114,18 @@ class QuizService:
             question_records = [
                 AttemptQuestion(
                     attempt=attempt,
+                    question_number=item.get("question_number", idx),
                     question_text=item["question_text"],
                     option_a=item["option_a"],
                     option_b=item["option_b"],
                     option_c=item["option_c"],
                     option_d=item["option_d"],
                     correct_option=item["correct_option"],
-                    student_answer=item["selected_option"],
+                    student_selected_option=item.get("student_selected", item.get("selected_option", "")),
                     is_correct=item["is_correct"],
                     explanation=item["explanation"],
                 )
-                for item in items_review
+                for idx, item in enumerate(items_review, start=1)
             ]
             AttemptQuestion.objects.bulk_create(question_records)
 
@@ -166,10 +167,68 @@ class QuizService:
                 )
 
     @classmethod
-    def get_hint(cls, topic_title: str, question_text: str) -> str:
+    def get_quiz_questions(cls, topic_id: str, count: int = DEFAULT_QUESTIONS_COUNT) -> List[Dict[str, Any]]:
+        """Alias for get_questions_for_topic to support Streamlit Quiz Arena."""
+        return cls.get_questions_for_topic(topic_id, count=count)
+
+    @classmethod
+    def get_hint(cls, topic_or_question: Any, question_text: str = "") -> str:
         """Retrieves a pedagogical hint guiding the student without giving away the answer."""
+        if isinstance(topic_or_question, dict):
+            q_text = topic_or_question.get("question_text", "")
+            t_title = topic_or_question.get("topic_title", "Cybersecurity")
+        else:
+            t_title = str(topic_or_question)
+            q_text = question_text
+
         try:
-            return ai_client.generate_hint(topic_title=topic_title, question_text=question_text)
+            return ai_client.generate_hint(topic_title=t_title, question_text=q_text)
         except Exception as exc:
             logger.warning(f"AI hint service unavailable: {exc}")
             return "Look carefully for signs of pressure, urgency, unexpected links, or requests for private data."
+
+    @classmethod
+    def submit_quiz_attempt(
+        cls,
+        student: Student,
+        topic_id: str,
+        topic_title: str,
+        questions: List[Dict[str, Any]],
+        selected_answers: Dict[Any, str]
+    ) -> Dict[str, Any]:
+        """
+        Complete end-to-end quiz grading, AI feedback generation, and persistence workflow.
+        Returns a rich evaluation dictionary for results rendering.
+        """
+        # Normalize keys to string for grade_answers
+        normalized_answers = {str(k): str(v) for k, v in selected_answers.items()}
+        score, total, percentage, items_review = cls.grade_answers(questions, normalized_answers)
+
+        feedback_text = cls.generate_ai_feedback(
+            student_name=student.name,
+            topic_title=topic_title,
+            score=score,
+            total=total,
+            items_review=items_review
+        )
+
+        attempt, _ = cls.save_quiz_attempt(
+            student=student,
+            topic_id=topic_id,
+            topic_title=topic_title,
+            questions=questions,
+            student_answers=normalized_answers,
+            ai_feedback_text=feedback_text
+        )
+
+        return {
+            "score": score,
+            "total": total,
+            "percentage": percentage,
+            "feedback": feedback_text,
+            "items_review": items_review,
+            "attempt": attempt,
+            "student": student,
+            "topic_id": topic_id,
+            "topic_title": topic_title,
+        }
