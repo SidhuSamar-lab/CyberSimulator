@@ -2287,14 +2287,15 @@ elif st.session_state.active_page == "📜 Certificate":
         # Track distinction if topic param is present
         active_topic_id = st.session_state.active_quiz_topic_id or (hasattr(st, "query_params") and st.query_params.get("topic"))
         topic_spec_html = ""
-        if active_topic_id and active_topic_id in TOPICS_DATA:
-            t_data = TOPICS_DATA[active_topic_id]
-            topic_spec_html = f"""
-            <div style="margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 9999px; background: rgba(232, 255, 71, 0.12); border: 1px solid rgba(232, 255, 71, 0.4); color: #e8ff47; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: bold;">
-                <span class="material-symbols-outlined" style="font-size: 15px;">verified</span>
-                <span>Specialization Track: {html.escape(t_data['title'])}</span>
-            </div>
-            """
+        if active_topic_id:
+            t_data = get_topic_by_id(active_topic_id)
+            if t_data:
+                topic_spec_html = f"""
+                <div style="margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 9999px; background: rgba(232, 255, 71, 0.12); border: 1px solid rgba(232, 255, 71, 0.4); color: #e8ff47; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: bold;">
+                    <span class="material-symbols-outlined" style="font-size: 15px;">verified</span>
+                    <span>Specialization Track: {html.escape(t_data['title'])}</span>
+                </div>
+                """
 
         # Top Control Bar (Dashboard link, Registry ID, and Download PDF button)
         bar_left, bar_right = st.columns([7, 5], vertical_alignment="center")
