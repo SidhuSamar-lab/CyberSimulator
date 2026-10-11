@@ -204,12 +204,14 @@
 
                 <!-- Navigation Tabs with Nexus Underline hover -->
                 <nav class="hidden md:flex items-center gap-6 lg:gap-8">
+                    {% if current_student %}
                     <a href="{% url 'student_dashboard' %}" 
                        id="nav-dashboard-link"
                        class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if request.resolver_match.url_name == 'student_dashboard' %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
                         Dashboard
                         <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if request.resolver_match.url_name == 'student_dashboard' %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
                     </a>
+                    {% endif %}
                     <a href="{% url 'home' %}" 
                        id="nav-home-link"
                        class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if request.resolver_match.url_name == 'home' %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
@@ -222,12 +224,14 @@
                         Leaderboard
                         <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if request.resolver_match.url_name == 'leaderboard_view' %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
                     </a>
+                    {% if user.is_authenticated and user.is_staff %}
                     <a href="{% url 'teacher_dashboard' %}" 
                        id="nav-teacher-portal-link"
                        class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if 'teacher' in request.path %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
                         Teacher Portal
                         <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if 'teacher' in request.path %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
                     </a>
+                    {% endif %}
                 </nav>
             </div>
 
@@ -240,20 +244,20 @@
                     <span>System Online</span>
                 </div>
 
-                <!-- Switch Role Button -->
+                <!-- Switch Role Button (Only for Teachers) -->
                 {% if user.is_authenticated and user.is_staff %}
                     <a href="{% url 'student_login' %}" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-ink-800 border border-white/10 text-mist-700 hover:text-white hover:border-white/20 transition-all text-xs font-mono" title="Switch Operational Role">
                         <span class="material-symbols-outlined text-sm">swap_horiz</span>
                         <span>Student View</span>
                     </a>
-                {% else %}
-                    <a href="{% url 'teacher_login' %}" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-ink-800 border border-white/10 text-mist-700 hover:text-signal hover:border-signal/30 transition-all text-xs font-mono" title="Switch Operational Role">
+                {% elif not current_student %}
+                    <a href="{% url 'teacher_login' %}" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-ink-800 border border-white/10 text-mist-700 hover:text-signal hover:border-signal/30 transition-all text-xs font-mono" title="Faculty Access">
                         <span class="material-symbols-outlined text-sm text-signal">verified_user</span>
                         <span>Teacher Portal</span>
                     </a>
                 {% endif %}
 
-                <!-- Profile / Sign In Pill Button -->
+                <!-- Profile / Sign In Controls -->
                 {% if current_student %}
                     <div class="flex items-center gap-2 pl-2 pr-3 py-1 rounded-full bg-ink-800 border border-white/10 hover:border-signal/40 transition-colors">
                         <div class="w-6 h-6 rounded-full bg-signal text-ink-950 flex items-center justify-center font-bold text-xs font-mono">
@@ -263,8 +267,9 @@
                             <span class="text-xs font-medium text-white leading-tight">{{ current_student.name }}</span>
                             <span class="text-[10px] font-mono text-signal leading-tight">#{{ current_student.roll_number }} • {{ current_student.class_name }}</span>
                         </div>
-                        <a href="{% url 'student_logout' %}" id="btn-student-logout" class="ml-1 text-mist-900 hover:text-ember transition-colors" title="Sign Out">
+                        <a href="{% url 'student_logout' %}" id="btn-student-logout" class="ml-2 px-2.5 py-0.5 rounded-full bg-ink-950 border border-ember/30 text-ember hover:bg-ember/20 hover:border-ember transition-all text-xs font-mono flex items-center gap-1" title="Sign Out">
                             <span class="material-symbols-outlined text-sm">logout</span>
+                            <span class="hidden sm:inline">Logout</span>
                         </a>
                     </div>
                 {% elif user.is_authenticated and user.is_staff %}
@@ -274,15 +279,17 @@
                         </div>
                         <div class="flex flex-col text-left">
                             <span class="text-xs font-medium text-white leading-tight">{{ user.username }}</span>
-                            <span class="text-[10px] font-mono text-emerald-light leading-tight">Teacher</span>
+                            <span class="text-[10px] font-mono text-emerald-light leading-tight">Faculty</span>
                         </div>
-                        <a href="{% url 'teacher_logout' %}" id="btn-teacher-logout" class="ml-1 text-mist-900 hover:text-ember transition-colors" title="Log Out">
+                        <a href="{% url 'teacher_logout' %}" id="btn-teacher-logout" class="ml-2 px-2.5 py-0.5 rounded-full bg-ink-950 border border-ember/30 text-ember hover:bg-ember/20 hover:border-ember transition-all text-xs font-mono flex items-center gap-1" title="Log Out">
                             <span class="material-symbols-outlined text-sm">logout</span>
+                            <span class="hidden sm:inline">Logout</span>
                         </a>
                     </div>
                 {% else %}
-                    <a href="{% url 'student_login' %}" class="px-5 py-2 rounded-full border border-signal text-signal text-xs font-mono uppercase tracking-wider hover:bg-signal hover:text-ink-950 transition-all font-bold shadow-[0_0_15px_rgba(232,255,71,0.15)]">
-                        Sign In &rarr;
+                    <a href="{% url 'student_login' %}" class="px-4 py-1.5 rounded-full bg-signal text-ink-950 text-xs font-mono uppercase tracking-wider hover:bg-signal-dim transition-all font-bold shadow-[0_0_15px_rgba(232,255,71,0.15)] flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm">person</span>
+                        <span>Student Sign In</span>
                     </a>
                 {% endif %}
 

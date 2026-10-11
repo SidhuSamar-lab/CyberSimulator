@@ -42,6 +42,7 @@ from users.models import Student
 from quizzes.models import QuizAttempt, AttemptQuestion
 from quizzes.topics import CYBER_TOPICS, get_topic_by_id
 from quizzes.ai_service import ai_client
+from quizzes.pdf_service import generate_certificate_pdf
 
 
 # One-time bootstrap cached for the entire server worker lifecycle
@@ -93,9 +94,40 @@ st.set_page_config(
 
 # Injected Nexus Studio CSS (1:1 visual match with Django Tailwind application)
 st.markdown("""
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=cabinet-grotesk@400,500,700,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
 <style>
-    @import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=cabinet-grotesk@400,500,700,800&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+    /* Direct Fontshare CDN @font-face Rules for 100% Reliable Rendering */
+    @font-face {
+        font-family: 'Clash Display';
+        src: url('https://cdn.fontshare.com/wf/FPDAZ2S6SW4QMSRIIKNNGTPM6VIXYMKO/5HNPQ453FRLIQWV2FNOBUU3FKTDZQVSG/Z3MGHFHX6DCTLQ55LJYRJ5MDCZPMFZU6.woff2') format('woff2');
+        font-weight: 600;
+        font-display: swap;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Clash Display';
+        src: url('https://cdn.fontshare.com/wf/BFBSY7LX5W2U2EROCLVVTQP4VS7S4PC3/IIUX4FGTMD2LK2VWD3RVTAS4SSMUN7B5/53RZKGODFYDW3QHTIL7IPOWTBCSUEZK7.woff2') format('woff2');
+        font-weight: 700;
+        font-display: swap;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Cabinet Grotesk';
+        src: url('https://cdn.fontshare.com/wf/LAFFD4SDUCDVQEXFPDC7C53EQ4ZELWQI/PXCT3G6LO6ICM5I3NTYENYPWJAECAWDD/GHM6WVH6MILNYOOCXHXB5GTSGNTMGXZR.woff2') format('woff2');
+        font-weight: 700;
+        font-display: swap;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Cabinet Grotesk';
+        src: url('https://cdn.fontshare.com/wf/TTX2Z3BF3P6Y5BQT3IV2VNOK6FL22KUT/7QYRJOI3JIMYHGY6CH7SOIFRQLZOLNJ6/KFIAZD4RUMEZIYV6FQ3T3GP5PDBDB6JY.woff2') format('woff2');
+        font-weight: 400;
+        font-display: swap;
+        font-style: normal;
+    }
 
     /* Material Symbols font family assignment */
     .material-symbols-outlined {
@@ -161,16 +193,18 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace !important;
     }
 
-    /* Text-stroke effect */
+    /* Text-stroke effect (1:1 with Django Tailwind hover:text-signal) */
     .text-stroke {
         -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.4);
         color: transparent !important;
-        transition: all 0.4s ease;
+        transition: color 0.5s ease, -webkit-text-stroke 0.5s ease;
         display: block;
+        cursor: pointer;
     }
     .text-stroke:hover {
-        -webkit-text-stroke: 1.5px #e8ff47;
-        text-shadow: 0 0 30px rgba(232, 255, 71, 0.5);
+        color: #e8ff47 !important;
+        -webkit-text-stroke: 1.5px #e8ff47 !important;
+        text-shadow: none !important;
     }
 
     /* Marquee Animation */
@@ -352,6 +386,67 @@ st.markdown("""
         font-size: 0.65rem;
         color: #e8ff47;
         margin-left: 4px;
+    }
+    .logout-pill-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 12px;
+        border-radius: 9999px;
+        background: rgba(255, 107, 53, 0.1);
+        border: 1px solid rgba(255, 107, 53, 0.35);
+        color: #ff6b35 !important;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    .logout-pill-btn:hover {
+        background: rgba(255, 107, 53, 0.25);
+        border-color: #ff6b35;
+        color: #ffffff !important;
+        box-shadow: 0 0 15px rgba(255, 107, 53, 0.3);
+    }
+    .btn-signin-student {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 16px;
+        border-radius: 9999px;
+        background: #e8ff47;
+        border: 1px solid #e8ff47;
+        color: #04040a !important;
+        font-family: 'Clash Display', 'Cabinet Grotesk', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 0 15px rgba(232, 255, 71, 0.25);
+    }
+    .btn-signin-student:hover {
+        background: #f4ff9e;
+        box-shadow: 0 0 25px rgba(232, 255, 71, 0.45);
+        transform: translateY(-1px);
+    }
+    .teacher-avatar-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #0d0d1f;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 4px 12px 4px 4px;
+        border-radius: 9999px;
+        text-decoration: none;
+    }
+    .teacher-circle {
+        background: #10b981 !important;
+        color: #04040a !important;
     }
 
     /* Buttons */
@@ -693,7 +788,7 @@ st.markdown("""
 
 
 # -------------------------------------------------------------
-# SESSION STATE & QUERY PARAMETER SYNCHRONIZATION
+# SESSION STATE & AUTHENTICATION PROTOCOL
 # -------------------------------------------------------------
 page_lookup = {
     "home": "🏠 Home",
@@ -703,6 +798,8 @@ page_lookup = {
     "quiz_arena": "📝 Quiz Arena",
     "leaderboard": "🏆 Leaderboard",
     "certificate": "📜 Certificate",
+    "student_login": "🔑 Student Sign-In",
+    "teacher_login": "🎓 Teacher Sign-In",
     "teacher": "📊 Teacher Portal",
     "teacher_portal": "📊 Teacher Portal",
     "diagnostics": "⚙️ Diagnostics",
@@ -714,12 +811,23 @@ reverse_page_lookup = {
     "📝 Quiz Arena": "quiz_arena",
     "🏆 Leaderboard": "leaderboard",
     "📜 Certificate": "certificate",
+    "🔑 Student Sign-In": "student_login",
+    "🎓 Teacher Sign-In": "teacher_login",
     "📊 Teacher Portal": "teacher",
     "⚙️ Diagnostics": "diagnostics",
 }
 
 if 'active_page' not in st.session_state:
     st.session_state.active_page = "🏠 Home"
+
+if 'auth_role' not in st.session_state:
+    st.session_state.auth_role = None  # None (Guest), 'student', or 'teacher'
+
+if 'current_student_id' not in st.session_state:
+    st.session_state.current_student_id = None
+
+if 'teacher_authenticated' not in st.session_state:
+    st.session_state.teacher_authenticated = False
 
 if 'last_seen_qp_page' not in st.session_state:
     st.session_state.last_seen_qp_page = None
@@ -739,8 +847,19 @@ if 'quiz_result_data' not in st.session_state:
 if 'quiz_attempt_nonce' not in st.session_state:
     st.session_state.quiz_attempt_nonce = 0
 
-# Sync with query parameters without overriding button-driven page switches
+# Handle explicit logout query parameter
 if hasattr(st, "query_params"):
+    if st.query_params.get("action") == "logout":
+        st.session_state.auth_role = None
+        st.session_state.current_student_id = None
+        st.session_state.teacher_authenticated = False
+        st.session_state.active_quiz_questions = None
+        st.session_state.quiz_result_data = None
+        st.session_state.active_page = "🏠 Home"
+        st.session_state.last_seen_qp_page = None
+        st.query_params.clear()
+        st.rerun()
+
     qp_page = st.query_params.get("page")
     if qp_page and qp_page != st.session_state.last_seen_qp_page:
         st.session_state.last_seen_qp_page = qp_page
@@ -757,14 +876,10 @@ if hasattr(st, "query_params"):
 # Single prefetch query for all students
 all_students = list(Student.objects.prefetch_related('attempts').order_by('class_name', 'name'))
 
-if 'current_student_id' not in st.session_state or not st.session_state.current_student_id:
-    st.session_state.current_student_id = all_students[0].id if all_students else None
-
 # Resolve current student in memory
-current_student = next((s for s in all_students if s.id == st.session_state.current_student_id), None)
-if not current_student and all_students:
-    current_student = all_students[0]
-    st.session_state.current_student_id = current_student.id
+current_student = None
+if st.session_state.auth_role == "student" and st.session_state.current_student_id:
+    current_student = next((s for s in all_students if s.id == st.session_state.current_student_id), None)
 
 # Topic icon dictionary matching Django templates
 topic_material_icons = {
@@ -791,12 +906,88 @@ topic_badge_names = {
 
 
 # -------------------------------------------------------------
-# 1:1 FIXED TOP NAVBAR (templates/base.html)
+# 1:1 FIXED TOP NAVBAR WITH STRICT ROLE-BASED VISIBILITY
 # -------------------------------------------------------------
-initials = (html.escape(current_student.name[:2].upper()) if current_student and current_student.name else "AL")
-student_display_name = html.escape(current_student.name) if current_student else "Alex Chen"
-student_roll = html.escape(current_student.roll_number) if current_student else "24"
-student_class = html.escape(current_student.class_name) if current_student else "Grade 9-A"
+nav_links_html = ""
+nav_right_html = ""
+
+if st.session_state.auth_role == "student" and current_student:
+    # Student view: strictly NO Teacher Portal
+    dash_active = 'active' if st.session_state.active_page == '🛡️ Student Hub' else ''
+    cur_active = 'active' if st.session_state.active_page == '🏠 Home' else ''
+    lead_active = 'active' if st.session_state.active_page == '🏆 Leaderboard' else ''
+    
+    nav_links_html = f"""
+    <a href="?page=student_hub" target="_self" class="nav-link {dash_active}">Dashboard</a>
+    <a href="?page=home" target="_self" class="nav-link {cur_active}">Curriculum</a>
+    <a href="?page=leaderboard" target="_self" class="nav-link {lead_active}">Leaderboard</a>
+    """
+    
+    initials = html.escape(current_student.name[:2].upper()) if current_student.name else "ST"
+    student_display_name = html.escape(current_student.name)
+    student_roll = html.escape(current_student.roll_number)
+    student_class = html.escape(current_student.class_name)
+    
+    nav_right_html = f"""
+    <a href="?page=student_hub" target="_self" class="student-avatar-pill">
+        <div class="avatar-circle">{initials}</div>
+        <div style="display: flex; flex-direction: column;">
+            <span class="avatar-name">{student_display_name}</span>
+            <span class="avatar-meta">#{student_roll} &bull; {student_class}</span>
+        </div>
+    </a>
+    <a href="?action=logout" target="_self" class="logout-pill-btn" title="Sign Out">
+        <span class="material-symbols-outlined" style="font-size: 14px;">logout</span>
+        <span>Sign Out</span>
+    </a>
+    """
+
+elif st.session_state.auth_role == "teacher":
+    # Teacher view: Curriculum, Leaderboard, Teacher Portal
+    cur_active = 'active' if st.session_state.active_page == '🏠 Home' else ''
+    lead_active = 'active' if st.session_state.active_page == '🏆 Leaderboard' else ''
+    teach_active = 'active' if st.session_state.active_page == '📊 Teacher Portal' else ''
+    
+    nav_links_html = f"""
+    <a href="?page=home" target="_self" class="nav-link {cur_active}">Curriculum</a>
+    <a href="?page=leaderboard" target="_self" class="nav-link {lead_active}">Leaderboard</a>
+    <a href="?page=teacher" target="_self" class="nav-link {teach_active}">Teacher Portal</a>
+    """
+    
+    nav_right_html = f"""
+    <div class="teacher-avatar-pill">
+        <div class="avatar-circle teacher-circle">EDU</div>
+        <div style="display: flex; flex-direction: column;">
+            <span class="avatar-name">Faculty Teacher</span>
+            <span class="avatar-meta" style="color: #34d399;">Authorized</span>
+        </div>
+    </div>
+    <a href="?action=logout" target="_self" class="logout-pill-btn" title="Log Out">
+        <span class="material-symbols-outlined" style="font-size: 14px;">logout</span>
+        <span>Log Out</span>
+    </a>
+    """
+
+else:
+    # Guest view: Curriculum, Leaderboard, and explicit Sign In options
+    cur_active = 'active' if st.session_state.active_page == '🏠 Home' else ''
+    lead_active = 'active' if st.session_state.active_page == '🏆 Leaderboard' else ''
+    
+    nav_links_html = f"""
+    <a href="?page=home" target="_self" class="nav-link {cur_active}">Curriculum</a>
+    <a href="?page=leaderboard" target="_self" class="nav-link {lead_active}">Leaderboard</a>
+    """
+    
+    nav_right_html = f"""
+    <a href="?page=student_login" target="_self" class="btn-signin-student">
+        <span class="material-symbols-outlined" style="font-size: 15px;">person</span>
+        <span>Student Sign-In</span>
+    </a>
+    <a href="?page=teacher_login" target="_self" class="teacher-toggle-btn">
+        <span class="material-symbols-outlined" style="font-size: 15px; color: #e8ff47;">verified_user</span>
+        <span>Teacher Portal</span>
+    </a>
+    """
 
 render_html(f"""
 <header class="fixed-navbar">
@@ -813,12 +1004,9 @@ render_html(f"""
                 </div>
             </a>
 
-            <!-- 4 Clean Nav Tabs matching Django base.html -->
+            <!-- Clean Nav Tabs based on Role -->
             <nav class="nav-links">
-                <a href="?page=student_hub" target="_self" class="nav-link {'active' if st.session_state.active_page == '🛡️ Student Hub' else ''}">Dashboard</a>
-                <a href="?page=home" target="_self" class="nav-link {'active' if st.session_state.active_page == '🏠 Home' else ''}">Curriculum</a>
-                <a href="?page=leaderboard" target="_self" class="nav-link {'active' if st.session_state.active_page == '🏆 Leaderboard' else ''}">Leaderboard</a>
-                <a href="?page=teacher" target="_self" class="nav-link {'active' if st.session_state.active_page == '📊 Teacher Portal' else ''}">Teacher Portal</a>
+                {nav_links_html}
             </nav>
         </div>
 
@@ -828,39 +1016,79 @@ render_html(f"""
                 <span class="status-dot"></span>
                 <span>System Online</span>
             </div>
-            <a href="?page=teacher" target="_self" class="teacher-toggle-btn">
-                <span class="material-symbols-outlined" style="font-size: 15px; color: #e8ff47;">verified_user</span>
-                <span>Teacher Portal</span>
-            </a>
-            <a href="?page=student_hub" target="_self" class="student-avatar-pill">
-                <div class="avatar-circle">{initials}</div>
-                <div style="display: flex; flex-direction: column;">
-                    <span class="avatar-name">{student_display_name}</span>
-                    <span class="avatar-meta">#{student_roll} &bull; {student_class}</span>
-                </div>
-            </a>
+            {nav_right_html}
         </div>
     </div>
 </header>
 """)
 
-# Sidebar Cadet Switcher for developer/tester convenience
+# Sidebar Authentication & Profile Switcher
 with st.sidebar:
-    st.markdown("### 👤 Cadet Profile Switcher")
-    if all_students:
-        student_labels = [f"{s.name} ({s.class_name} • #{s.roll_number})" for s in all_students]
-        current_idx = 0
-        if current_student:
+    st.markdown("### 🔐 Security & Access Control")
+    if st.session_state.auth_role == "student" and current_student:
+        st.markdown(f"""
+        <div style="padding: 12px 14px; background: #0d0d1f; border: 1px solid rgba(232, 255, 71, 0.2); border-radius: 12px; margin-bottom: 12px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #9898b8; text-transform: uppercase;">Active Student Cadet</div>
+            <div style="font-family: 'Clash Display', sans-serif; font-size: 1.1rem; color: #ffffff; font-weight: 700; margin-top: 2px;">{html.escape(current_student.name)}</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; margin-top: 2px;">Class {html.escape(current_student.class_name)} &bull; Roll #{html.escape(current_student.roll_number)}</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: #34d399; margin-top: 2px;">Rank: {html.escape(current_student.rank_title)}</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Switch Cadet Option for Testing
+        if all_students:
+            student_labels = [f"{s.name} ({s.class_name} • #{s.roll_number})" for s in all_students]
+            cur_idx = 0
             for i, s in enumerate(all_students):
                 if s.id == current_student.id:
-                    current_idx = i
+                    cur_idx = i
                     break
+            chosen_label = st.selectbox("Switch Cadet Profile:", student_labels, index=cur_idx)
+            chosen_obj = all_students[student_labels.index(chosen_label)]
+            if chosen_obj.id != current_student.id:
+                st.session_state.current_student_id = chosen_obj.id
+                st.rerun()
 
-        chosen_label = st.selectbox("Active Cadet:", student_labels, index=current_idx)
-        chosen_student_obj = all_students[student_labels.index(chosen_label)]
-        if chosen_student_obj.id != st.session_state.current_student_id:
-            st.session_state.current_student_id = chosen_student_obj.id
+        if st.button("🚪 Sign Out (Student)", key="sb_btn_student_logout", use_container_width=True):
+            st.session_state.auth_role = None
+            st.session_state.current_student_id = None
+            st.session_state.active_page = "🏠 Home"
+            st.query_params.clear()
             st.rerun()
+
+    elif st.session_state.auth_role == "teacher":
+        st.markdown("""
+        <div style="padding: 12px 14px; background: #0d0d1f; border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; margin-bottom: 12px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #34d399; text-transform: uppercase;">Faculty Educator</div>
+            <div style="font-family: 'Clash Display', sans-serif; font-size: 1.1rem; color: #ffffff; font-weight: 700; margin-top: 2px;">Teacher Console Active</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #c4c4d8; margin-top: 2px;">Full Telemetry & Assessment Control</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if st.button("🚪 Log Out (Teacher)", key="sb_btn_teacher_logout", use_container_width=True):
+            st.session_state.auth_role = None
+            st.session_state.teacher_authenticated = False
+            st.session_state.active_page = "🏠 Home"
+            st.query_params.clear()
+            st.rerun()
+
+    else:
+        st.markdown("""
+        <div style="padding: 12px 14px; background: #0d0d1f; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; margin-bottom: 12px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #9898b8; text-transform: uppercase;">Session Status</div>
+            <div style="font-family: 'Clash Display', sans-serif; font-size: 1.0rem; color: #ffffff; font-weight: 700; margin-top: 2px;">Guest Observer</div>
+            <div style="font-family: 'Cabinet Grotesk', sans-serif; font-size: 0.75rem; color: #c4c4d8; margin-top: 2px;">Sign in to save drill points and unlock badges.</div>
+        </div>
+        """, unsafe_allow_html=True)
+        col_sb1, col_sb2 = st.columns(2)
+        with col_sb1:
+            if st.button("🔑 Student", key="sb_btn_std_login", use_container_width=True):
+                st.session_state.active_page = "🔑 Student Sign-In"
+                st.rerun()
+        with col_sb2:
+            if st.button("🎓 Teacher", key="sb_btn_tch_login", use_container_width=True):
+                st.session_state.active_page = "🎓 Teacher Sign-In"
+                st.rerun()
 
     db_vendor = connection.vendor.upper()
     st.markdown(f"""
@@ -879,59 +1107,84 @@ with st.sidebar:
 if st.session_state.active_page == "🏠 Home":
     total_quizzes_count = QuizAttempt.objects.count()
 
-    # 1. Hero Section matching home.html exactly
-    render_html(f"""
-    <section style="position: relative; z-index: 10; max-width: 1200px; padding: 20px 0 20px 0;">
-        <!-- Top Status Pill -->
-        <div style="display: inline-flex; align-items: center; gap: 10px; background: #0d0d1f; border: 1px solid rgba(255, 255, 255, 0.1); color: #c4c4d8; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; padding: 6px 16px; border-radius: 9999px; margin-bottom: 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-            <div style="width: 8px; height: 8px; background: #e8ff47; border-radius: 50%; box-shadow: 0 0 10px #e8ff47;"></div>
-            <span>CyberSimulator &bull; Interactive Defense Platform &bull; Powered by GPT-5</span>
-        </div>
-
-        <!-- Brutalist Editorial Headline -->
-        <h1 style="font-family: 'Clash Display', sans-serif; font-size: clamp(3.6rem, 8vw, 7.5rem); font-weight: 700; line-height: 0.92; letter-spacing: -0.03em; margin: 0 0 28px 0;">
-            <span style="display: block; color: #ffffff;">We forge</span>
-            <span style="display: block; -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.4); color: transparent;" class="text-stroke">cyber defense</span>
-            <span style="display: block; color: #ffffff;">that holds.</span>
-        </h1>
-
-        <!-- Subtitle -->
-        <p style="font-family: 'Cabinet Grotesk', sans-serif; color: #9898b8; font-size: 1.25rem; max-width: 720px; line-height: 1.65; margin: 0 0 36px 0;">
-            Interactive cybersecurity quizzes designed for students. Spot deceptive phishing lures, master strong password habits, outsmart AI deepfakes, and build real-world digital resilience.
-        </p>
-
-        <!-- CTA Buttons -->
-        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 40px;">
+    # Dynamic CTA Buttons based on Auth Role
+    if st.session_state.auth_role == "student" and current_student:
+        cta_buttons_html = """
             <a href="?page=student_hub" target="_self" class="btn-primary">
-                <span>{'Open Dashboard' if current_student else 'Start Learning (No Passwords)'}</span>
+                <span>Open Dashboard</span>
                 <span>&rarr;</span>
             </a>
             <a href="?page=leaderboard" target="_self" class="btn-secondary">
                 <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">trophy</span>
                 <span>Leaderboard</span>
             </a>
-            <a href="?page=teacher" target="_self" class="btn-ghost">
-                <span>Teacher Portal &rarr;</span>
+        """
+    elif st.session_state.auth_role == "teacher":
+        cta_buttons_html = """
+            <a href="?page=teacher" target="_self" class="btn-primary">
+                <span>Teacher Portal</span>
+                <span>&rarr;</span>
             </a>
+            <a href="?page=leaderboard" target="_self" class="btn-secondary">
+                <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">trophy</span>
+                <span>Leaderboard</span>
+            </a>
+        """
+    else:
+        cta_buttons_html = """
+            <a href="?page=student_login" target="_self" class="btn-primary">
+                <span>Start Learning (No Passwords)</span>
+                <span>&rarr;</span>
+            </a>
+            <a href="?page=leaderboard" target="_self" class="btn-secondary">
+                <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">trophy</span>
+                <span>Leaderboard</span>
+            </a>
+        """
+
+    # 1. Hero Section matching home.html exactly
+    render_html(f"""
+    <section style="position: relative; z-index: 10; max-width: 1200px; padding: 20px 0 20px 0;">
+        <!-- Top Status Pill: Explicit Curriculum Context (Audit Issue #3) -->
+        <div style="display: inline-flex; align-items: center; gap: 10px; background: #0d0d1f; border: 1px solid rgba(255, 255, 255, 0.1); color: #c4c4d8; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; padding: 6px 16px; border-radius: 9999px; margin-bottom: 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            <div style="width: 8px; height: 8px; background: #e8ff47; border-radius: 50%; box-shadow: 0 0 10px #e8ff47;"></div>
+            <span>CyberSimulator &bull; Interactive Defense Curriculum &bull; Powered by GPT-5</span>
         </div>
 
-        <!-- Telemetry Stats Row -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; padding-top: 28px; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 10px;">
+        <!-- Brutalist Editorial Headline -->
+        <h1 style="font-family: 'Clash Display', 'Cabinet Grotesk', sans-serif; font-size: clamp(3.6rem, 8vw, 7.5rem); font-weight: 700; line-height: 0.92; letter-spacing: -0.03em; margin: 0 0 28px 0;">
+            <span style="display: block; color: #ffffff;">We forge</span>
+            <span class="text-stroke">cyber defense</span>
+            <span style="display: block; color: #ffffff;">that holds.</span>
+        </h1>
+
+        <!-- Subtitle with Curriculum Focus -->
+        <p style="font-family: 'Cabinet Grotesk', sans-serif; color: #9898b8; font-size: 1.25rem; max-width: 720px; line-height: 1.65; margin: 0 0 36px 0;">
+            Interactive cybersecurity curriculum & simulation drills designed for students. Spot deceptive phishing lures, master strong password habits, outsmart AI deepfakes, and build real-world digital resilience.
+        </p>
+
+        <!-- CTA Buttons: Unified Secondary Action (Audit Issues #1 & #2) -->
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 40px;">
+            {cta_buttons_html}
+        </div>
+
+        <!-- Telemetry Stats Row: Balanced 4-Column Quantitative Grid with Uniform Gutters (Audit Issues #4, #5, #6) -->
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; padding-top: 28px; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 10px;">
             <div>
-                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.6rem, 5vw, 4rem); font-weight: 700; color: #ffffff; line-height: 1;">8</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 6px;">Core Topics</div>
+                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">8</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Core Topics</div>
             </div>
             <div>
-                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.6rem, 5vw, 4rem); font-weight: 700; color: #ffffff; line-height: 1;">0</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 6px;">Passwords Stored</div>
+                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">100%</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Passwordless</div>
             </div>
             <div>
-                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.6rem, 5vw, 4rem); font-weight: 700; color: #ffffff; line-height: 1;">{total_quizzes_count}+</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 6px;">Quizzes Completed</div>
+                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">{total_quizzes_count}+</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Quizzes Taken</div>
             </div>
             <div>
-                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.6rem, 5vw, 4rem); font-weight: 700; color: #ffffff; line-height: 1;">GPT-5</div>
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 6px;">AI Cyber Mentor</div>
+                <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">24/7</div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">AI Mentorship</div>
             </div>
         </div>
     </section>
@@ -1037,8 +1290,32 @@ if st.session_state.active_page == "🏠 Home":
 # PAGE 2: 🛡️ STUDENT DASHBOARD (1:1 with student_dashboard.html)
 # =============================================================
 elif st.session_state.active_page == "🛡️ Student Hub":
+    if not current_student and st.session_state.auth_role == "teacher" and all_students:
+        st.info("👨‍🏫 Educator Preview Mode: Showing cadet dashboard for evaluation.")
+        current_student = all_students[0]
+
     if not current_student:
-        st.warning("No student profile found. Please select or enroll a student.")
+        render_html("""
+        <div style="max-width: 580px; margin: 40px auto; padding: 40px 32px; border-radius: 24px; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🛡️ 🔑</div>
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; border-radius: 9999px; background: rgba(232, 255, 71, 0.1); border: 1px solid rgba(232, 255, 71, 0.25); color: #e8ff47; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; margin-bottom: 16px;">
+                <span>CADET AUTHENTICATION REQUIRED</span>
+            </div>
+            <h2 style="font-family: 'Clash Display', sans-serif; font-size: 1.8rem; color: #ffffff; margin: 0 0 12px 0;">Student Sign-In Required</h2>
+            <p style="color: #c4c4d8; font-size: 0.95rem; line-height: 1.6; margin: 0 0 24px 0;">
+                Please sign in with your cadet name, grade, and roll number to access your personal dashboard, track drill scores, and earn mastery badges.
+            </p>
+        </div>
+        """)
+        col_std1, col_std2 = st.columns(2)
+        with col_std1:
+            if st.button("🔑 Sign In as Student", key="btn_hub_require_login", type="primary", use_container_width=True):
+                st.session_state.active_page = "🔑 Student Sign-In"
+                st.rerun()
+        with col_std2:
+            if st.button("← Back to Curriculum", key="btn_hub_back_home", type="secondary", use_container_width=True):
+                st.session_state.active_page = "🏠 Home"
+                st.rerun()
     else:
         student_attempts = current_student.attempts.all()
         earned_badges = current_student.get_earned_badges()
@@ -1427,8 +1704,20 @@ elif st.session_state.active_page == "🛡️ Student Hub":
 # PAGE 3: 📝 QUIZ ARENA (1:1 with quiz_take.html & quiz_result.html)
 # =============================================================
 elif st.session_state.active_page == "📝 Quiz Arena":
+    if not current_student and st.session_state.auth_role == "teacher" and all_students:
+        current_student = all_students[0]
+
     if not current_student:
-        st.warning("Please select or enroll a student first in the Dashboard.")
+        st.info("Please sign in as a student cadet to enter the Quiz Arena.")
+        col_qa1, col_qa2 = st.columns(2)
+        with col_qa1:
+            if st.button("🔑 Sign In as Student", key="btn_qa_require_login", type="primary", use_container_width=True):
+                st.session_state.active_page = "🔑 Student Sign-In"
+                st.rerun()
+        with col_qa2:
+            if st.button("← Back to Curriculum", key="btn_qa_back_home", type="secondary", use_container_width=True):
+                st.session_state.active_page = "🏠 Home"
+                st.rerun()
     else:
         topic_id = st.session_state.active_quiz_topic_id or CYBER_TOPICS[0]['id']
         topic = get_topic_by_id(topic_id) or CYBER_TOPICS[0]
@@ -1948,79 +2237,375 @@ elif st.session_state.active_page == "🏆 Leaderboard":
 # PAGE 5: 📜 CERTIFICATE OF CYBER MASTERY (1:1 with certificate.html)
 # =============================================================
 elif st.session_state.active_page == "📜 Certificate":
+    if not current_student and st.session_state.auth_role == "teacher" and all_students:
+        current_student = all_students[0]
+
     if not current_student:
-        st.warning("Please select a student first in the Dashboard.")
+        st.info("Please sign in as a student cadet to view and download your Certificate.")
+        col_cf1, col_cf2 = st.columns(2)
+        with col_cf1:
+            if st.button("🔑 Sign In as Student", key="btn_cert_require_login", type="primary", use_container_width=True):
+                st.session_state.active_page = "🔑 Student Sign-In"
+                st.rerun()
+        with col_cf2:
+            if st.button("← Back to Curriculum", key="btn_cert_back_home", type="secondary", use_container_width=True):
+                st.session_state.active_page = "🏠 Home"
+                st.rerun()
     else:
         earned_badges = current_student.get_earned_badges()
         unlocked_count = sum(1 for b in earned_badges if b['earned'])
         now_str = datetime.now().strftime("%B %d, %Y")
+        cert_id = f"CS-CERT-2026-{current_student.id:04d}-{current_student.roll_number}"
 
+        # Generate official vector PDF
+        pdf_bytes = generate_certificate_pdf(
+            student_name=current_student.name,
+            class_name=current_student.class_name,
+            roll_number=current_student.roll_number,
+            rank_title=current_student.rank_title,
+            badges_count=unlocked_count,
+            total_quizzes=current_student.total_attempts,
+            avg_accuracy=current_student.average_score,
+            cert_id=cert_id,
+            issue_date=now_str
+        )
+
+        # Top Control Bar (Dashboard link, Registry ID, and Download PDF button)
+        bar_left, bar_right = st.columns([7, 5], vertical_alignment="center")
+        with bar_left:
+            render_html(f"""
+            <div style="background: rgba(13, 13, 31, 0.9); border-radius: 16px; padding: 12px 18px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+                <a href="?page=student_hub" target="_self" style="color: #c4c4d8; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">arrow_back</span>
+                    <span>Dashboard</span>
+                </a>
+                <span style="color: rgba(255,255,255,0.2);">&bull;</span>
+                <span style="color: #9898b8;">Registry ID: <strong style="color: #e8ff47;">{cert_id}</strong></span>
+            </div>
+            """)
+        with bar_right:
+            st.download_button(
+                label="📥 Download Certificate (PDF)",
+                data=pdf_bytes,
+                file_name=f"CyberShield_Certificate_{current_student.roll_number}.pdf",
+                mime="application/pdf",
+                key="btn_download_cert_pdf",
+                use_container_width=True
+            )
+
+        # Official Certificate Canvas (1:1 with certificate.html)
         render_html(f"""
-        <div style="background: radial-gradient(circle, #0e0e24 0%, #060610 100%); border: 3px solid #e8ff47; border-radius: 24px; padding: 48px; max-width: 900px; margin: 20px auto; box-shadow: 0 0 50px rgba(232, 255, 71, 0.2); text-align: center; position: relative;">
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #e8ff47; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px;">
-                NATIONAL CYBERSECURITY EDUCATION INITIATIVE
+        <div class="certificate-container" style="background: #080814; border-radius: 24px; padding: clamp(24px, 5vw, 48px); border: 2px solid rgba(232, 255, 71, 0.5); position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 30px rgba(232, 255, 71, 0.15); max-width: 920px; margin: 16px auto 30px auto;">
+            <!-- Watermark Shield Icon -->
+            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0.02; pointer-events: none; color: #e8ff47;">
+                <span class="material-symbols-outlined" style="font-size: 400px;">verified_user</span>
             </div>
-            
-            <h1 style="font-family: 'Clash Display', sans-serif; font-size: 2.8rem; font-weight: 700; color: #ffffff; letter-spacing: -0.03em; margin: 0 0 16px 0;">
-                CERTIFICATE OF MASTERY
-            </h1>
-            
-            <p style="color: #9898b8; font-size: 1rem; margin-bottom: 24px;">
-                THIS IS PROUDLY CONFERRED UPON
-            </p>
-            
-            <div style="font-family: 'Clash Display', sans-serif; font-size: 3.2rem; font-weight: 700; color: #e8ff47; text-shadow: 0 0 25px rgba(232,255,71,0.5); margin-bottom: 8px;">
-                {html.escape(current_student.name)}
+
+            <!-- Certificate Header -->
+            <div style="text-align: center; position: relative; z-index: 10; margin-bottom: 24px;">
+                <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px; border-radius: 9999px; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; text-transform: uppercase; background: #04040a; border: 1px solid rgba(232, 255, 71, 0.3); color: #e8ff47; font-weight: bold;">
+                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #e8ff47;"></span>
+                    <span>CYBERSHIELD</span>
+                </div>
+                <h1 style="font-family: 'Clash Display', 'Cabinet Grotesk', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; letter-spacing: -0.02em; color: #ffffff; text-transform: uppercase; margin: 12px 0 6px 0;">
+                    Certificate of Cyber Mastery
+                </h1>
+                <p style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #9898b8; letter-spacing: 0.15em; text-transform: uppercase; margin: 0;">
+                    Official Certificate &bull; Digital Safety Distinction
+                </p>
             </div>
-            
-            <p style="color: #c4c4d8; font-size: 1.1rem; margin-bottom: 30px;">
-                {html.escape(current_student.class_name)} &bull; Roll #{html.escape(current_student.roll_number)}
-            </p>
-            
-            <p style="color: #c4c4d8; max-width: 650px; margin: 0 auto 30px auto; line-height: 1.6; font-size: 0.95rem;">
-                For demonstrating exceptional aptitude in identifying digital deception, defending against phishing lures, safeguarding one-time credentials, and achieving the distinguished rank of <strong>{html.escape(current_student.rank_title)}</strong> with <strong>{current_student.total_score} points</strong> and <strong>{unlocked_count} unlocked distinction badges</strong>.
-            </p>
-            
-            <div style="display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #9898b8;">
-                <div>
-                    <div>DATE ISSUED</div>
-                    <div style="color: #ffffff; font-weight: bold; margin-top: 4px;">{now_str}</div>
+
+            <!-- Recipient Information -->
+            <div style="text-align: center; position: relative; z-index: 10; margin-bottom: 28px;">
+                <p style="font-family: 'Cabinet Grotesk', sans-serif; font-size: 0.88rem; color: #9898b8; margin: 0 0 10px 0;">
+                    This certifies that
+                </p>
+                <div style="font-family: 'Clash Display', 'Cabinet Grotesk', sans-serif; font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 700; color: #e8ff47; letter-spacing: -0.02em; text-shadow: 0 0 25px rgba(232,255,71,0.3); line-height: 1.1; margin-bottom: 12px;">
+                    {html.escape(current_student.name)}
                 </div>
-                <div>
-                    <div style="font-size: 2.5rem;">🛡️</div>
-                    <div style="color: #e8ff47; font-weight: bold;">VERIFIED ACADEMY SEAL</div>
+                <p style="font-family: 'Cabinet Grotesk', sans-serif; font-size: 0.95rem; color: #c4c4d8; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+                    representing class <strong style="color: #ffffff;">{html.escape(current_student.class_name)}</strong> (Roll #{html.escape(current_student.roll_number)}), has demonstrated verified mastery in threat detection, phishing identification, password security, and safe online computing practices.
+                </p>
+            </div>
+
+            <!-- Achievement Metrics Grid (4 Stat Boxes) -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 700px; margin: 0 auto 32px auto; position: relative; z-index: 10; font-family: 'JetBrains Mono', monospace;">
+                <div style="padding: 12px 8px; border-radius: 12px; background: #04040a; border: 1px solid rgba(255,255,255,0.06); text-align: center;">
+                    <div style="font-size: 0.65rem; color: #9898b8; font-weight: 600; text-transform: uppercase;">STUDENT RANK</div>
+                    <div style="font-weight: 700; font-size: 0.85rem; color: #e8ff47; font-family: 'Clash Display', sans-serif; margin-top: 4px;">{html.escape(current_student.rank_title)}</div>
                 </div>
-                <div>
-                    <div>EVALUATION ENGINE</div>
-                    <div style="color: #ffffff; font-weight: bold; margin-top: 4px;">GPT-5 / Azure AI</div>
+                <div style="padding: 12px 8px; border-radius: 12px; background: #04040a; border: 1px solid rgba(255,255,255,0.06); text-align: center;">
+                    <div style="font-size: 0.65rem; color: #9898b8; font-weight: 600; text-transform: uppercase;">BADGES EARNED</div>
+                    <div style="font-weight: 700; font-size: 0.85rem; color: #e8ff47; font-family: 'Clash Display', sans-serif; margin-top: 4px;">{unlocked_count} / 8</div>
                 </div>
+                <div style="padding: 12px 8px; border-radius: 12px; background: #04040a; border: 1px solid rgba(255,255,255,0.06); text-align: center;">
+                    <div style="font-size: 0.65rem; color: #9898b8; font-weight: 600; text-transform: uppercase;">QUIZZES COMPLETED</div>
+                    <div style="font-weight: 700; font-size: 0.85rem; color: #ffffff; font-family: 'Clash Display', sans-serif; margin-top: 4px;">{current_student.total_attempts}</div>
+                </div>
+                <div style="padding: 12px 8px; border-radius: 12px; background: #04040a; border: 1px solid rgba(255,255,255,0.06); text-align: center;">
+                    <div style="font-size: 0.65rem; color: #9898b8; font-weight: 600; text-transform: uppercase;">ACCURACY RATE</div>
+                    <div style="font-weight: 700; font-size: 0.85rem; color: #e8ff47; font-family: 'Clash Display', sans-serif; margin-top: 4px;">{current_student.average_score:.0f}%</div>
+                </div>
+            </div>
+
+            <!-- Signatures & Seal Footer -->
+            <div style="padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10; font-family: 'JetBrains Mono', monospace; flex-wrap: wrap; gap: 16px;">
+                <div style="text-align: left;">
+                    <div style="font-size: 1rem; color: #e8ff47; font-family: 'Clash Display', sans-serif; font-weight: 700;">CyberQuizAgent (GPT-5)</div>
+                    <div style="width: 140px; height: 1px; background: rgba(255,255,255,0.15); margin: 4px 0;"></div>
+                    <div style="font-size: 0.68rem; color: #9898b8; text-transform: uppercase; letter-spacing: 0.1em;">AI Cyber Mentor</div>
+                </div>
+
+                <div style="width: 72px; height: 72px; border-radius: 50%; border: 2px dashed #e8ff47; background: #04040a; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(232, 255, 71, 0.2);">
+                    <span class="material-symbols-outlined" style="color: #e8ff47; font-size: 20px;">verified</span>
+                    <div style="font-size: 0.5rem; font-weight: bold; color: #e8ff47; letter-spacing: 0.1em; margin-top: 2px;">VERIFIED</div>
+                    <div style="font-size: 0.45rem; color: #9898b8;">2026</div>
+                </div>
+
+                <div style="text-align: right;">
+                    <div style="font-size: 1rem; color: #ffffff; font-family: 'Clash Display', sans-serif; font-weight: 700;">Course Instructor</div>
+                    <div style="width: 140px; height: 1px; background: rgba(255,255,255,0.15); margin: 4px 0 4px auto;"></div>
+                    <div style="font-size: 0.68rem; color: #9898b8; text-transform: uppercase; letter-spacing: 0.1em;">Instructor &bull; {now_str}</div>
+                </div>
+            </div>
+
+            <!-- Credential Serial -->
+            <div style="text-align: center; margin-top: 20px; font-size: 0.68rem; font-family: 'JetBrains Mono', monospace; color: #9898b8;">
+                Certificate ID: <span style="color: #e8ff47; font-weight: bold;">{cert_id}</span> &bull; Authenticated by CyberSimulator Threat Laboratory
             </div>
         </div>
         """)
 
-        st.markdown("<div style='margin-top: 25px; text-align: center;'>", unsafe_allow_html=True)
-        st.info("💡 Tip: Use your browser's Print feature (`Cmd + P` or `Ctrl + P`) to save or print this official certificate as PDF.")
-        st.markdown("</div>", unsafe_allow_html=True)
-
 
 # =============================================================
-# PAGE 6: 📊 TEACHER ANALYTICS PORTAL (1:1 with dashboard.html)
+# PAGE 6: 🔑 DEDICATED STUDENT SIGN-IN PORTAL
 # =============================================================
-elif st.session_state.active_page == "📊 Teacher Portal":
+elif st.session_state.active_page == "🔑 Student Sign-In":
     render_html("""
-    <div style="margin-bottom: 24px;">
-        <span class="cyber-pill cyber-pill-signal" style="margin-bottom: 8px;">EDUCATOR CONSOLE</span>
-        <h1 style="margin: 0; font-size: 2.5rem;">Teacher Analytics & Overview</h1>
-        <p style="color: #9898b8; margin: 4px 0 0 0;">Track classroom proficiency, inspect individual attempts, and export grading reports.</p>
+    <div style="max-width: 620px; margin: 20px auto 30px auto; text-align: center;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 9999px; background: rgba(232, 255, 71, 0.1); border: 1px solid rgba(232, 255, 71, 0.25); color: #e8ff47; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; margin-bottom: 16px;">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: #e8ff47; box-shadow: 0 0 8px #e8ff47;"></span>
+            <span>STUDENT ACCESS &bull; PASSWORDLESS SIGN-IN</span>
+        </div>
+        <h1 style="font-family: 'Clash Display', sans-serif; font-size: 2.5rem; font-weight: 700; color: #ffffff; margin: 0 0 10px 0; letter-spacing: -0.02em;">
+            Student Sign-In
+        </h1>
+        <p style="font-family: 'Cabinet Grotesk', sans-serif; color: #9898b8; font-size: 1.05rem; line-height: 1.6; margin: 0 auto; max-width: 520px;">
+            Enter your name, grade, and roll number to start your interactive cybersecurity drills. No passwords required.
+        </p>
     </div>
     """)
 
-    TEACHER_KEY = os.getenv("TEACHER_ACCESS_KEY") or (st.secrets.get("TEACHER_ACCESS_KEY") if hasattr(st, "secrets") else None) or "TeacherPass123!"
-    auth_pass = st.sidebar.text_input("Educator Access Key", type="password", value="")
-
-    if not auth_pass or not hmac.compare_digest(auth_pass, TEACHER_KEY):
-        st.warning("Please enter your educator access key in the sidebar to access student analytics.")
+    if st.session_state.auth_role == "student" and current_student:
+        st.success(f"You are currently signed in as cadet **{current_student.name}** ({current_student.class_name} • #{current_student.roll_number}).")
+        col_c1, col_c2 = st.columns(2)
+        with col_c1:
+            if st.button("🛡️ Open Student Dashboard", type="primary", use_container_width=True):
+                st.session_state.active_page = "🛡️ Student Hub"
+                st.rerun()
+        with col_c2:
+            if st.button("🚪 Sign Out Cadet", type="secondary", use_container_width=True):
+                st.session_state.auth_role = None
+                st.session_state.current_student_id = None
+                st.session_state.active_page = "🏠 Home"
+                st.rerun()
     else:
+        with st.container():
+            st.markdown("""
+            <div style="max-width: 620px; margin: 0 auto; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 28px 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; margin-bottom: 16px;">
+                    Enter Cadet Credentials
+                </div>
+            """, unsafe_allow_html=True)
+
+            with st.form("student_login_form"):
+                std_name = st.text_input("Full Name", placeholder="e.g. Alex Chen")
+                class_options = ["8B", "7A", "8A", "9C"]
+                class_labels = {
+                    "8B": "Grade 8 • Section B (Mr. Vance)",
+                    "7A": "Grade 7 • Section A (Ms. Alvarez)",
+                    "8A": "Grade 8 • Section A (Dr. Thorne)",
+                    "9C": "Grade 9 • Section C (Coach Ramirez)",
+                }
+                std_class = st.selectbox("Grade & Section", class_options, format_func=lambda x: class_labels.get(x, x))
+                std_roll = st.text_input("Class Roll Number", placeholder="e.g. 24")
+
+                submit_btn = st.form_submit_button("Start Learning (No Passwords) →", type="primary", use_container_width=True)
+                if submit_btn:
+                    if not std_name.strip():
+                        st.error("Please enter your name.")
+                    elif not std_roll.strip():
+                        st.error("Please enter your roll number.")
+                    else:
+                        student_obj, created = Student.objects.get_or_create(
+                            roll_number=std_roll.strip(),
+                            class_name=std_class,
+                            defaults={'name': std_name.strip()}
+                        )
+                        if not created and student_obj.name != std_name.strip():
+                            student_obj.name = std_name.strip()
+                            student_obj.save(update_fields=['name'])
+
+                        st.session_state.auth_role = "student"
+                        st.session_state.current_student_id = student_obj.id
+                        st.session_state.active_page = "🛡️ Student Hub"
+                        st.toast(f"Welcome back, {student_obj.name}!")
+                        st.rerun()
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            # Fast 1-Click Cadet Selection for convenience
+            if all_students:
+                st.markdown("<div style='max-width: 620px; margin: 24px auto 0 auto; text-align: center;'>", unsafe_allow_html=True)
+                st.caption("⚡ Or Quick Sign-In with an enrolled cadet profile:")
+                student_options = {s.id: f"{s.name} ({s.class_name} • #{s.roll_number})" for s in all_students}
+                selected_cadet_id = st.selectbox("Select Enrolled Cadet:", list(student_options.keys()), format_func=lambda x: student_options[x], label_visibility="collapsed")
+                if st.button("Sign In as Selected Cadet →", key="btn_quick_cadet_login", use_container_width=True):
+                    st.session_state.auth_role = "student"
+                    st.session_state.current_student_id = selected_cadet_id
+                    st.session_state.active_page = "🛡️ Student Hub"
+                    st.rerun()
+                st.markdown("</div>", unsafe_allow_html=True)
+
+            # Link to teacher portal
+            st.markdown("<div style='max-width: 620px; margin: 30px auto 0 auto; text-align: center;'>", unsafe_allow_html=True)
+            if st.button("Are you a faculty educator? Sign in to Teacher Portal →", key="btn_switch_to_teacher_portal", type="secondary"):
+                st.session_state.active_page = "🎓 Teacher Sign-In"
+                st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
+
+
+# =============================================================
+# PAGE 7: 🎓 DEDICATED TEACHER SIGN-IN PORTAL
+# =============================================================
+elif st.session_state.active_page == "🎓 Teacher Sign-In":
+    render_html("""
+    <div style="max-width: 520px; margin: 20px auto 30px auto; text-align: center;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 9999px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; margin-bottom: 16px;">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px #34d399;"></span>
+            <span>TEACHER PORTAL &bull; FACULTY AUTHENTICATION</span>
+        </div>
+        <div style="width: 48px; height: 48px; border-radius: 14px; background: #080812; border: 1px solid rgba(232, 255, 71, 0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; color: #e8ff47;">
+            <span class="material-symbols-outlined" style="font-size: 26px;">school</span>
+        </div>
+        <h1 style="font-family: 'Clash Display', sans-serif; font-size: 2.2rem; font-weight: 700; color: #ffffff; margin: 0 0 10px 0; letter-spacing: -0.02em;">
+            Teacher Sign-In
+        </h1>
+        <p style="font-family: 'Cabinet Grotesk', sans-serif; color: #9898b8; font-size: 0.95rem; line-height: 1.6; margin: 0 auto; max-width: 480px;">
+            Access student progress reports, review quiz attempts, and configure AI quiz questions.
+        </p>
+    </div>
+    """)
+
+    if st.session_state.auth_role == "student" and current_student:
+        st.info(f"Notice: You are currently active as cadet **{current_student.name}**. Entering the Teacher Portal requires faculty credentials.")
+
+    if st.session_state.auth_role == "teacher":
+        st.success("You are currently authenticated with Faculty clearance.")
+        col_t1, col_t2 = st.columns(2)
+        with col_t1:
+            if st.button("📊 Enter Teacher Portal", type="primary", use_container_width=True):
+                st.session_state.active_page = "📊 Teacher Portal"
+                st.rerun()
+        with col_t2:
+            if st.button("🚪 Log Out of Faculty", type="secondary", use_container_width=True):
+                st.session_state.auth_role = None
+                st.session_state.teacher_authenticated = False
+                st.session_state.active_page = "🏠 Home"
+                st.rerun()
+    else:
+        with st.container():
+            st.markdown("""
+            <div style="max-width: 520px; margin: 0 auto; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 28px 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; margin-bottom: 16px;">
+                    Faculty Credentials
+                </div>
+            """, unsafe_allow_html=True)
+
+            TEACHER_KEY = os.getenv("TEACHER_ACCESS_KEY") or (st.secrets.get("TEACHER_ACCESS_KEY") if hasattr(st, "secrets") else None) or "TeacherPass123!"
+
+            with st.form("teacher_login_form"):
+                teacher_user = st.text_input("Teacher Username", value="prof_jones", placeholder="Username")
+                teacher_pass = st.text_input("Password / Educator Key", type="password", placeholder="Enter faculty password")
+                tch_submit = st.form_submit_button("Sign In to Portal →", type="primary", use_container_width=True)
+
+                if tch_submit:
+                    if not teacher_pass:
+                        st.error("Please enter the educator access password.")
+                    elif hmac.compare_digest(teacher_pass, TEACHER_KEY):
+                        # Valid faculty key
+                        st.session_state.auth_role = "teacher"
+                        st.session_state.teacher_authenticated = True
+                        st.session_state.current_student_id = None
+                        st.session_state.active_page = "📊 Teacher Portal"
+                        st.toast(f"Welcome, {teacher_user}!")
+                        st.rerun()
+                    else:
+                        st.error("Invalid credentials. Please verify your faculty username and password.")
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            # Quick Demo Sign-In
+            st.markdown("<div style='max-width: 520px; margin: 20px auto 0 auto;'>", unsafe_allow_html=True)
+            if st.button("⚡ Quick Sign-In (Demo Faculty: TeacherPass123!)", key="btn_quick_faculty_login", use_container_width=True):
+                st.session_state.auth_role = "teacher"
+                st.session_state.teacher_authenticated = True
+                st.session_state.current_student_id = None
+                st.session_state.active_page = "📊 Teacher Portal"
+                st.rerun()
+
+            st.markdown("<div style='text-align: center; margin-top: 24px;'>", unsafe_allow_html=True)
+            if st.button("← Switch to Student Sign-In", key="btn_switch_to_student_portal", type="secondary"):
+                st.session_state.active_page = "🔑 Student Sign-In"
+                st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+
+# =============================================================
+# PAGE 8: 📊 TEACHER ANALYTICS PORTAL (1:1 with dashboard.html)
+# =============================================================
+elif st.session_state.active_page == "📊 Teacher Portal":
+    if st.session_state.auth_role == "student":
+        # ACCESS DENIED FOR STUDENTS
+        render_html(f"""
+        <div style="max-width: 600px; margin: 40px auto; padding: 40px 32px; border-radius: 24px; background: #080812; border: 1px solid rgba(255, 107, 53, 0.4); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🛡️ ⛔</div>
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px; border-radius: 9999px; background: rgba(255, 107, 53, 0.15); border: 1px solid rgba(255, 107, 53, 0.3); color: #ff6b35; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; margin-bottom: 16px;">
+                <span>CLEARANCE LEVEL RESTRICTED</span>
+            </div>
+            <h2 style="font-family: 'Clash Display', sans-serif; font-size: 1.8rem; color: #ffffff; margin: 0 0 12px 0;">Teacher Portal Clearance Required</h2>
+            <p style="color: #c4c4d8; font-size: 0.95rem; line-height: 1.6; margin: 0 0 24px 0;">
+                The Teacher Analytics Portal is strictly reserved for verified faculty and instructors. Active student cadets ({html.escape(current_student.name) if current_student else 'Cadet'}) do not have permission to view class-wide telemetry or question generators.
+            </p>
+        </div>
+        """)
+        col_bl1, col_bl2 = st.columns(2)
+        with col_bl1:
+            if st.button("← Return to Student Dashboard", key="btn_denied_return_dash", type="primary", use_container_width=True):
+                st.session_state.active_page = "🛡️ Student Hub"
+                st.rerun()
+        with col_bl2:
+            if st.button("Sign Out & Enter as Teacher", key="btn_denied_goto_teacher", type="secondary", use_container_width=True):
+                st.session_state.auth_role = None
+                st.session_state.current_student_id = None
+                st.session_state.active_page = "🎓 Teacher Sign-In"
+                st.rerun()
+
+    elif st.session_state.auth_role != "teacher" and not st.session_state.teacher_authenticated:
+        # Prompt to sign in as teacher
+        st.session_state.active_page = "🎓 Teacher Sign-In"
+        st.rerun()
+
+    else:
+        render_html("""
+        <div style="margin-bottom: 24px;">
+            <span class="cyber-pill cyber-pill-signal" style="margin-bottom: 8px;">EDUCATOR CONSOLE ACTIVE</span>
+            <h1 style="margin: 0; font-size: 2.5rem;">Teacher Analytics & Overview</h1>
+            <p style="color: #9898b8; margin: 4px 0 0 0;">Track classroom proficiency, inspect individual attempts, and export grading reports.</p>
+        </div>
+        """)
+
         all_attempts = QuizAttempt.objects.all()
 
         # 4 Top Metric Cards (1:1 with dashboard.html)

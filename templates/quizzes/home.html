@@ -15,9 +15,10 @@
     <section class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-24 flex flex-col items-start">
         
         <!-- Top Status Pill -->
+        <!-- Top Status Pill: Explicit Curriculum Context (Audit Issue #3) -->
         <div class="bg-ink-800 border border-white/10 text-mist-700 font-mono text-xs px-4 py-2 rounded-full mb-10 flex items-center gap-2.5 shadow-lg">
             <div class="w-2 h-2 bg-signal rounded-full animate-pulse-slow"></div>
-            <span>CyberSimulator &bull; Interactive Defense Platform &bull; Powered by GPT-5</span>
+            <span>CyberSimulator &bull; Interactive Defense Curriculum &bull; Powered by GPT-5</span>
         </div>
 
         <!-- Brutalist Editorial Headline -->
@@ -27,12 +28,12 @@
             <span class="block text-white">that holds.</span>
         </h1>
 
-        <!-- Subtitle -->
+        <!-- Subtitle with Curriculum Focus -->
         <p class="font-body text-mist-900 text-lg md:text-xl max-w-2xl mb-10 leading-relaxed">
-            Interactive cybersecurity quizzes designed for students. Spot deceptive phishing lures, master strong password habits, outsmart AI deepfakes, and build real-world digital resilience.
+            Interactive cybersecurity curriculum & simulation drills designed for students. Spot deceptive phishing lures, master strong password habits, outsmart AI deepfakes, and build real-world digital resilience.
         </p>
 
-        <!-- CTA Buttons -->
+        <!-- CTA Buttons: Unified Secondary Action (Audit Issues #1 & #2) -->
         <div class="flex flex-wrap items-center gap-4 sm:gap-6 mb-16">
             {% if current_student %}
                 <a href="{% url 'student_dashboard' %}" class="px-8 py-4 rounded-full bg-signal text-ink-950 font-display font-bold text-sm tracking-wide hover:bg-signal-dim shadow-[0_0_25px_rgba(232,255,71,0.25)] flex items-center gap-2 transition-all">
@@ -50,30 +51,25 @@
                 <span class="material-symbols-outlined text-sm text-signal">trophy</span>
                 <span>Leaderboard</span>
             </a>
-
-            <a href="{% url 'teacher_dashboard' %}" class="px-6 py-4 text-mist-700 hover:text-white font-mono text-xs uppercase tracking-wider transition-colors flex items-center gap-1.5">
-                <span>Teacher Portal</span>
-                <span>&rarr;</span>
-            </a>
         </div>
 
-        <!-- Telemetry Stats Row -->
-        <div class="w-full pt-10 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-6">
+        <!-- Telemetry Stats Row: Balanced 4-Column Quantitative Grid with Uniform Gutters (Audit Issues #4, #5, #6) -->
+        <div class="w-full pt-10 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
                 <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">8</p>
-                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-1">Core Topics</p>
+                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-2">Core Topics</p>
             </div>
             <div>
-                <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">0</p>
-                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-1">Passwords Stored</p>
+                <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">100%</p>
+                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-2">Passwordless</p>
             </div>
             <div>
-                <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">{{ total_quizzes|default:"100" }}+</p>
-                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-1">Quizzes Completed</p>
+                <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">{{ total_quizzes|default:"17" }}+</p>
+                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-2">Quizzes Taken</p>
             </div>
             <div>
-                <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">GPT-5</p>
-                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-1">AI Cyber Mentor</p>
+                <p class="font-display text-4xl sm:text-5xl font-bold text-white tracking-tight">24/7</p>
+                <p class="font-mono text-xs text-signal uppercase tracking-wider mt-2">AI Mentorship</p>
             </div>
         </div>
 

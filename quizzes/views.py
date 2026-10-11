@@ -599,3 +599,47 @@ def student_certificate(request):
         'avg_accuracy': avg_accuracy,
     })
 
+
+def student_certificate_pdf(request):
+    """
+    Exports the official Certificate of Cyber Mastery as a downloadable PDF file.
+    """
+    from django.http import HttpResponse
+    from .pdf_service import generate_certificate_pdf
+
+    student_id = request.session.get('student_id')
+    if not student_id:
+        s_param = request.GET.get('id')
+        if s_param and s_param.isdigit():
+            student = get_object_or_404(Student, id=int(s_param))
+        else:
+            messages.info(request, "Please log in to download your Certificate of Cyber Mastery.")
+            return redirect('student_login')
+    else:
+        student = get_object_or_404(Student, id=student_id)
+
+    earned_badges = student.get_earned_badges()
+    badges_unlocked = sum(1 for b in earned_badges if b['earned'])
+    attempts = QuizAttempt.objects.filter(student=student)
+    total_quizzes = attempts.count()
+    avg_accuracy = student.average_score
+    cert_id = f"CS-CERT-2026-{student.id:04d}-{student.roll_number}"
+    issue_date = timezone.now().strftime("%B %d, %Y")
+
+    pdf_bytes = generate_certificate_pdf(
+        student_name=student.name,
+        class_name=student.class_name,
+        roll_number=student.roll_number,
+        rank_title=student.rank_title,
+        badges_count=badges_unlocked,
+        total_quizzes=total_quizzes,
+        avg_accuracy=avg_accuracy,
+        cert_id=cert_id,
+        issue_date=issue_date
+    )
+
+    filename = f"CyberShield_Certificate_{student.roll_number}.pdf"
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+

@@ -18,6 +18,7 @@ urlpatterns = [
     path('api/chat/mentor/', views.chat_mentor_api, name='chat_mentor_api'),
     path('leaderboard/', views.leaderboard_view, name='leaderboard_view'),
     path('student/certificate/', views.student_certificate, name='student_certificate'),
+    path('student/certificate/pdf/', views.student_certificate_pdf, name='student_certificate_pdf'),
     
     # Teacher views
     path('teacher/dashboard/', views.teacher_dashboard, name='teacher_dashboard'),
