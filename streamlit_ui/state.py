@@ -54,7 +54,6 @@ class AppStateManager:
             "active_quiz_questions": None,
             "quiz_result_data": None,
             "quiz_attempt_nonce": 0,
-            "sb_direct_nav": "🏠 Home",
             "_internal_nav": False,
             "_nav_target": None,
         }
@@ -88,7 +87,6 @@ class AppStateManager:
                 st.query_params["page"] = target_slug
                 st.session_state.last_seen_qp_page = target_slug
                 st.session_state.active_page = target_page
-                st.session_state["sb_direct_nav"] = target_page
                 return
 
         # Page query parameter
@@ -109,7 +107,6 @@ class AppStateManager:
                     st.session_state.last_seen_qp_page = "teacher"
 
                 st.session_state.active_page = target_page
-                st.session_state["sb_direct_nav"] = target_page
 
         # Topic query parameter
         qp_topic = st.query_params.get("topic")
@@ -145,7 +142,6 @@ class AppStateManager:
         st.session_state.active_quiz_questions = None
         st.session_state.quiz_result_data = None
         st.session_state.active_page = "🏠 Home"
-        st.session_state["sb_direct_nav"] = "🏠 Home"
         st.session_state.last_seen_qp_page = None
         st.session_state._internal_nav = False
         st.session_state._nav_target = None
@@ -154,7 +150,6 @@ class AppStateManager:
     def navigate_to(cls, page_name: str, topic_id: Optional[str] = None) -> None:
         """Programmatically navigates to a target page and updates query parameters."""
         st.session_state.active_page = page_name
-        st.session_state["sb_direct_nav"] = page_name
         st.session_state._internal_nav = True
         st.session_state._nav_target = page_name
         if topic_id:
