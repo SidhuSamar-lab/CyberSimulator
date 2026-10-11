@@ -231,6 +231,13 @@
                         Teacher Portal
                         <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if 'teacher' in request.path %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
                     </a>
+                    {% elif not current_student %}
+                    <a href="{% url 'teacher_login' %}" 
+                       id="nav-teacher-portal-link"
+                       class="font-body text-sm font-medium tracking-wide transition-colors relative group py-1 {% if 'teacher' in request.path %}text-white font-semibold{% else %}text-mist-900 hover:text-white{% endif %}">
+                        Teacher Portal
+                        <span class="absolute -bottom-1 left-0 h-[2px] bg-signal transition-all duration-300 {% if 'teacher' in request.path %}w-full{% else %}w-0 group-hover:w-full{% endif %}"></span>
+                    </a>
                     {% endif %}
                 </nav>
             </div>
@@ -249,11 +256,6 @@
                     <a href="{% url 'student_login' %}" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-ink-800 border border-white/10 text-mist-700 hover:text-white hover:border-white/20 transition-all text-xs font-mono" title="Switch Operational Role">
                         <span class="material-symbols-outlined text-sm">swap_horiz</span>
                         <span>Student View</span>
-                    </a>
-                {% elif not current_student %}
-                    <a href="{% url 'teacher_login' %}" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-ink-800 border border-white/10 text-mist-700 hover:text-signal hover:border-signal/30 transition-all text-xs font-mono" title="Faculty Access">
-                        <span class="material-symbols-outlined text-sm text-signal">verified_user</span>
-                        <span>Teacher Portal</span>
                     </a>
                 {% endif %}
 

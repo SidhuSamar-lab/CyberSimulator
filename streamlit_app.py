@@ -969,23 +969,21 @@ elif st.session_state.auth_role == "teacher":
     """
 
 else:
-    # Guest view: Curriculum, Leaderboard, and explicit Sign In options
+    # Guest view: Curriculum, Leaderboard, Teacher Portal in primary nav (Audit Issue #1)
     cur_active = 'active' if st.session_state.active_page == '🏠 Home' else ''
     lead_active = 'active' if st.session_state.active_page == '🏆 Leaderboard' else ''
+    teach_active = 'active' if st.session_state.active_page in ['🎓 Teacher Sign-In', '📊 Teacher Portal'] else ''
     
     nav_links_html = f"""
     <a href="?page=home" target="_self" class="nav-link {cur_active}">Curriculum</a>
     <a href="?page=leaderboard" target="_self" class="nav-link {lead_active}">Leaderboard</a>
+    <a href="?page=teacher_login" target="_self" class="nav-link {teach_active}">Teacher Portal</a>
     """
     
     nav_right_html = f"""
     <a href="?page=student_login" target="_self" class="btn-signin-student">
         <span class="material-symbols-outlined" style="font-size: 15px;">person</span>
         <span>Student Sign-In</span>
-    </a>
-    <a href="?page=teacher_login" target="_self" class="teacher-toggle-btn">
-        <span class="material-symbols-outlined" style="font-size: 15px; color: #e8ff47;">verified_user</span>
-        <span>Teacher Portal</span>
     </a>
     """
 
@@ -2237,8 +2235,24 @@ elif st.session_state.active_page == "🏆 Leaderboard":
 # PAGE 5: 📜 CERTIFICATE OF CYBER MASTERY (1:1 with certificate.html)
 # =============================================================
 elif st.session_state.active_page == "📜 Certificate":
-    if not current_student and st.session_state.auth_role == "teacher" and all_students:
-        current_student = all_students[0]
+    if not current_student and all_students:
+        # Instant preview registry for testing & auditing (no login roadblock)
+        cadet_labels = [f"{s.name} (#{s.roll_number} • {s.class_name})" for s in all_students]
+        sel_col1, sel_col2 = st.columns([8, 4], vertical_alignment="center")
+        with sel_col1:
+            chosen_cadet_str = st.selectbox(
+                "Certificate Registry Cadet Preview:",
+                cadet_labels,
+                index=0,
+                key="sel_preview_cadet_cert"
+            )
+            chosen_idx = cadet_labels.index(chosen_cadet_str)
+            current_student = all_students[chosen_idx]
+        with sel_col2:
+            if st.button("🔑 Sign In as Cadet", key="btn_signin_as_preview_cadet", type="primary", use_container_width=True):
+                st.session_state.auth_role = "student"
+                st.session_state.current_student_id = current_student.id
+                st.rerun()
 
     if not current_student:
         st.info("Please sign in as a student cadet to view and download your Certificate.")
@@ -2269,6 +2283,18 @@ elif st.session_state.active_page == "📜 Certificate":
             cert_id=cert_id,
             issue_date=now_str
         )
+
+        # Track distinction if topic param is present
+        active_topic_id = st.session_state.active_quiz_topic_id or (hasattr(st, "query_params") and st.query_params.get("topic"))
+        topic_spec_html = ""
+        if active_topic_id and active_topic_id in TOPICS_DATA:
+            t_data = TOPICS_DATA[active_topic_id]
+            topic_spec_html = f"""
+            <div style="margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 9999px; background: rgba(232, 255, 71, 0.12); border: 1px solid rgba(232, 255, 71, 0.4); color: #e8ff47; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: bold;">
+                <span class="material-symbols-outlined" style="font-size: 15px;">verified</span>
+                <span>Specialization Track: {html.escape(t_data['title'])}</span>
+            </div>
+            """
 
         # Top Control Bar (Dashboard link, Registry ID, and Download PDF button)
         bar_left, bar_right = st.columns([7, 5], vertical_alignment="center")
@@ -2326,6 +2352,7 @@ elif st.session_state.active_page == "📜 Certificate":
                 <p style="font-family: 'Cabinet Grotesk', sans-serif; font-size: 0.95rem; color: #c4c4d8; max-width: 600px; margin: 0 auto; line-height: 1.6;">
                     representing class <strong style="color: #ffffff;">{html.escape(current_student.class_name)}</strong> (Roll #{html.escape(current_student.roll_number)}), has demonstrated verified mastery in threat detection, phishing identification, password security, and safe online computing practices.
                 </p>
+                {topic_spec_html}
             </div>
 
             <!-- Achievement Metrics Grid (4 Stat Boxes) -->
