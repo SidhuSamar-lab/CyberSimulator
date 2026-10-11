@@ -615,6 +615,67 @@ st.markdown("""
         margin-bottom: 14px !important;
     }
 
+    /* Topic Filter Segmented Control Tabs (1:1 with student_dashboard.html) */
+    div[data-testid="stSegmentedControl"] {
+        background: #080812 !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 9999px !important;
+        padding: 4px !important;
+        display: inline-flex !important;
+        justify-content: flex-end !important;
+        margin-left: auto !important;
+        width: fit-content !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+    div[data-testid="stSegmentedControl"] > div {
+        background: transparent !important;
+        border: none !important;
+        gap: 4px !important;
+        padding: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+    }
+    div[data-testid="stSegmentedControl"] button {
+        background: transparent !important;
+        color: #9898b8 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 0.72rem !important;
+        font-weight: 500 !important;
+        border-radius: 9999px !important;
+        border: none !important;
+        padding: 4px 12px !important;
+        min-height: 28px !important;
+        height: 28px !important;
+        box-shadow: none !important;
+        transform: none !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+    }
+    div[data-testid="stSegmentedControl"] button:hover {
+        background: rgba(255, 255, 255, 0.06) !important;
+        color: #ffffff !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    div[data-testid="stSegmentedControl"] button[data-selected="true"],
+    div[data-testid="stSegmentedControl"] button[aria-checked="true"],
+    div[data-testid="stSegmentedControl"] button[data-state="on"],
+    div[data-testid="stSegmentedControl"] button[aria-pressed="true"],
+    div[data-testid="stSegmentedControl"] button[data-variant="segmented_control"][data-selected] {
+        background: #e8ff47 !important;
+        color: #04040a !important;
+        font-weight: 700 !important;
+        box-shadow: 0 0 15px rgba(232, 255, 71, 0.3) !important;
+    }
+    div[data-testid="stSegmentedControl"] button[data-selected="true"]:hover,
+    div[data-testid="stSegmentedControl"] button[aria-checked="true"]:hover,
+    div[data-testid="stSegmentedControl"] button[data-state="on"]:hover,
+    div[data-testid="stSegmentedControl"] button[data-variant="segmented_control"][data-selected]:hover {
+        background: #d4ec33 !important;
+        color: #04040a !important;
+        transform: none !important;
+    }
+
     /* Minimalist 4px Scrollbar */
     ::-webkit-scrollbar {
         width: 4px;
@@ -988,19 +1049,22 @@ elif st.session_state.active_page == "🛡️ Student Hub":
         topics_with_progress = []
         for t in CYBER_TOPICS:
             t_att = student_attempts.filter(topic_id=t['id'])
-            has_completed = t_att.exists()
+            has_attempts = t_att.exists()
             best_score = 0
             best_total = 3
-            if has_completed:
+            if has_attempts:
                 best_att = t_att.order_by('-score').first()
                 best_score = best_att.score
                 best_total = best_att.total_questions
 
-            pct = round((best_score / best_total) * 100) if best_total > 0 and has_completed else 0
+            pct = round((best_score / best_total) * 100) if best_total > 0 and has_attempts else 0
+            # Mastery requires passing grade (>= 2 out of 3, consistent with users/models.py get_earned_badges)
+            is_mastered = (best_score >= 2) if has_attempts else False
             topics_with_progress.append({
                 **t,
-                'completed': has_completed,
-                'is_completed': has_completed,
+                'completed': is_mastered,
+                'is_completed': is_mastered,
+                'has_attempts': has_attempts,
                 'best_score': best_score,
                 'best_total': best_total,
                 'percentage': pct,
@@ -1008,10 +1072,10 @@ elif st.session_state.active_page == "🛡️ Student Hub":
                 'badge_name': topic_badge_names.get(t['id'], 'Defender Badge'),
             })
 
-        completed_count = sum(1 for t in topics_with_progress if t['completed'])
+        completed_count = sum(1 for t in topics_with_progress if t['is_completed'])
         completion_percentage = int((completed_count / total_topics) * 100) if total_topics else 0
-        active_count = sum(1 for t in topics_with_progress if t['attempts_count'] > 0 and not t['completed'])
-        pending_count = max(0, total_topics - completed_count - active_count)
+        active_count = sum(1 for t in topics_with_progress if not t['is_completed'])
+        pending_count = sum(1 for t in topics_with_progress if not t['has_attempts'])
 
         # 1. Hero Student Overview Banner (1:1 with student_dashboard.html)
         render_html(f"""
@@ -1115,74 +1179,138 @@ elif st.session_state.active_page == "🛡️ Student Hub":
         dash_left_col, dash_right_col = st.columns([8, 4])
 
         with dash_left_col:
+            # Topic Filter Selection (All, Active, Mastered)
+            filter_options = ["all", "active", "mastered"]
+            filter_labels = {
+                "all": f"All ({total_topics})",
+                "active": f"Active ({active_count})",
+                "mastered": f"Mastered ({completed_count})"
+            }
+
+            # Check query params for initial/updated filter
+            qp_filter = st.query_params.get("filter") if hasattr(st, "query_params") else None
+            if qp_filter in filter_options and qp_filter != st.session_state.get("dash_topic_filter"):
+                st.session_state.dash_topic_filter = qp_filter
+
+            current_filter = st.session_state.get("dash_topic_filter", "all")
+            if current_filter not in filter_options:
+                current_filter = "all"
+                st.session_state.dash_topic_filter = "all"
+
             # Header with filter tabs matching student_dashboard.html
-            render_html(f"""
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 12px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            hdr_left, hdr_right = st.columns([6, 6], vertical_alignment="center")
+            with hdr_left:
+                render_html("""
                 <div>
-                    <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700;">Cybersecurity Topics</h2>
+                    <h2 style="margin: 0; font-size: 1.8rem; font-weight: 700; color: #ffffff;">Cybersecurity Topics</h2>
                     <p style="color: #9898b8; font-size: 0.82rem; margin: 2px 0 0 0;">Interactive scenario quizzes designed for middle and high school students.</p>
                 </div>
-                <div style="display: inline-flex; background: #080812; padding: 4px; border-radius: 9999px; border: 1px solid rgba(255,255,255,0.1); font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; gap: 4px;">
-                    <span style="background: #e8ff47; color: #04040a; font-weight: bold; padding: 4px 12px; border-radius: 9999px;">All ({total_topics})</span>
-                    <span style="color: #9898b8; padding: 4px 10px;">Active ({active_count})</span>
-                    <span style="color: #9898b8; padding: 4px 10px;">Mastered ({completed_count})</span>
+                """)
+            with hdr_right:
+                selected_filter = st.segmented_control(
+                    "Filter Topics",
+                    options=filter_options,
+                    format_func=lambda x: filter_labels[x],
+                    default=current_filter,
+                    label_visibility="collapsed",
+                    key="dash_topic_filter_control"
+                )
+                if selected_filter and selected_filter != current_filter:
+                    st.session_state.dash_topic_filter = selected_filter
+                    if hasattr(st, "query_params"):
+                        st.query_params["filter"] = selected_filter
+                    st.rerun()
+                elif selected_filter:
+                    current_filter = selected_filter
+
+            # Filter topic cards according to selection
+            if current_filter == "mastered":
+                display_topics = [t for t in topics_with_progress if t['is_completed']]
+            elif current_filter == "active":
+                display_topics = [t for t in topics_with_progress if not t['is_completed']]
+            else:
+                display_topics = topics_with_progress
+
+            render_html("""<div style="border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 20px;"></div>""")
+
+            if not display_topics:
+                render_html(f"""
+                <div style="background: #0b0b18; border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 18px; padding: 40px 20px; text-align: center; margin-bottom: 20px;">
+                    <div style="width: 48px; height: 48px; border-radius: 50%; background: #080812; border: 1px solid rgba(255,255,255,0.1); display: inline-flex; align-items: center; justify-content: center; color: #9898b8; margin-bottom: 12px;">
+                        <span class="material-symbols-outlined" style="font-size: 24px;">task_alt</span>
+                    </div>
+                    <h3 style="margin: 0 0 6px 0; font-size: 1.1rem; font-weight: 700; color: #ffffff;">No {current_filter.capitalize()} Topics</h3>
+                    <p style="color: #9898b8; font-size: 0.82rem; margin: 0 auto; max-width: 400px;">
+                        {"Complete scenario quizzes with a score of 66% or higher to master topics!" if current_filter == "mastered" else "You have mastered all cybersecurity topics! Great job cadet."}
+                    </p>
                 </div>
-            </div>
-            """)
+                """)
+            else:
+                # 2-Column Grid of Topic Cards (1:1 with student_dashboard.html topic cards)
+                t_col_1, t_col_2 = st.columns(2)
+                for idx, topic in enumerate(display_topics):
+                    target_col = t_col_1 if idx % 2 == 0 else t_col_2
+                    with target_col:
+                        is_done = topic['is_completed']
+                        has_att = topic['has_attempts']
 
-            # 2-Column Grid of Topic Cards (1:1 with student_dashboard.html topic cards)
-            t_col_1, t_col_2 = st.columns(2)
-            for idx, topic in enumerate(topics_with_progress):
-                target_col = t_col_1 if idx % 2 == 0 else t_col_2
-                with target_col:
-                    is_done = topic['is_completed']
-                    top_badge = (
-                        f"""<span style="display: inline-flex; align-items: center; gap: 6px; background: rgba(232, 255, 71, 0.15); border: 1px solid rgba(232, 255, 71, 0.3); color: #e8ff47; padding: 3px 10px; border-radius: 9999px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: bold;"><span style="width: 5px; height: 5px; background: #e8ff47; border-radius: 50%;"></span>Mastered</span>
-                           <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #ffffff; background: #080812; border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 9999px;">Score: {topic['percentage']}%</span>"""
-                    ) if is_done else (
-                        f"""<span style="display: inline-flex; align-items: center; gap: 6px; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); color: #c4c4d8; padding: 3px 10px; border-radius: 9999px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: bold;"><span style="width: 5px; height: 5px; background: rgba(255,255,255,0.4); border-radius: 50%;"></span>Ready to Start</span>
-                           <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #9898b8;">⏱ 3 mins</span>"""
-                    )
+                        if is_done:
+                            top_badge = f"""<span style="display: inline-flex; align-items: center; gap: 6px; background: rgba(232, 255, 71, 0.15); border: 1px solid rgba(232, 255, 71, 0.3); color: #e8ff47; padding: 3px 10px; border-radius: 9999px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: bold;"><span style="width: 5px; height: 5px; background: #e8ff47; border-radius: 50%;"></span>Mastered</span>
+                               <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #ffffff; background: #080812; border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 9999px;">Score: {topic['percentage']}%</span>"""
+                        elif has_att:
+                            top_badge = f"""<span style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 107, 53, 0.15); border: 1px solid rgba(255, 107, 53, 0.3); color: #ff6b35; padding: 3px 10px; border-radius: 9999px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: bold;"><span style="width: 5px; height: 5px; background: #ff6b35; border-radius: 50%;"></span>In Progress</span>
+                               <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #ffffff; background: #080812; border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 9999px;">Score: {topic['percentage']}%</span>"""
+                        else:
+                            top_badge = f"""<span style="display: inline-flex; align-items: center; gap: 6px; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); color: #c4c4d8; padding: 3px 10px; border-radius: 9999px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: bold;"><span style="width: 5px; height: 5px; background: rgba(255,255,255,0.4); border-radius: 50%;"></span>Ready to Start</span>
+                               <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #9898b8;">⏱ 3 mins</span>"""
 
-                    icon_name = topic_material_icons.get(topic['id'], 'shield')
+                        icon_name = topic_material_icons.get(topic['id'], 'shield')
+                        border_color = 'rgba(232, 255, 71, 0.3)' if is_done else ('rgba(255, 107, 53, 0.3)' if has_att else 'rgba(255, 255, 255, 0.08)')
+                        icon_color = '#e8ff47' if is_done else ('#ff6b35' if has_att else '#c4c4d8')
 
-                    render_html(f"""
-                    <div style="background: #0b0b18; border: 1px solid {'rgba(232, 255, 71, 0.3)' if is_done else 'rgba(255, 255, 255, 0.08)'}; border-radius: 18px; padding: 20px; margin-bottom: 16px; display: flex; flex-direction: column; justify-content: space-between; min-height: 230px;">
-                        <div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                                {top_badge}
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
-                                <div style="width: 42px; height: 42px; border-radius: 12px; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; color: {'#e8ff47' if is_done else '#c4c4d8'};">
-                                    <span class="material-symbols-outlined" style="font-size: 22px;">{icon_name}</span>
+                        render_html(f"""
+                        <div style="background: #0b0b18; border: 1px solid {border_color}; border-radius: 18px; padding: 20px; margin-bottom: 16px; display: flex; flex-direction: column; justify-content: space-between; min-height: 230px;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                                    {top_badge}
                                 </div>
-                                <div>
-                                    <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #ffffff;">{html.escape(topic['title'])}</h3>
-                                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #9898b8; margin-top: 2px;">
-                                        ⏱ 3 mins &bull; BEGINNER
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+                                    <div style="width: 42px; height: 42px; border-radius: 12px; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; color: {icon_color};">
+                                        <span class="material-symbols-outlined" style="font-size: 22px;">{icon_name}</span>
+                                    </div>
+                                    <div>
+                                        <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #ffffff;">{html.escape(topic['title'])}</h3>
+                                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #9898b8; margin-top: 2px;">
+                                            ⏱ 3 mins &bull; BEGINNER
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div style="background: #080812; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #9898b8;">
-                                <span>Badge: {html.escape(topic['badge_name'])}</span>
-                                <span class="material-symbols-outlined" style="font-size: 16px; color: {'#e8ff47' if is_done else '#9898b8'};">workspace_premium</span>
+                                <div style="background: #080812; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #9898b8;">
+                                    <span>Badge: {html.escape(topic['badge_name'])}</span>
+                                    <span class="material-symbols-outlined" style="font-size: 16px; color: {'#e8ff47' if is_done else '#9898b8'};">workspace_premium</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    """)
+                        """)
 
-                    btn_label = f"Review: {topic['title']}" if is_done else f"Start Quiz: {topic['title']}"
-                    if st.button(btn_label, key=f"btn_dash_start_{topic['id']}"):
-                        st.session_state.active_quiz_topic_id = topic['id']
-                        st.session_state.active_quiz_questions = None
-                        st.session_state.quiz_result_data = None
-                        st.session_state.active_page = "📝 Quiz Arena"
-                        st.session_state.last_seen_qp_page = "quiz_arena"
-                        st.session_state.last_seen_qp_topic = topic['id']
-                        if hasattr(st, "query_params"):
-                            st.query_params["page"] = "quiz_arena"
-                            st.query_params["topic"] = topic['id']
-                        st.rerun()
+                        if is_done:
+                            btn_label = f"Review: {topic['title']}"
+                        elif has_att:
+                            btn_label = f"Retry Quiz: {topic['title']}"
+                        else:
+                            btn_label = f"Start Quiz: {topic['title']}"
+
+                        if st.button(btn_label, key=f"btn_dash_start_{topic['id']}"):
+                            st.session_state.active_quiz_topic_id = topic['id']
+                            st.session_state.active_quiz_questions = None
+                            st.session_state.quiz_result_data = None
+                            st.session_state.active_page = "📝 Quiz Arena"
+                            st.session_state.last_seen_qp_page = "quiz_arena"
+                            st.session_state.last_seen_qp_topic = topic['id']
+                            if hasattr(st, "query_params"):
+                                st.query_params["page"] = "quiz_arena"
+                                st.query_params["topic"] = topic['id']
+                            st.rerun()
 
         with dash_right_col:
             # Daily Cyber Tip Box (1:1 with student_dashboard.html)

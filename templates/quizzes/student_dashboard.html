@@ -137,13 +137,21 @@
                 <!-- 8 Bento Grid Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="topics-grid">
                     {% for topic in topics %}
-                    <div class="topic-card flex flex-col justify-between bg-ink-850 border {% if topic.is_completed %}border-signal/30 bg-ink-850/90{% else %}border-white/5{% endif %} rounded-2xl p-6 shadow-xl hover:border-signal/40 hover:bg-ink-800 transition-all duration-300 group" data-status="{% if topic.is_completed %}mastered{% else %}active{% endif %}">
+                    <div class="topic-card flex flex-col justify-between bg-ink-850 border {% if topic.is_completed %}border-signal/30 bg-ink-850/90{% elif topic.has_attempts %}border-amber-500/30 bg-ink-850/90{% else %}border-white/5{% endif %} rounded-2xl p-6 shadow-xl hover:border-signal/40 hover:bg-ink-800 transition-all duration-300 group" data-status="{% if topic.is_completed %}mastered{% else %}active{% endif %}">
                         <div>
                             <div class="flex items-start justify-between gap-2">
                                 {% if topic.is_completed %}
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-signal/15 text-signal border border-signal/30">
                                         <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
                                         Mastered
+                                    </span>
+                                    <span class="font-mono text-xs text-white bg-ink-950 border border-white/10 px-2.5 py-0.5 rounded-full">
+                                        Score: {{ topic.percentage }}%
+                                    </span>
+                                {% elif topic.has_attempts %}
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-mono font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                                        In Progress
                                     </span>
                                     <span class="font-mono text-xs text-white bg-ink-950 border border-white/10 px-2.5 py-0.5 rounded-full">
                                         Score: {{ topic.percentage }}%
@@ -190,9 +198,15 @@
 
                         <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
                             {% if topic.is_completed %}
-                                <span class="font-mono text-[11px] text-signal font-semibold">Completed</span>
+                                <span class="font-mono text-[11px] text-signal font-semibold">Mastered</span>
                                 <a href="{% url 'take_quiz' topic.id %}" class="px-4 py-2 rounded-full bg-ink-950 hover:bg-ink-900 border border-white/10 text-white font-mono text-xs transition-colors">
                                     Review
+                                </a>
+                            {% elif topic.has_attempts %}
+                                <span class="font-mono text-[11px] text-amber-400 font-semibold">In Progress</span>
+                                <a href="{% url 'take_quiz' topic.id %}" class="px-4 py-2 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-signal/20">
+                                    <span>Retry Quiz</span>
+                                    <span>&rarr;</span>
                                 </a>
                             {% else %}
                                 <span class="font-mono text-[11px] text-mist-900">Available</span>

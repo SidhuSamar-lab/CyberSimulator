@@ -45,19 +45,22 @@ def student_dashboard(request):
     for topic in CYBER_TOPICS:
         t_id = topic["id"]
         topic_attempts = student_attempts.filter(topic_id=t_id)
-        has_completed = topic_attempts.exists()
+        has_attempts = topic_attempts.exists()
         best_score = 0
         best_total = 3
-        if has_completed:
+        if has_attempts:
             best_attempt = topic_attempts.order_by('-score').first()
             best_score = best_attempt.score
             best_total = best_attempt.total_questions
 
-        percentage = round((best_score / best_total) * 100) if best_total > 0 and has_completed else 0
+        percentage = round((best_score / best_total) * 100) if best_total > 0 and has_attempts else 0
+        # Mastery requires passing grade (>= 2 out of 3, consistent with users/models.py get_earned_badges)
+        is_mastered = (best_score >= 2) if has_attempts else False
         topics_with_progress.append({
             **topic,
-            'completed': has_completed,
-            'is_completed': has_completed,
+            'completed': is_mastered,
+            'is_completed': is_mastered,
+            'has_attempts': has_attempts,
             'best_score': best_score,
             'best_total': best_total,
             'percentage': percentage,
@@ -65,10 +68,10 @@ def student_dashboard(request):
         })
 
     total_topics = len(CYBER_TOPICS)
-    completed_count = sum(1 for t in topics_with_progress if t['completed'])
+    completed_count = sum(1 for t in topics_with_progress if t['is_completed'])
     completion_percentage = int((completed_count / total_topics) * 100) if total_topics else 0
-    active_count = sum(1 for t in topics_with_progress if t['attempts_count'] > 0 and not t['completed'])
-    pending_count = max(0, total_topics - completed_count - active_count)
+    active_count = sum(1 for t in topics_with_progress if not t['is_completed'])
+    pending_count = sum(1 for t in topics_with_progress if not t['has_attempts'])
     overall_percent = student.average_score
     earned_badges = student.get_earned_badges()
     unlocked_badge_count = sum(1 for b in earned_badges if b['earned'])
