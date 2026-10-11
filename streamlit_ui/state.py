@@ -54,6 +54,9 @@ class AppStateManager:
             "active_quiz_questions": None,
             "quiz_result_data": None,
             "quiz_attempt_nonce": 0,
+            "sb_direct_nav": "🏠 Home",
+            "_internal_nav": False,
+            "_nav_target": None,
         }
         for key, val in defaults.items():
             if key not in st.session_state:
@@ -71,12 +74,42 @@ class AppStateManager:
             st.query_params.clear()
             st.rerun()
 
+        # If internal programmatic navigation was triggered, guard against stale client query params
+        if st.session_state.get("_internal_nav"):
+            target_page = st.session_state.get("_nav_target", st.session_state.active_page)
+            target_slug = REVERSE_PAGE_LOOKUP.get(target_page, "home")
+            qp_page = st.query_params.get("page")
+            if qp_page == target_slug:
+                # Browser has acknowledged the navigation
+                st.session_state._internal_nav = False
+                st.session_state.last_seen_qp_page = target_slug
+            else:
+                # Enforce target slug in URL query params and protect active_page
+                st.query_params["page"] = target_slug
+                st.session_state.last_seen_qp_page = target_slug
+                st.session_state.active_page = target_page
+                st.session_state["sb_direct_nav"] = target_page
+                return
+
         # Page query parameter
         qp_page = st.query_params.get("page")
         if qp_page and qp_page != st.session_state.last_seen_qp_page:
             st.session_state.last_seen_qp_page = qp_page
             if qp_page in PAGE_LOOKUP:
-                st.session_state.active_page = PAGE_LOOKUP[qp_page]
+                target_page = PAGE_LOOKUP[qp_page]
+                # If student is authenticated and visits sign-in, redirect straight to Student Hub
+                if st.session_state.get("auth_role") == "student" and target_page == "🔑 Student Sign-In":
+                    target_page = "🛡️ Student Hub"
+                    st.query_params["page"] = "student_hub"
+                    st.session_state.last_seen_qp_page = "student_hub"
+                # If teacher is authenticated and visits sign-in, redirect straight to Teacher Portal
+                elif st.session_state.get("auth_role") == "teacher" and target_page == "🎓 Teacher Sign-In":
+                    target_page = "📊 Teacher Portal"
+                    st.query_params["page"] = "teacher"
+                    st.session_state.last_seen_qp_page = "teacher"
+
+                st.session_state.active_page = target_page
+                st.session_state["sb_direct_nav"] = target_page
 
         # Topic query parameter
         qp_topic = st.query_params.get("topic")
@@ -112,12 +145,18 @@ class AppStateManager:
         st.session_state.active_quiz_questions = None
         st.session_state.quiz_result_data = None
         st.session_state.active_page = "🏠 Home"
+        st.session_state["sb_direct_nav"] = "🏠 Home"
         st.session_state.last_seen_qp_page = None
+        st.session_state._internal_nav = False
+        st.session_state._nav_target = None
 
     @classmethod
     def navigate_to(cls, page_name: str, topic_id: Optional[str] = None) -> None:
         """Programmatically navigates to a target page and updates query parameters."""
         st.session_state.active_page = page_name
+        st.session_state["sb_direct_nav"] = page_name
+        st.session_state._internal_nav = True
+        st.session_state._nav_target = page_name
         if topic_id:
             st.session_state.active_quiz_topic_id = topic_id
         if hasattr(st, "query_params"):
@@ -130,7 +169,13 @@ class AppStateManager:
 
     @classmethod
     def resolve_current_student(cls, all_students: List[Student]) -> Optional[Student]:
-        """Resolves the current student model instance from cached student list."""
+        """Resolves the current student model instance from cached student list or direct query."""
         if st.session_state.auth_role == "student" and st.session_state.current_student_id:
-            return next((s for s in all_students if s.id == st.session_state.current_student_id), None)
+            student = next((s for s in all_students if s.id == st.session_state.current_student_id), None)
+            if not student:
+                try:
+                    student = Student.objects.filter(id=st.session_state.current_student_id).first()
+                except Exception:
+                    student = None
+            return student
         return None

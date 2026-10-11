@@ -180,7 +180,10 @@ def render_sidebar_auth(all_students: List[Student], current_student: Optional[S
         ]
         curr_page = st.session_state.get("active_page", "🏠 Home")
         idx = nav_options.index(curr_page) if curr_page in nav_options else 0
-        chosen_page = st.selectbox("Direct Portal Navigation", nav_options, index=idx, key="sb_direct_nav")
-        if chosen_page != curr_page:
-            AppStateManager.navigate_to(chosen_page)
-            st.rerun()
+
+        def _on_sb_nav_change():
+            sel = st.session_state.get("sb_direct_nav")
+            if sel and sel != st.session_state.get("active_page"):
+                AppStateManager.navigate_to(sel)
+
+        st.selectbox("Direct Portal Navigation", nav_options, index=idx, key="sb_direct_nav", on_change=_on_sb_nav_change)

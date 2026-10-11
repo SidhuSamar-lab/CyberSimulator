@@ -107,6 +107,20 @@ def main() -> None:
     # Route to active page component
     active_page = st.session_state.get("active_page", "🏠 Home")
 
+    # Guard: Authenticated students should never be trapped on sign-in page
+    if st.session_state.get("auth_role") == "student" and current_student and active_page == "🔑 Student Sign-In":
+        active_page = "🛡️ Student Hub"
+        st.session_state.active_page = "🛡️ Student Hub"
+        if hasattr(st, "query_params"):
+            st.query_params["page"] = "student_hub"
+
+    # Guard: Authenticated teachers should never be trapped on teacher sign-in page
+    if st.session_state.get("auth_role") == "teacher" and active_page == "🎓 Teacher Sign-In":
+        active_page = "📊 Teacher Portal"
+        st.session_state.active_page = "📊 Teacher Portal"
+        if hasattr(st, "query_params"):
+            st.query_params["page"] = "teacher"
+
     try:
         if active_page == "🏠 Home":
             render_home(current_student)
@@ -121,7 +135,7 @@ def main() -> None:
         elif active_page == "🔑 Student Sign-In":
             render_student_signin(current_student, all_students)
         elif active_page == "🎓 Teacher Sign-In":
-            render_teacher_signin()
+            render_teacher_signin(all_students)
         elif active_page == "📊 Teacher Portal":
             render_teacher_portal(current_student, all_students)
         elif active_page == "⚙️ Diagnostics":

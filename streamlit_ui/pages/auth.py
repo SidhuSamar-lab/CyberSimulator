@@ -12,7 +12,12 @@ from streamlit_ui.state import AppStateManager
 
 
 def render_student_signin(current_student: Optional[Student], all_students: List[Student]) -> None:
-    """Renders passwordless student cadet sign-in portal."""
+    """Renders passwordless student cadet sign-in portal or direct hub if already active."""
+    if st.session_state.get("auth_role") == "student" and current_student:
+        from streamlit_ui.pages.student_hub import render_student_hub_page
+        render_student_hub_page(all_students, current_student)
+        return
+
     render_html("""
     <div style="max-width: 620px; margin: 20px auto 30px auto; text-align: center;">
         <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 9999px; background: rgba(232, 255, 71, 0.1); border: 1px solid rgba(232, 255, 71, 0.25); color: #e8ff47; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; margin-bottom: 16px;">
@@ -28,19 +33,7 @@ def render_student_signin(current_student: Optional[Student], all_students: List
     </div>
     """)
 
-    if st.session_state.auth_role == "student" and current_student:
-        st.success(f"You are currently signed in as cadet **{current_student.name}** ({current_student.class_name} • #{current_student.roll_number}).")
-        col_c1, col_c2 = st.columns(2)
-        with col_c1:
-            if st.button("🛡️ Open Student Dashboard", type="primary", use_container_width=True):
-                AppStateManager.navigate_to("🛡️ Student Hub")
-                st.rerun()
-        with col_c2:
-            if st.button("🚪 Sign Out Cadet", type="secondary", use_container_width=True):
-                AppStateManager.logout()
-                st.rerun()
-    else:
-        with st.container():
+    with st.container():
             st.markdown("""
             <div style="max-width: 620px; margin: 0 auto; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 28px 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
                 <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; margin-bottom: 16px;">
@@ -108,8 +101,13 @@ def render_student_signin(current_student: Optional[Student], all_students: List
             st.markdown("</div>", unsafe_allow_html=True)
 
 
-def render_teacher_signin() -> None:
-    """Renders faculty authentication portal with constant-time password comparison."""
+def render_teacher_signin(all_students: Optional[List[Student]] = None) -> None:
+    """Renders faculty authentication portal with constant-time password comparison or direct portal if active."""
+    if st.session_state.get("auth_role") == "teacher":
+        from streamlit_ui.pages.teacher import render_teacher_portal
+        render_teacher_portal(None, all_students or [])
+        return
+
     render_html("""
     <div style="max-width: 520px; margin: 20px auto 30px auto; text-align: center;">
         <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 9999px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; margin-bottom: 16px;">
@@ -128,22 +126,10 @@ def render_teacher_signin() -> None:
     </div>
     """)
 
-    if st.session_state.auth_role == "student":
+    if st.session_state.get("auth_role") == "student":
         st.info("Notice: You are currently active with student session. Entering the Teacher Portal requires faculty credentials.")
 
-    if st.session_state.auth_role == "teacher":
-        st.success("You are currently authenticated with Faculty clearance.")
-        col_t1, col_t2 = st.columns(2)
-        with col_t1:
-            if st.button("📊 Enter Teacher Portal", type="primary", use_container_width=True):
-                AppStateManager.navigate_to("📊 Teacher Portal")
-                st.rerun()
-        with col_t2:
-            if st.button("🚪 Log Out of Faculty", type="secondary", use_container_width=True):
-                AppStateManager.logout()
-                st.rerun()
-    else:
-        with st.container():
+    with st.container():
             st.markdown("""
             <div style="max-width: 520px; margin: 0 auto; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 28px 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
                 <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; margin-bottom: 16px;">

@@ -68,6 +68,7 @@ def render_student_hub_page(all_students: List[Student], current_student: Option
                         student_obj.save(update_fields=['name'])
 
                     AppStateManager.set_student_session(student_obj.id)
+                    AppStateManager.navigate_to("🛡️ Student Hub")
                     st.toast(f"🎉 Registered and activated cadet {student_obj.name}!")
                     st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
