@@ -77,39 +77,188 @@ def bootstrap_cloud_backend() -> bool:
     return True
 
 
+import streamlit.components.v1 as components
+
+
 def inject_client_session_sync(current_student: Optional[Student]) -> None:
-    """Injects client-side localStorage sync to persist cadet session across browser refreshes and page loads."""
+    """Injects client-side cookie and localStorage synchronization to persist cadet session across all reloads and page changes."""
     auth_role = st.session_state.get("auth_role")
     cadet_id_val = str(current_student.id) if (auth_role == "student" and current_student) else ""
+    cadet_roll_val = str(current_student.roll_number) if (auth_role == "student" and current_student) else ""
+    cadet_class_val = str(current_student.class_name) if (auth_role == "student" and current_student) else ""
+    cadet_name_val = str(current_student.name) if (auth_role == "student" and current_student) else ""
     teacher_tok_val = AppStateManager.make_teacher_token() if auth_role == "teacher" else ""
     just_logged_out = "true" if st.session_state.get("_just_logged_out") else "false"
 
     if st.session_state.get("_just_logged_out"):
         st.session_state._just_logged_out = False
 
-    onerror_js = (
-        "try {"
-        "var P=new URLSearchParams(window.location.search);"
-        f"var J={just_logged_out};"
-        "if(P.get('action')==='logout'||J){"
-        "try{localStorage.removeItem('cybershield_cadet_id');localStorage.removeItem('cybershield_teacher_token');localStorage.removeItem('cybershield_auth_role');}catch(e){}"
-        "}else{"
-        f"var sC='{cadet_id_val}';"
-        f"var sT='{teacher_tok_val}';"
-        "if(sC){localStorage.setItem('cybershield_cadet_id',sC);localStorage.setItem('cybershield_auth_role','student');}"
-        "else if(sT){localStorage.setItem('cybershield_teacher_token',sT);localStorage.setItem('cybershield_auth_role','teacher');}"
-        "var cId=localStorage.getItem('cybershield_cadet_id');"
-        "var tTok=localStorage.getItem('cybershield_teacher_token');"
-        "var R=false;"
-        "if(cId&&!P.get('cadet_id')){P.set('cadet_id',cId);R=true;}"
-        "else if(tTok&&!P.get('teacher_token')){P.set('teacher_token',tTok);R=true;}"
-        "if(R){window.location.replace(window.location.pathname+'?'+P.toString());}"
-        "}"
-        "}catch(e){}"
-    )
+    html_code = f"""
+    <script>
+    (function() {{
+        try {{
+            var pWin = window;
+            try {{
+                if (window.parent && window.parent.location && window.parent.location.href) {{
+                    pWin = window.parent;
+                }}
+            }} catch(err) {{
+                pWin = window;
+            }}
 
-    markup = f'<img src="data:image/gif;base64,bad" style="display:none;" onerror="{onerror_js}" />'
-    st.markdown(markup, unsafe_allow_html=True)
+            var pLoc = pWin.location;
+            var params = new URLSearchParams(pLoc.search);
+            var action = params.get('action');
+            var justLoggedOut = {just_logged_out};
+
+            function clearSession() {{
+                var keys = [
+                    'cybershield_cadet_id',
+                    'cybershield_cadet_roll',
+                    'cybershield_cadet_class',
+                    'cybershield_cadet_name',
+                    'cybershield_teacher_token',
+                    'cybershield_auth_role'
+                ];
+                for (var i = 0; i < keys.length; i++) {{
+                    try {{ pWin.localStorage.removeItem(keys[i]); }} catch(e) {{}}
+                    try {{ window.localStorage.removeItem(keys[i]); }} catch(e) {{}}
+                    var exp = "=; path=/; max-age=0; SameSite=Lax";
+                    try {{ pWin.document.cookie = keys[i] + exp; }} catch(e) {{}}
+                    try {{ document.cookie = keys[i] + exp; }} catch(e) {{}}
+                }}
+            }}
+
+            if (action === 'logout' || justLoggedOut) {{
+                clearSession();
+                return;
+            }}
+
+            var sCadet = "{cadet_id_val}";
+            var sRoll = "{cadet_roll_val}";
+            var sClass = "{cadet_class_val}";
+            var sName = "{cadet_name_val}";
+            var sTeach = "{teacher_tok_val}";
+
+            // If server confirmed an active student session, write localStorage and cookies
+            if (sCadet) {{
+                try {{
+                    pWin.localStorage.setItem('cybershield_cadet_id', sCadet);
+                    pWin.localStorage.setItem('cybershield_cadet_roll', sRoll);
+                    pWin.localStorage.setItem('cybershield_cadet_class', sClass);
+                    pWin.localStorage.setItem('cybershield_cadet_name', sName);
+                    pWin.localStorage.setItem('cybershield_auth_role', 'student');
+                }} catch(e) {{}}
+
+                var maxAge = "; path=/; max-age=2592000; SameSite=Lax";
+                try {{ pWin.document.cookie = "cybershield_cadet_id=" + encodeURIComponent(sCadet) + maxAge; }} catch(e) {{}}
+                try {{ pWin.document.cookie = "cybershield_cadet_roll=" + encodeURIComponent(sRoll) + maxAge; }} catch(e) {{}}
+                try {{ pWin.document.cookie = "cybershield_cadet_class=" + encodeURIComponent(sClass) + maxAge; }} catch(e) {{}}
+                try {{ pWin.document.cookie = "cybershield_cadet_name=" + encodeURIComponent(sName) + maxAge; }} catch(e) {{}}
+                try {{ document.cookie = "cybershield_cadet_id=" + encodeURIComponent(sCadet) + maxAge; }} catch(e) {{}}
+                try {{ document.cookie = "cybershield_cadet_roll=" + encodeURIComponent(sRoll) + maxAge; }} catch(e) {{}}
+                try {{ document.cookie = "cybershield_cadet_class=" + encodeURIComponent(sClass) + maxAge; }} catch(e) {{}}
+                try {{ document.cookie = "cybershield_cadet_name=" + encodeURIComponent(sName) + maxAge; }} catch(e) {{}}
+            }} else if (sTeach) {{
+                try {{
+                    pWin.localStorage.setItem('cybershield_teacher_token', sTeach);
+                    pWin.localStorage.setItem('cybershield_auth_role', 'teacher');
+                }} catch(e) {{}}
+                var tStr = "cybershield_teacher_token=" + encodeURIComponent(sTeach) + "; path=/; max-age=2592000; SameSite=Lax";
+                try {{ pWin.document.cookie = tStr; }} catch(e) {{}}
+                try {{ document.cookie = tStr; }} catch(e) {{}}
+            }}
+
+            // Read credentials from localStorage if URL lacks them
+            var cId = null;
+            var tTok = null;
+            try {{
+                cId = pWin.localStorage.getItem('cybershield_cadet_id');
+                tTok = pWin.localStorage.getItem('cybershield_teacher_token');
+            }} catch(e) {{}}
+
+            if (!cId) {{
+                try {{
+                    var allCookies = (pWin.document.cookie || "") + "; " + (document.cookie || "");
+                    var m = allCookies.match(/(?:^|; )cybershield_cadet_id=([^;]*)/);
+                    if (m) cId = decodeURIComponent(m[1]);
+                }} catch(e) {{}}
+            }}
+            if (!tTok) {{
+                try {{
+                    var allCookies = (pWin.document.cookie || "") + "; " + (document.cookie || "");
+                    var mT = allCookies.match(/(?:^|; )cybershield_teacher_token=([^;]*)/);
+                    if (mT) tTok = decodeURIComponent(mT[1]);
+                }} catch(e) {{}}
+            }}
+
+            // Ensure cookies stay valid in both parent and document
+            if (cId) {{
+                var cStr = "cybershield_cadet_id=" + encodeURIComponent(cId) + "; path=/; max-age=2592000; SameSite=Lax";
+                try {{ pWin.document.cookie = cStr; }} catch(e) {{}}
+                try {{ document.cookie = cStr; }} catch(e) {{}}
+            }} else if (tTok) {{
+                var tStr = "cybershield_teacher_token=" + encodeURIComponent(tTok) + "; path=/; max-age=2592000; SameSite=Lax";
+                try {{ pWin.document.cookie = tStr; }} catch(e) {{}}
+                try {{ document.cookie = tStr; }} catch(e) {{}}
+            }}
+
+            var changed = false;
+            if (cId && !params.get('cadet_id')) {{
+                params.set('cadet_id', cId);
+                changed = true;
+            }} else if (tTok && !params.get('teacher_token')) {{
+                params.set('teacher_token', tTok);
+                changed = true;
+            }}
+
+            if (changed) {{
+                var newUrl = pLoc.pathname + '?' + params.toString();
+                pLoc.replace(newUrl);
+                return;
+            }}
+
+            // Patch all parent anchor tags dynamically
+            function patchLinks() {{
+                try {{
+                    var cadet = cId || sCadet;
+                    var teach = tTok || sTeach;
+                    if (!cadet && !teach) return;
+
+                    var links = pWin.document.querySelectorAll('a[href]');
+                    for (var i = 0; i < links.length; i++) {{
+                        var a = links[i];
+                        var href = a.getAttribute('href');
+                        if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) continue;
+                        if (href.indexOf('action=logout') !== -1) continue;
+
+                        try {{
+                            var u = new URL(href, pLoc.origin);
+                            var mod = false;
+                            if (cadet && !u.searchParams.has('cadet_id')) {{
+                                u.searchParams.set('cadet_id', cadet);
+                                mod = true;
+                            }} else if (teach && !u.searchParams.has('teacher_token')) {{
+                                u.searchParams.set('teacher_token', teach);
+                                mod = true;
+                            }}
+                            if (mod) {{
+                                a.setAttribute('href', u.pathname + u.search);
+                            }}
+                        }} catch(err) {{}}
+                    }}
+                }} catch(err) {{}}
+            }}
+
+            patchLinks();
+            setTimeout(patchLinks, 200);
+            setTimeout(patchLinks, 600);
+            setTimeout(patchLinks, 1500);
+        }} catch(e) {{}}
+    }})();
+    </script>
+    """
+    components.html(html_code, height=0, width=0)
 
 
 def main() -> None:
@@ -136,12 +285,12 @@ def main() -> None:
     # Resolve active student session
     current_student = AppStateManager.resolve_current_student(all_students)
 
+    # Ensure browser localStorage and cookie session persistence across refreshes
+    inject_client_session_sync(current_student)
+
     # Render fixed navigation header and sidebar controls
     render_navbar(current_student)
     render_sidebar_auth(all_students, current_student)
-
-    # Ensure browser localStorage session persistence across refreshes
-    inject_client_session_sync(current_student)
 
     # Route to active page component
     active_page = st.session_state.get("active_page", "🏠 Home")

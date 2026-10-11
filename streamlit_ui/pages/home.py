@@ -48,7 +48,7 @@ def render_home_page(current_student: Optional[Student]) -> None:
     # Hero Action Buttons (Streamlit Native Interactive Widgets)
     col_cta1, col_cta2, col_cta3 = st.columns([4, 4, 4])
     with col_cta1:
-        if auth_role == "student" and current_student:
+        if current_student:
             if st.button("🛡️ Open Cadet Dashboard →", key="btn_hero_open_dash", type="primary", use_container_width=True):
                 AppStateManager.navigate_to("🛡️ Student Hub")
                 st.rerun()
@@ -67,9 +67,13 @@ def render_home_page(current_student: Optional[Student]) -> None:
             st.rerun()
 
     with col_cta3:
-        if auth_role != "teacher":
+        if not current_student and auth_role != "teacher":
             if st.button("🎓 Teacher Portal", key="btn_hero_goto_teacher", type="secondary", use_container_width=True):
                 AppStateManager.navigate_to("🎓 Teacher Sign-In")
+                st.rerun()
+        elif current_student:
+            if st.button("📜 View Certificate", key="btn_hero_goto_cert", type="secondary", use_container_width=True):
+                AppStateManager.navigate_to("📜 Certificate")
                 st.rerun()
 
     # Telemetry Stats Row

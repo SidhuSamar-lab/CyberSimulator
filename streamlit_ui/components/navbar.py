@@ -14,11 +14,11 @@ def render_navbar(current_student: Optional[Student]) -> None:
     auth_role = st.session_state.get("auth_role")
     active_page = st.session_state.get("active_page", "🏠 Home")
 
-    cid_param = f"&cadet_id={current_student.id}" if (auth_role == "student" and current_student) else ""
+    cid_param = f"&cadet_id={current_student.id}" if current_student else ""
     tok_param = f"&teacher_token={AppStateManager.make_teacher_token()}" if auth_role == "teacher" else ""
     brand_auth_param = cid_param or tok_param
 
-    if auth_role == "student" and current_student:
+    if current_student:
         # Student view: strictly NO Teacher Portal
         dash_active = 'active' if active_page == '🛡️ Student Hub' else ''
         cur_active = 'active' if active_page == '🏠 Home' else ''
@@ -144,7 +144,7 @@ def render_sidebar_auth(all_students: List[Student], current_student: Optional[S
     with st.sidebar:
         st.markdown("### 🔐 Security & Access Control")
 
-        if auth_role == "student" and current_student:
+        if current_student:
             st.success(f"Cadet Active: **{current_student.name}** (#{current_student.roll_number})")
             st.caption(f"Class: {current_student.class_name} • Rank: {current_student.rank_title}")
             if st.button("🚪 Sign Out (Clear Session)", key="btn_sidebar_logout_student", use_container_width=True):

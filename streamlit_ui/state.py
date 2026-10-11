@@ -80,6 +80,30 @@ class AppStateManager:
                 st.session_state[key] = val
 
     @classmethod
+    def get_cookie(cls, key: str) -> Optional[str]:
+        """Reads a cookie value from Streamlit's native request context (cookies dict or raw headers)."""
+        try:
+            if hasattr(st, "context"):
+                # 1. Native StreamlitCookies mapping
+                if hasattr(st.context, "cookies") and st.context.cookies:
+                    val = st.context.cookies.get(key)
+                    if val:
+                        return str(val).strip()
+                # 2. Raw HTTP Cookie request header fallback
+                if hasattr(st.context, "headers") and st.context.headers:
+                    raw_cookie = st.context.headers.get("cookie") or st.context.headers.get("Cookie")
+                    if raw_cookie:
+                        for part in raw_cookie.split(";"):
+                            part = part.strip()
+                            if "=" in part:
+                                k, v = part.split("=", 1)
+                                if k.strip() == key:
+                                    return v.strip()
+        except Exception:
+            pass
+        return None
+
+    @classmethod
     def sync_query_params(cls) -> None:
         """Synchronizes URL query parameters with active session state."""
         if not hasattr(st, "query_params"):
@@ -92,13 +116,18 @@ class AppStateManager:
                 del st.query_params["action"]
             st.rerun()
 
-        # Restore session from query parameters on fresh connection / browser refresh
-        if st.session_state.get("auth_role") is None:
-            cid = st.query_params.get("cadet_id")
-            teacher_tok = st.query_params.get("teacher_token")
+        # Restore session from query parameters or request cookies on fresh connection / browser refresh
+        if st.session_state.get("auth_role") is None or not st.session_state.get("current_student_id"):
+            cid = st.query_params.get("cadet_id") or cls.get_cookie("cybershield_cadet_id")
+            teacher_tok = st.query_params.get("teacher_token") or cls.get_cookie("cybershield_teacher_token")
             if cid:
                 try:
                     std = Student.objects.filter(id=int(cid)).first()
+                    if not std:
+                        roll = cls.get_cookie("cybershield_cadet_roll")
+                        cname = cls.get_cookie("cybershield_cadet_class")
+                        if roll and cname:
+                            std = Student.objects.filter(roll_number=roll, class_name=cname).first()
                     if std:
                         st.session_state.auth_role = "student"
                         st.session_state.current_student_id = std.id
@@ -109,9 +138,21 @@ class AppStateManager:
                 st.session_state.auth_role = "teacher"
                 st.session_state.teacher_authenticated = True
                 st.session_state.current_student_id = None
+            else:
+                roll = cls.get_cookie("cybershield_cadet_roll")
+                cname = cls.get_cookie("cybershield_cadet_class")
+                if roll and cname:
+                    try:
+                        std = Student.objects.filter(roll_number=roll, class_name=cname).first()
+                        if std:
+                            st.session_state.auth_role = "student"
+                            st.session_state.current_student_id = std.id
+                            st.session_state.teacher_authenticated = False
+                    except Exception:
+                        pass
 
         # Always enforce active session in URL query params
-        if st.session_state.get("auth_role") == "student" and st.session_state.get("current_student_id"):
+        if st.session_state.get("current_student_id"):
             st.query_params["cadet_id"] = str(st.session_state.current_student_id)
         elif st.session_state.get("auth_role") == "teacher":
             st.query_params["teacher_token"] = cls.make_teacher_token()
@@ -130,7 +171,6 @@ class AppStateManager:
                 st.query_params["page"] = target_slug
                 st.session_state.last_seen_qp_page = target_slug
                 st.session_state.active_page = target_page
-                return
 
         # Page query parameter
         qp_page = st.query_params.get("page")
@@ -223,22 +263,28 @@ class AppStateManager:
                 del st.query_params["topic"]
 
             # Preserve active student or teacher authorization in URL
-            if st.session_state.get("auth_role") == "student" and st.session_state.get("current_student_id"):
+            if st.session_state.get("current_student_id"):
                 st.query_params["cadet_id"] = str(st.session_state.current_student_id)
             elif st.session_state.get("auth_role") == "teacher":
                 st.query_params["teacher_token"] = cls.make_teacher_token()
 
-
     @classmethod
     def resolve_current_student(cls, all_students: List[Student]) -> Optional[Student]:
-        """Resolves the current student model instance from cached student list, session, or query parameter."""
+        """Resolves the current student model instance from cached student list, session, query param, or cookies."""
         sid = st.session_state.get("current_student_id")
-        if not sid and hasattr(st, "query_params") and st.query_params.get("cadet_id"):
-            try:
-                sid = int(st.query_params.get("cadet_id"))
-            except (ValueError, TypeError):
-                sid = None
+        if not sid:
+            raw_cid = None
+            if hasattr(st, "query_params") and st.query_params.get("cadet_id"):
+                raw_cid = st.query_params.get("cadet_id")
+            if not raw_cid:
+                raw_cid = cls.get_cookie("cybershield_cadet_id")
+            if raw_cid:
+                try:
+                    sid = int(raw_cid)
+                except (ValueError, TypeError):
+                    sid = None
 
+        student = None
         if sid:
             student = next((s for s in all_students if s.id == sid), None)
             if not student:
@@ -246,9 +292,23 @@ class AppStateManager:
                     student = Student.objects.filter(id=sid).first()
                 except Exception:
                     student = None
-            if student:
-                st.session_state.auth_role = "student"
-                st.session_state.current_student_id = student.id
-                st.session_state.teacher_authenticated = False
-                return student
+
+        if not student:
+            roll = cls.get_cookie("cybershield_cadet_roll")
+            cname = cls.get_cookie("cybershield_cadet_class")
+            if roll and cname:
+                student = next((s for s in all_students if s.roll_number == roll and s.class_name == cname), None)
+                if not student:
+                    try:
+                        student = Student.objects.filter(roll_number=roll, class_name=cname).first()
+                    except Exception:
+                        student = None
+
+        if student:
+            st.session_state.auth_role = "student"
+            st.session_state.current_student_id = student.id
+            st.session_state.teacher_authenticated = False
+            if hasattr(st, "query_params") and not st.query_params.get("cadet_id"):
+                st.query_params["cadet_id"] = str(student.id)
+            return student
         return None
