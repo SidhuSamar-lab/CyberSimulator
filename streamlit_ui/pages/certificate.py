@@ -35,12 +35,16 @@ def render_certificate(current_student: Optional[Student], all_students: List[St
 
     if not current_student:
         st.info("Please sign in as a student cadet to view and download your Certificate.")
-        col_cf1, col_cf2 = st.columns(2)
+        col_cf1, col_cf2, col_cf3 = st.columns(3)
         with col_cf1:
             if st.button("🔑 Sign In as Student", key="btn_cert_require_login", type="primary", use_container_width=True):
                 AppStateManager.navigate_to("🔑 Student Sign-In")
                 st.rerun()
         with col_cf2:
+            if st.button("🎓 Teacher Portal", key="btn_cert_goto_teacher", type="secondary", use_container_width=True):
+                AppStateManager.navigate_to("🎓 Teacher Sign-In")
+                st.rerun()
+        with col_cf3:
             if st.button("← Back to Curriculum", key="btn_cert_back_home", type="secondary", use_container_width=True):
                 AppStateManager.navigate_to("🏠 Home")
                 st.rerun()

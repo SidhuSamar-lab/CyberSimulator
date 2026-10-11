@@ -346,6 +346,29 @@ NEXUS_STUDIO_CSS = '''
         box-shadow: 0 0 25px rgba(232, 255, 71, 0.45);
         transform: translateY(-1px);
     }
+    .btn-signin-teacher {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 9999px;
+        background: rgba(52, 211, 153, 0.12);
+        border: 1px solid rgba(52, 211, 153, 0.35);
+        color: #34d399 !important;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+    .btn-signin-teacher:hover {
+        background: rgba(52, 211, 153, 0.25);
+        border-color: #34d399;
+        box-shadow: 0 0 15px rgba(52, 211, 153, 0.3);
+        transform: translateY(-1px);
+    }
     .teacher-avatar-pill {
         display: inline-flex;
         align-items: center;

@@ -84,10 +84,16 @@ def render_navbar(current_student: Optional[Student]) -> None:
         """
 
         nav_right_html = f"""
-        <a href="?page=student_login" target="_self" class="btn-signin-student">
-            <span class="material-symbols-outlined" style="font-size: 15px;">person</span>
-            <span>Student Sign-In</span>
-        </a>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <a href="?page=teacher_login" target="_self" class="btn-signin-teacher">
+                <span class="material-symbols-outlined" style="font-size: 15px;">school</span>
+                <span>Teacher Portal</span>
+            </a>
+            <a href="?page=student_login" target="_self" class="btn-signin-student">
+                <span class="material-symbols-outlined" style="font-size: 15px;">person</span>
+                <span>Student Sign-In</span>
+            </a>
+        </div>
         """
 
     navbar_markup = f"""

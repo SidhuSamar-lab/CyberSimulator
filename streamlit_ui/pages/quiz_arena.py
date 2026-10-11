@@ -19,12 +19,16 @@ def render_quiz_arena(current_student: Optional[Student], all_students: List[Stu
 
     if not current_student:
         st.info("Please sign in as a student cadet to enter the Quiz Arena.")
-        col_qa1, col_qa2 = st.columns(2)
+        col_qa1, col_qa2, col_qa3 = st.columns(3)
         with col_qa1:
             if st.button("🔑 Sign In as Student", key="btn_qa_require_login", type="primary", use_container_width=True):
                 AppStateManager.navigate_to("🔑 Student Sign-In")
                 st.rerun()
         with col_qa2:
+            if st.button("🎓 Teacher Portal", key="btn_qa_goto_teacher", type="secondary", use_container_width=True):
+                AppStateManager.navigate_to("🎓 Teacher Sign-In")
+                st.rerun()
+        with col_qa3:
             if st.button("← Back to Curriculum", key="btn_qa_back_home", type="secondary", use_container_width=True):
                 AppStateManager.navigate_to("🏠 Home")
                 st.rerun()

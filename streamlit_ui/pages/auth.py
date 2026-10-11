@@ -44,63 +44,94 @@ def render_student_signin(current_student: Optional[Student], all_students: List
             st.markdown("""
             <div style="max-width: 620px; margin: 0 auto; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 28px 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
                 <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; margin-bottom: 16px;">
-                    Enter Cadet Credentials
+                    Cadet Portal &bull; Enrollment & Sign-In
                 </div>
             """, unsafe_allow_html=True)
 
-            with st.form("student_login_form"):
-                std_name = st.text_input("Full Name", placeholder="e.g. Alex Chen")
-                class_options = ["8B", "7A", "8A", "9C"]
-                class_labels = {
-                    "8B": "Grade 8 • Section B (Mr. Vance)",
-                    "7A": "Grade 7 • Section A (Ms. Alvarez)",
-                    "8A": "Grade 8 • Section A (Dr. Thorne)",
-                    "9C": "Grade 9 • Section C (Coach Ramirez)",
-                }
-                std_class = st.selectbox("Grade & Section", class_options, format_func=lambda x: class_labels.get(x, x))
-                std_roll = st.text_input("Class Roll Number", placeholder="e.g. 24")
+            tab_register, tab_quick = st.tabs(["➕ Register / Add New Student", "⚡ Existing Cadet Quick Sign-In"])
 
-                submit_btn = st.form_submit_button("Start Learning (No Passwords) →", type="primary", use_container_width=True)
-                if submit_btn:
-                    if not std_name.strip():
-                        st.error("Please enter your name.")
-                    elif not std_roll.strip():
-                        st.error("Please enter your roll number.")
-                    else:
-                        student_obj, created = Student.objects.get_or_create(
-                            roll_number=std_roll.strip(),
-                            class_name=std_class,
-                            defaults={'name': std_name.strip()}
-                        )
-                        if not created and student_obj.name != std_name.strip():
-                            student_obj.name = std_name.strip()
-                            student_obj.save(update_fields=['name'])
+            with tab_register:
+                with st.form("student_login_form"):
+                    std_name = st.text_input("Full Name", placeholder="e.g. Alex Chen", key="auth_reg_name")
+                    class_options = ["8B", "7A", "8A", "9C", "Grade 9-A", "Grade 9-B", "Grade 10-A"]
+                    class_labels = {
+                        "8B": "Grade 8 • Section B (Mr. Vance)",
+                        "7A": "Grade 7 • Section A (Ms. Alvarez)",
+                        "8A": "Grade 8 • Section A (Dr. Thorne)",
+                        "9C": "Grade 9 • Section C (Coach Ramirez)",
+                        "Grade 9-A": "Grade 9-A (STEM Track)",
+                        "Grade 9-B": "Grade 9-B (Digital Safety)",
+                        "Grade 10-A": "Grade 10-A (Cyber Defense)",
+                    }
+                    std_class = st.selectbox("Grade & Section", class_options, format_func=lambda x: class_labels.get(x, x), key="auth_reg_class")
+                    std_roll = st.text_input("Class Roll Number", placeholder="e.g. 24", key="auth_reg_roll")
 
-                        AppStateManager.set_student_session(student_obj.id)
+                    submit_btn = st.form_submit_button("➕ Register & Start Drills (No Passwords) →", type="primary", use_container_width=True)
+                    if submit_btn:
+                        if not std_name.strip():
+                            st.error("Please enter your name.")
+                        elif not std_roll.strip():
+                            st.error("Please enter your roll number.")
+                        else:
+                            student_obj, created = Student.objects.get_or_create(
+                                roll_number=std_roll.strip(),
+                                class_name=std_class.strip(),
+                                defaults={'name': std_name.strip()}
+                            )
+                            if not created and student_obj.name != std_name.strip():
+                                student_obj.name = std_name.strip()
+                                student_obj.save(update_fields=['name'])
+
+                            AppStateManager.set_student_session(student_obj.id)
+                            AppStateManager.navigate_to("🛡️ Student Hub")
+                            st.toast(f"Welcome, {student_obj.name}!")
+                            st.rerun()
+
+            with tab_quick:
+                if all_students:
+                    st.caption("Select an existing cadet profile enrolled in the academy:")
+                    student_options = {s.id: f"{s.name} ({s.class_name} • #{s.roll_number})" for s in all_students}
+                    selected_cadet_id = st.selectbox(
+                        "Select Enrolled Cadet:",
+                        list(student_options.keys()),
+                        format_func=lambda x: student_options[x],
+                        label_visibility="collapsed",
+                        key="auth_quick_cadet_select"
+                    )
+                    if st.button("Sign In as Selected Cadet →", key="btn_quick_cadet_login", type="primary", use_container_width=True):
+                        AppStateManager.set_student_session(selected_cadet_id)
                         AppStateManager.navigate_to("🛡️ Student Hub")
-                        st.toast(f"Welcome back, {student_obj.name}!")
                         st.rerun()
+                else:
+                    st.info("No enrolled students found. Use the 'Register / Add New Student' tab to create your profile.")
 
             st.markdown("</div>", unsafe_allow_html=True)
 
-            # Fast 1-Click Cadet Selection for convenience
-            if all_students:
-                st.markdown("<div style='max-width: 620px; margin: 24px auto 0 auto; text-align: center;'>", unsafe_allow_html=True)
-                st.caption("⚡ Or Quick Sign-In with an enrolled cadet profile:")
-                student_options = {s.id: f"{s.name} ({s.class_name} • #{s.roll_number})" for s in all_students}
-                selected_cadet_id = st.selectbox("Select Enrolled Cadet:", list(student_options.keys()), format_func=lambda x: student_options[x], label_visibility="collapsed")
-                if st.button("Sign In as Selected Cadet →", key="btn_quick_cadet_login", use_container_width=True):
-                    AppStateManager.set_student_session(selected_cadet_id)
-                    AppStateManager.navigate_to("🛡️ Student Hub")
+            # Prominent Teacher Portal Callout
+            st.markdown("""
+            <div style="max-width: 620px; margin: 24px auto 0 auto; background: #080812; border: 1px solid rgba(52, 211, 153, 0.3); border-radius: 18px; padding: 20px 22px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(52,211,153,0.15); display: flex; align-items: center; justify-content: center; color: #34d399;">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">school</span>
+                    </div>
+                    <div>
+                        <div style="font-family: 'Clash Display', sans-serif; font-size: 1.05rem; font-weight: 700; color: #ffffff;">Faculty Educator Access</div>
+                        <div style="font-size: 0.78rem; color: #9898b8;">Teachers can review class performance, inspect attempt logs, and configure scenarios.</div>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            col_t_btn1, col_t_btn2 = st.columns(2)
+            with col_t_btn1:
+                if st.button("🎓 Sign In to Teacher Portal →", key="btn_switch_to_teacher_portal", type="primary", use_container_width=True):
+                    AppStateManager.navigate_to("🎓 Teacher Sign-In")
                     st.rerun()
-                st.markdown("</div>", unsafe_allow_html=True)
-
-            # Link to teacher portal
-            st.markdown("<div style='max-width: 620px; margin: 30px auto 0 auto; text-align: center;'>", unsafe_allow_html=True)
-            if st.button("Are you a faculty educator? Sign in to Teacher Portal →", key="btn_switch_to_teacher_portal", type="secondary"):
-                AppStateManager.navigate_to("🎓 Teacher Sign-In")
-                st.rerun()
-            st.markdown("</div>", unsafe_allow_html=True)
+            with col_t_btn2:
+                if st.button("⚡ Quick Faculty Demo Sign-In", key="btn_quick_auth_teacher", type="secondary", use_container_width=True):
+                    AppStateManager.set_teacher_session()
+                    AppStateManager.navigate_to("📊 Teacher Portal")
+                    st.rerun()
 
 
 def render_teacher_signin() -> None:

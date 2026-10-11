@@ -108,6 +108,34 @@ def render_teacher_portal(current_student: Optional[Student], all_students: List
     """)
 
     st.markdown("### 👥 Student Roster & Attempt Inspector")
+
+    with st.expander("➕ Enroll New Student / Add Cadet to Roster"):
+        with st.form("form_teacher_enroll_student"):
+            t_name = st.text_input("Student Full Name", placeholder="e.g. Maya Lin", key="tch_add_name")
+            t_col1, t_col2 = st.columns(2)
+            with t_col1:
+                t_class = st.text_input("Class / Section", value="Grade 9-A", placeholder="e.g. 8B or Grade 9-A", key="tch_add_class")
+            with t_col2:
+                t_roll = st.text_input("Roll Number", placeholder="e.g. 305", key="tch_add_roll")
+            t_submit = st.form_submit_button("➕ Enroll Cadet into Academy", type="primary", use_container_width=True)
+
+            if t_submit:
+                if not t_name.strip():
+                    st.error("Please enter student name.")
+                elif not t_roll.strip():
+                    st.error("Please enter roll number.")
+                else:
+                    new_s, created = Student.objects.get_or_create(
+                        roll_number=t_roll.strip(),
+                        class_name=t_class.strip(),
+                        defaults={'name': t_name.strip()}
+                    )
+                    if not created and new_s.name != t_name.strip():
+                        new_s.name = t_name.strip()
+                        new_s.save(update_fields=['name'])
+                    st.success(f"Successfully enrolled cadet {new_s.name} (#{new_s.roll_number} • {new_s.class_name})!")
+                    st.rerun()
+
     available_classes = sorted(list(set(s.class_name for s in all_students)))
     class_filter = st.selectbox("Filter by Class Section:", ["All Classes"] + available_classes)
 
