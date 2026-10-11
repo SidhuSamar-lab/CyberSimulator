@@ -8,7 +8,11 @@ CYBER_TOPICS = [
         "id": "phishing",
         "title": "Phishing Scams",
         "tagline": "Spot deceptive emails, fake urgency, and dangerous links.",
-        "icon": "shield-alert",
+        "icon": "mark_email_unread",
+        "material_icon": "mark_email_unread",
+        "badge_name": "Phishing Hunter",
+        "time": "3 mins",
+        "level": "BEGINNER",
         "color": "rose",
         "description": "Learn to detect urgent emails claiming your account is banned, fake teacher messages, and spoofed website links designed to steal your credentials.",
         "key_concepts": [
@@ -21,7 +25,11 @@ CYBER_TOPICS = [
         "id": "otp_scams",
         "title": "OTP & Verification Scams",
         "tagline": "Protect your one-time passwords from fraud callers and impostors.",
-        "icon": "key-round",
+        "icon": "key",
+        "material_icon": "key",
+        "badge_name": "OTP Sentinel",
+        "time": "3 mins",
+        "level": "BEGINNER",
         "color": "amber",
         "description": "Understand why legitimate banks, game platforms, and tech services NEVER ask for your SMS/WhatsApp One-Time Passwords over phone or chat.",
         "key_concepts": [
@@ -34,7 +42,11 @@ CYBER_TOPICS = [
         "id": "fake_websites",
         "title": "Fake & Spoofed Websites",
         "tagline": "Inspect URLs, detect typo-squatting, and avoid counterfeit stores.",
-        "icon": "globe",
+        "icon": "travel_explore",
+        "material_icon": "travel_explore",
+        "badge_name": "Domain Sleuth",
+        "time": "3 mins",
+        "level": "BEGINNER",
         "color": "cyan",
         "description": "Identify fraudulent websites disguised as popular gaming stores, streaming sites, or school login portals that harvest passwords and credit cards.",
         "key_concepts": [
@@ -47,7 +59,11 @@ CYBER_TOPICS = [
         "id": "cyberbullying",
         "title": "Cyberbullying & Online Safety",
         "tagline": "Handle toxic players, protect personal boundaries, and report safely.",
-        "icon": "users",
+        "icon": "favorite",
+        "material_icon": "favorite",
+        "badge_name": "Anti-Harassment Shield",
+        "time": "3 mins",
+        "level": "BEGINNER",
         "color": "purple",
         "description": "Build safe online habits in gaming Discord servers, multiplayer lobbies, and class groups while knowing when and how to block, report, and seek help.",
         "key_concepts": [
@@ -60,7 +76,11 @@ CYBER_TOPICS = [
         "id": "social_privacy",
         "title": "Social Media Privacy",
         "tagline": "Control your digital footprint, geotags, and personal exposure.",
-        "icon": "eye-off",
+        "icon": "visibility_off",
+        "material_icon": "visibility_off",
+        "badge_name": "Privacy Guardian",
+        "time": "3 mins",
+        "level": "BEGINNER",
         "color": "indigo",
         "description": "Master privacy settings on Instagram, TikTok, and Snapchat. Prevent strangers from tracking your daily routine through location tags and public stories.",
         "key_concepts": [
@@ -73,7 +93,11 @@ CYBER_TOPICS = [
         "id": "qr_scams",
         "title": "QR Code Scams (Quishing)",
         "tagline": "Identify tampered stickers, parking meters, and payment traps.",
-        "icon": "qr-code",
+        "icon": "qr_code_scanner",
+        "material_icon": "qr_code_scanner",
+        "badge_name": "Quishing Buster",
+        "time": "3 mins",
+        "level": "BEGINNER",
         "color": "emerald",
         "description": "Examine how attackers paste fraudulent QR codes over real signs in restaurants, public transport, or contest posters to redirect you to malware.",
         "key_concepts": [
@@ -86,7 +110,11 @@ CYBER_TOPICS = [
         "id": "ai_misinformation",
         "title": "AI Misinformation & Deepfakes",
         "tagline": "Detect voice clones, synthetic media, and generative fakes.",
-        "icon": "cpu",
+        "icon": "psychology",
+        "material_icon": "psychology",
+        "badge_name": "Deepfake Detective",
+        "time": "3 mins",
+        "level": "BEGINNER",
         "color": "fuchsia",
         "description": "Learn to critically evaluate sensational AI-generated news videos, voice clones pretending to be relatives in distress, and deepfake imagery.",
         "key_concepts": [
@@ -99,7 +127,11 @@ CYBER_TOPICS = [
         "id": "passwords_2fa",
         "title": "Password Security & 2FA",
         "tagline": "Build bulletproof passphrases and activate multi-factor defense.",
-        "icon": "lock",
+        "icon": "phonelink_lock",
+        "material_icon": "phonelink_lock",
+        "badge_name": "2FA Sentinel",
+        "time": "3 mins",
+        "level": "BEGINNER",
         "color": "blue",
         "description": "Discover why 'Password123' fails instantly, how to generate strong memorizable passphrases, and why Two-Factor Authentication stops 99% of account hacks.",
         "key_concepts": [
@@ -116,3 +148,11 @@ TOPICS_BY_ID = {topic["id"]: topic for topic in CYBER_TOPICS}
 def get_topic_by_id(topic_id: str):
     """Retrieve topic metadata or return None."""
     return TOPICS_BY_ID.get(topic_id)
+
+
+def get_topic_icon(topic_id: str) -> str:
+    """Retrieve standard Google Material Symbol icon for topic."""
+    topic = TOPICS_BY_ID.get(topic_id)
+    if topic:
+        return topic.get("material_icon") or topic.get("icon") or "shield"
+    return "shield"

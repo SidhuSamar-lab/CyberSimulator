@@ -56,6 +56,10 @@ NEXUS_STUDIO_CSS = '''
         direction: ltr;
         -webkit-font-smoothing: antialiased;
         vertical-align: middle;
+        overflow: hidden !important;
+        text-overflow: clip !important;
+        max-width: 100% !important;
+        user-select: none;
     }
 
     /* Global reset to Obsidian deep canvas */
@@ -109,14 +113,14 @@ NEXUS_STUDIO_CSS = '''
     .text-stroke {
         -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.4);
         color: transparent !important;
-        transition: color 0.5s ease, -webkit-text-stroke 0.5s ease;
+        transition: color 0.4s ease, -webkit-text-stroke 0.4s ease, text-shadow 0.4s ease;
         display: block;
         cursor: pointer;
     }
     .text-stroke:hover {
         color: #e8ff47 !important;
         -webkit-text-stroke: 1.5px #e8ff47 !important;
-        text-shadow: none !important;
+        text-shadow: 0 0 30px rgba(232, 255, 71, 0.45) !important;
     }
 
     /* Marquee Animation */
@@ -573,6 +577,92 @@ NEXUS_STUDIO_CSS = '''
         background: rgba(232, 255, 71, 0.12);
         border-color: rgba(232, 255, 71, 0.35);
         color: #e8ff47;
+    }
+
+    /* Student Dashboard Topic Card & Action Links */
+    .student-topic-card {
+        background: #0b0b18;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 20px;
+        margin-bottom: 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 230px;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+    }
+    .student-topic-card:hover {
+        border-color: rgba(232, 255, 71, 0.35);
+        background: #0e0e22;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+    .topic-icon-box {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        max-width: 42px;
+        border-radius: 12px;
+        background: #080812;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden !important;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+    .student-topic-card:hover .topic-icon-box {
+        border-color: rgba(232, 255, 71, 0.4);
+        transform: scale(1.05);
+    }
+    .topic-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 16px;
+        border-radius: 9999px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-decoration: none !important;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        line-height: 1.4;
+    }
+    .topic-btn-start {
+        background: #e8ff47;
+        color: #04040a !important;
+        border: 1px solid #e8ff47;
+        box-shadow: 0 0 15px rgba(232, 255, 71, 0.25);
+    }
+    .topic-btn-start:hover {
+        background: #d4ec33;
+        transform: translateY(-1px);
+        box-shadow: 0 0 25px rgba(232, 255, 71, 0.45);
+    }
+    .topic-btn-retry {
+        background: #ff6b35;
+        color: #ffffff !important;
+        border: 1px solid #ff6b35;
+        box-shadow: 0 0 15px rgba(255, 107, 53, 0.25);
+    }
+    .topic-btn-retry:hover {
+        background: #f05a24;
+        transform: translateY(-1px);
+        box-shadow: 0 0 25px rgba(255, 107, 53, 0.45);
+    }
+    .topic-btn-review {
+        background: #080812;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .topic-btn-review:hover {
+        background: #121226;
+        border-color: rgba(232, 255, 71, 0.5);
+        color: #e8ff47 !important;
     }
 
     /* Streamlit Radio Override - Interactive Cyber Option Cards */

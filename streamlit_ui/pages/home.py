@@ -25,7 +25,7 @@ def render_home_page(current_student: Optional[Student]) -> None:
                 <span>&rarr;</span>
             </a>
             <a href="?page=leaderboard" target="_self" class="btn-secondary">
-                <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">trophy</span>
+                <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">emoji_events</span>
                 <span>Leaderboard</span>
             </a>
         """
@@ -36,7 +36,7 @@ def render_home_page(current_student: Optional[Student]) -> None:
                 <span>&rarr;</span>
             </a>
             <a href="?page=leaderboard" target="_self" class="btn-secondary">
-                <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">trophy</span>
+                <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">emoji_events</span>
                 <span>Leaderboard</span>
             </a>
         """
@@ -47,7 +47,7 @@ def render_home_page(current_student: Optional[Student]) -> None:
                 <span>&rarr;</span>
             </a>
             <a href="?page=leaderboard" target="_self" class="btn-secondary">
-                <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">trophy</span>
+                <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">emoji_events</span>
                 <span>Leaderboard</span>
             </a>
         """
@@ -124,20 +124,24 @@ def render_home_page(current_student: Optional[Student]) -> None:
     for idx, t in enumerate(CYBER_TOPICS):
         c = cols[idx % 4]
         with c:
-            topic_icon = t.get('icon', 'shield')
+            topic_icon = t.get('material_icon') or t.get('icon', 'shield')
             topic_card_html = f"""
-            <div style="background: #0d0d1f; border-radius: 16px; padding: 22px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 20px; min-height: 240px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease;">
+            <div style="background: #0d0d1f; border-radius: 16px; padding: 22px; border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 20px; min-height: 250px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease;">
                 <div>
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
-                        <span class="material-symbols-outlined" style="font-size: 26px; color: #e8ff47;">{topic_icon}</span>
+                        <div class="topic-icon-box" style="color: #e8ff47; width: 38px; height: 38px;">
+                            <span class="material-symbols-outlined" style="font-size: 22px;">{topic_icon}</span>
+                        </div>
                         <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #666680;">#{idx + 1:02d}</span>
                     </div>
-                    <h3 style="font-family: 'Clash Display', sans-serif; font-size: 1.25rem; font-weight: 700; color: #ffffff; margin: 0 0 8px 0; line-height: 1.2;">{html.escape(t['title'])}</h3>
-                    <p style="font-family: 'Cabinet Grotesk', sans-serif; font-size: 0.88rem; color: #9898b8; line-height: 1.5; margin: 0;">{html.escape(t['description'])}</p>
+                    <h3 style="font-family: 'Clash Display', sans-serif; font-size: 1.15rem; font-weight: 700; color: #ffffff; margin: 0 0 8px 0; line-height: 1.2;">{html.escape(t['title'])}</h3>
+                    <p style="font-family: 'Cabinet Grotesk', sans-serif; font-size: 0.85rem; color: #9898b8; line-height: 1.5; margin: 0;">{html.escape(t['description'])}</p>
                 </div>
                 <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between;">
-                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47;">{html.escape(t.get('badge_name', 'Defender'))}</span>
-                    <span style="color: #666680; font-size: 0.8rem;">&rarr;</span>
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #e8ff47;">{html.escape(t.get('badge_name', 'Defender'))}</span>
+                    <a href="?page=quiz_arena&topic={t['id']}" target="_self" class="topic-btn topic-btn-start" style="padding: 4px 12px; font-size: 0.68rem;">
+                        <span>Start Drill</span> <span>&rarr;</span>
+                    </a>
                 </div>
             </div>
             """
@@ -145,10 +149,6 @@ def render_home_page(current_student: Optional[Student]) -> None:
                 st.html(topic_card_html)
             else:
                 st.markdown(topic_card_html, unsafe_allow_html=True)
-
-            if st.button(f"Launch {t['title']} →", key=f"btn_card_drill_{t['id']}", use_container_width=True):
-                AppStateManager.navigate_to("📝 Quiz Arena", topic_id=t['id'])
-                st.rerun()
 
 
 render_home = render_home_page

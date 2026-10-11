@@ -336,22 +336,44 @@ def render_student_hub_page(all_students: List[Student], current_student: Option
                         top_badge = f"""<span style="display: inline-flex; align-items: center; gap: 6px; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); color: #c4c4d8; padding: 3px 10px; border-radius: 9999px; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: bold;"><span style="width: 5px; height: 5px; background: rgba(255,255,255,0.4); border-radius: 50%;"></span>Ready to Start</span>
                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #9898b8;">⏱ 3 mins</span>"""
 
-                    icon_name = topic.get('icon', 'shield')
+                    icon_name = topic.get('material_icon') or BadgeService.get_material_icon(topic['id'])
                     border_color = 'rgba(232, 255, 71, 0.3)' if is_done else ('rgba(255, 107, 53, 0.3)' if has_att else 'rgba(255, 255, 255, 0.08)')
                     icon_color = '#e8ff47' if is_done else ('#ff6b35' if has_att else '#c4c4d8')
 
+                    if is_done:
+                        action_html = f"""
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; font-weight: 600;">Mastered</span>
+                        <a href="?page=quiz_arena&topic={topic['id']}" target="_self" class="topic-btn topic-btn-review">
+                            <span>Review</span> <span>&rarr;</span>
+                        </a>
+                        """
+                    elif has_att:
+                        action_html = f"""
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #ff6b35; font-weight: 600;">In Progress</span>
+                        <a href="?page=quiz_arena&topic={topic['id']}" target="_self" class="topic-btn topic-btn-retry">
+                            <span>Retry Quiz</span> <span>&rarr;</span>
+                        </a>
+                        """
+                    else:
+                        action_html = f"""
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #9898b8;">Available</span>
+                        <a href="?page=quiz_arena&topic={topic['id']}" target="_self" class="topic-btn topic-btn-start">
+                            <span>Start Quiz</span> <span>&rarr;</span>
+                        </a>
+                        """
+
                     card_markup = f"""
-                    <div style="background: #0b0b18; border: 1px solid {border_color}; border-radius: 18px; padding: 20px; margin-bottom: 16px; display: flex; flex-direction: column; justify-content: space-between; min-height: 230px;">
+                    <div class="student-topic-card" style="border-color: {border_color};">
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                                 {top_badge}
                             </div>
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
-                                <div style="width: 42px; height: 42px; border-radius: 12px; background: #080812; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; color: {icon_color};">
+                            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+                                <div class="topic-icon-box" style="color: {icon_color};">
                                     <span class="material-symbols-outlined" style="font-size: 22px;">{icon_name}</span>
                                 </div>
-                                <div>
-                                    <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #ffffff;">{html.escape(topic['title'])}</h3>
+                                <div style="min-width: 0; flex: 1;">
+                                    <h3 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{html.escape(topic['title'])}</h3>
                                     <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #9898b8; margin-top: 2px;">
                                         ⏱ 3 mins &bull; BEGINNER
                                     </div>
@@ -362,17 +384,15 @@ def render_student_hub_page(all_students: List[Student], current_student: Option
                                 <span class="material-symbols-outlined" style="font-size: 16px; color: {'#e8ff47' if is_done else '#9898b8'};">workspace_premium</span>
                             </div>
                         </div>
+                        <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.06); display: flex; align-items: center; justify-content: space-between;">
+                            {action_html}
+                        </div>
                     </div>
                     """
                     if hasattr(st, "html"):
                         st.html(card_markup)
                     else:
                         st.markdown(card_markup, unsafe_allow_html=True)
-
-                    btn_label = f"Review: {topic['title']}" if is_done else (f"Retry Quiz: {topic['title']}" if has_att else f"Start Quiz: {topic['title']}")
-                    if st.button(btn_label, key=f"btn_dash_start_{topic['id']}"):
-                        AppStateManager.navigate_to("📝 Quiz Arena", topic_id=topic['id'])
-                        st.rerun()
 
     with dash_right_col:
         # Cyber Tip Box

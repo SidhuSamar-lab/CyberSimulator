@@ -67,7 +67,28 @@ class BadgeService:
         },
     ]
 
+    TOPIC_MATERIAL_ICONS: Dict[str, str] = {
+        "phishing": "mark_email_unread",
+        "otp_scams": "key",
+        "fake_websites": "travel_explore",
+        "cyberbullying": "favorite",
+        "social_privacy": "visibility_off",
+        "qr_scams": "qr_code_scanner",
+        "ai_misinformation": "psychology",
+        "passwords_2fa": "phonelink_lock",
+        # Common topic aliases
+        "passwords": "key",
+        "social_media": "visibility_off",
+        "ai_deepfakes": "psychology",
+        "mfa": "phonelink_lock",
+    }
+
     MASTERY_SCORE_THRESHOLD: int = 2  # At least 2/3 correct
+
+    @classmethod
+    def get_material_icon(cls, topic_id: str) -> str:
+        """Returns verified Google Material Symbol icon name for any topic."""
+        return cls.TOPIC_MATERIAL_ICONS.get(topic_id, "shield")
 
     @classmethod
     def get_badge_definitions(cls) -> List[Dict[str, str]]:

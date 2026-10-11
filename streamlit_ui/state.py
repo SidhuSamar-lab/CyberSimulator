@@ -11,7 +11,10 @@ PAGE_LOOKUP: Dict[str, str] = {
     "curriculum": "🏠 Home",
     "student_hub": "🛡️ Student Hub",
     "dashboard": "🛡️ Student Hub",
+    "student_dashboard": "🛡️ Student Hub",
     "quiz_arena": "📝 Quiz Arena",
+    "quiz": "📝 Quiz Arena",
+    "take_quiz": "📝 Quiz Arena",
     "leaderboard": "🏆 Leaderboard",
     "certificate": "📜 Certificate",
     "student_login": "🔑 Student Sign-In",
@@ -77,11 +80,14 @@ class AppStateManager:
 
         # Topic query parameter
         qp_topic = st.query_params.get("topic")
-        if qp_topic and qp_topic != st.session_state.last_seen_qp_topic:
-            st.session_state.last_seen_qp_topic = qp_topic
-            st.session_state.active_quiz_topic_id = qp_topic
-            st.session_state.active_quiz_questions = None
-            st.session_state.quiz_result_data = None
+        if qp_topic:
+            if qp_topic != st.session_state.get("last_seen_qp_topic") or st.session_state.get("active_quiz_topic_id") != qp_topic:
+                st.session_state.last_seen_qp_topic = qp_topic
+                st.session_state.active_quiz_topic_id = qp_topic
+                st.session_state.active_quiz_questions = None
+                st.session_state.quiz_result_data = None
+        else:
+            st.session_state.last_seen_qp_topic = None
 
     @classmethod
     def set_student_session(cls, student_id: int) -> None:
