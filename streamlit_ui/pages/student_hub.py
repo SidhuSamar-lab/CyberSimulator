@@ -110,17 +110,12 @@ def render_student_hub_page(all_students: List[Student], current_student: Option
         </div>
         """)
 
-        col_t1, col_t2, col_t3 = st.columns([5, 5, 4])
+        col_t1, col_t2 = st.columns([7, 5])
         with col_t1:
             if st.button("🎓 Sign In as Teacher →", key="btn_hub_goto_teacher", type="primary", use_container_width=True):
                 AppStateManager.navigate_to("🎓 Teacher Sign-In")
                 st.rerun()
         with col_t2:
-            if st.button("⚡ Quick Faculty Demo Sign-In", key="btn_hub_quick_teacher", type="secondary", use_container_width=True):
-                AppStateManager.set_teacher_session()
-                AppStateManager.navigate_to("📊 Teacher Portal")
-                st.rerun()
-        with col_t3:
             if st.button("← Curriculum", key="btn_hub_back_home", type="secondary", use_container_width=True):
                 AppStateManager.navigate_to("🏠 Home")
                 st.rerun()

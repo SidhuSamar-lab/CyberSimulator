@@ -696,8 +696,11 @@ NEXUS_STUDIO_CSS = '''
         box-shadow: 0 0 25px rgba(232, 255, 71, 0.15) !important;
     }
 
-    /* Streamlit Buttons */
-    .stButton > button {
+    /* Streamlit Buttons & Form Submit Buttons */
+    .stButton > button,
+    div[data-testid="stFormSubmitButton"] > button,
+    button[data-testid="baseButton-primary"],
+    button[kind="primary"] {
         background: #e8ff47 !important;
         color: #04040a !important;
         font-family: 'Clash Display', sans-serif !important;
@@ -708,10 +711,60 @@ NEXUS_STUDIO_CSS = '''
         box-shadow: 0 0 25px rgba(232, 255, 71, 0.25) !important;
         transition: all 0.2s ease !important;
     }
-    .stButton > button:hover {
+    .stButton > button *,
+    div[data-testid="stFormSubmitButton"] > button *,
+    button[data-testid="baseButton-primary"] *,
+    button[kind="primary"] *,
+    div[data-testid="stFormSubmitButton"] p,
+    div[data-testid="stFormSubmitButton"] span,
+    div[data-testid="stFormSubmitButton"] div,
+    button[data-testid="baseButton-primary"] p,
+    button[data-testid="baseButton-primary"] span,
+    button[data-testid="baseButton-primary"] div,
+    button[kind="primary"] p,
+    button[kind="primary"] span,
+    button[kind="primary"] div {
+        color: #04040a !important;
+        font-family: 'Clash Display', sans-serif !important;
+        font-weight: 700 !important;
+    }
+    .stButton > button:hover,
+    div[data-testid="stFormSubmitButton"] > button:hover,
+    button[data-testid="baseButton-primary"]:hover,
+    button[kind="primary"]:hover {
         background: #d4ec33 !important;
         transform: translateY(-2px) !important;
         box-shadow: 0 0 35px rgba(232, 255, 71, 0.45) !important;
+    }
+
+    /* Streamlit Secondary Buttons */
+    .stButton > button[kind="secondary"],
+    button[data-testid="baseButton-secondary"],
+    button[kind="secondary"] {
+        background: #080812 !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow: none !important;
+    }
+    .stButton > button[kind="secondary"] *,
+    button[data-testid="baseButton-secondary"] *,
+    button[kind="secondary"] * {
+        color: #ffffff !important;
+        font-family: 'Cabinet Grotesk', sans-serif !important;
+        font-weight: 600 !important;
+    }
+    .stButton > button[kind="secondary"]:hover,
+    button[data-testid="baseButton-secondary"]:hover,
+    button[kind="secondary"]:hover {
+        background: #121226 !important;
+        border-color: rgba(232, 255, 71, 0.5) !important;
+        color: #e8ff47 !important;
+        transform: translateY(-1px) !important;
+    }
+    .stButton > button[kind="secondary"]:hover *,
+    button[data-testid="baseButton-secondary"]:hover *,
+    button[kind="secondary"]:hover * {
+        color: #e8ff47 !important;
     }
 
     /* Form Inputs & Selectboxes */

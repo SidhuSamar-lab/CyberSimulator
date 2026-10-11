@@ -122,16 +122,11 @@ def render_student_signin(current_student: Optional[Student], all_students: List
             </div>
             """, unsafe_allow_html=True)
 
-            col_t_btn1, col_t_btn2 = st.columns(2)
-            with col_t_btn1:
-                if st.button("🎓 Sign In to Teacher Portal →", key="btn_switch_to_teacher_portal", type="primary", use_container_width=True):
-                    AppStateManager.navigate_to("🎓 Teacher Sign-In")
-                    st.rerun()
-            with col_t_btn2:
-                if st.button("⚡ Quick Faculty Demo Sign-In", key="btn_quick_auth_teacher", type="secondary", use_container_width=True):
-                    AppStateManager.set_teacher_session()
-                    AppStateManager.navigate_to("📊 Teacher Portal")
-                    st.rerun()
+            st.markdown("<div style='max-width: 620px; margin: 16px auto 0 auto;'>", unsafe_allow_html=True)
+            if st.button("🎓 Sign In to Teacher Portal →", key="btn_switch_to_teacher_portal", type="primary", use_container_width=True):
+                AppStateManager.navigate_to("🎓 Teacher Sign-In")
+                st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
 
 
 def render_teacher_signin() -> None:
@@ -197,13 +192,6 @@ def render_teacher_signin() -> None:
                         st.error("Invalid credentials. Please verify your faculty username and password.")
 
             st.markdown("</div>", unsafe_allow_html=True)
-
-            # Quick Demo Sign-In
-            st.markdown("<div style='max-width: 520px; margin: 20px auto 0 auto;'>", unsafe_allow_html=True)
-            if st.button("⚡ Quick Sign-In (Demo Faculty: TeacherPass123!)", key="btn_quick_faculty_login", use_container_width=True):
-                AppStateManager.set_teacher_session()
-                AppStateManager.navigate_to("📊 Teacher Portal")
-                st.rerun()
 
             st.markdown("<div style='text-align: center; margin-top: 24px;'>", unsafe_allow_html=True)
             if st.button("← Switch to Student Sign-In", key="btn_switch_to_student_portal", type="secondary"):
