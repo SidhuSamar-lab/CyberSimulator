@@ -1,24 +1,16 @@
 import os
+import sys
 from pathlib import Path
-from dotenv import load_dotenv
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Load environment variables from .env if present
-load_dotenv(BASE_DIR / '.env')
+import dj_database_url
+from .env import AppConfig, BASE_DIR
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-cybersimulator-dev-key-change-in-prod')
+SECRET_KEY = AppConfig.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
+DEBUG = AppConfig.DEBUG
 
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver,.azurewebsites.net,.onrender.com,.railway.app,.vercel.app,.streamlit.app,*').split(',')
-    if host.strip()
-]
+ALLOWED_HOSTS = AppConfig.ALLOWED_HOSTS
 
 # Application definition
 INSTALLED_APPS = [
@@ -33,6 +25,7 @@ INSTALLED_APPS = [
     # Custom apps
     'users',
     'quizzes',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -68,13 +61,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # Supabase Cloud PostgreSQL Database Configuration
-# Cloud database only - no local storage or disk SQLite
-import dj_database_url
-import sys
-
-SUPABASE_DATABASE_URL = "postgresql://postgres.zdcebdeazxodmecjrkan:Samardeida%4022@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres"
-DATABASE_URL = os.getenv('DATABASE_URL', '').strip() or SUPABASE_DATABASE_URL
-
 if 'test' in sys.argv:
     # Isolated in-memory database for unit test runner (never touches disk)
     DATABASES = {
@@ -83,14 +69,22 @@ if 'test' in sys.argv:
             'NAME': ':memory:',
         }
     }
-else:
-    # Production cloud database (Supabase PostgreSQL)
+elif AppConfig.DATABASE_URL:
+    # Cloud database (PostgreSQL / Supabase)
     DATABASES = {
         'default': dj_database_url.config(
-            default=DATABASE_URL,
+            default=AppConfig.DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
         )
+    }
+else:
+    # Local development SQLite fallback if DATABASE_URL is not set
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
 
 # Password validation
@@ -131,11 +125,7 @@ STORAGES = {
 }
 WHITENOISE_MANIFEST_STRICT = False
 
-CSRF_TRUSTED_ORIGINS = [
-    origin.strip()
-    for origin in os.getenv('CSRF_TRUSTED_ORIGINS', 'https://*.onrender.com,https://*.railway.app,https://*.azurewebsites.net,https://*.vercel.app,http://localhost:8000,http://127.0.0.1:8000').split(',')
-    if origin.strip()
-]
+CSRF_TRUSTED_ORIGINS = AppConfig.CSRF_TRUSTED_ORIGINS
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -145,10 +135,10 @@ LOGIN_REDIRECT_URL = 'teacher_dashboard'
 LOGOUT_REDIRECT_URL = 'home'
 
 # Azure AI Foundry Configuration
-AZURE_AI_ENDPOINT = os.getenv('AZURE_AI_ENDPOINT', '').strip()
-AZURE_AI_KEY = os.getenv('AZURE_AI_KEY', '').strip()
-AZURE_AI_DEPLOYMENT_NAME = os.getenv('AZURE_AI_DEPLOYMENT_NAME', 'gpt-4o-mini').strip()
-AZURE_AI_API_VERSION = os.getenv('AZURE_AI_API_VERSION', '2024-06-01').strip()
+AZURE_AI_ENDPOINT = AppConfig.AZURE_AI_ENDPOINT
+AZURE_AI_KEY = AppConfig.AZURE_AI_KEY
+AZURE_AI_DEPLOYMENT_NAME = AppConfig.AZURE_AI_DEPLOYMENT_NAME
+AZURE_AI_API_VERSION = AppConfig.AZURE_AI_API_VERSION
 
 # Supabase Configuration
 SUPABASE_URL = os.getenv('SUPABASE_URL', '').strip()
