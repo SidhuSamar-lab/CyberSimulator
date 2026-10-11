@@ -14,8 +14,19 @@ from streamlit_ui.state import AppStateManager
 
 def render_quiz_arena(current_student: Optional[Student], all_students: List[Student]) -> None:
     """Renders the scenario challenge arena or graded results view."""
-    if not current_student and st.session_state.auth_role == "teacher" and all_students:
+    if not current_student and st.session_state.get("auth_role") == "teacher" and all_students:
         current_student = all_students[0]
+
+    if not current_student:
+        if st.session_state.get("current_student_id"):
+            current_student = Student.objects.filter(id=st.session_state.current_student_id).first()
+        elif hasattr(st, "query_params") and st.query_params.get("cadet_id"):
+            try:
+                current_student = Student.objects.filter(id=int(st.query_params.get("cadet_id"))).first()
+                if current_student:
+                    AppStateManager.set_student_session(current_student.id)
+            except Exception:
+                pass
 
     topic_id = st.session_state.active_quiz_topic_id or CYBER_TOPICS[0]['id']
     topic = get_topic_by_id(topic_id) or CYBER_TOPICS[0]

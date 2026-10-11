@@ -14,6 +14,10 @@ def render_navbar(current_student: Optional[Student]) -> None:
     auth_role = st.session_state.get("auth_role")
     active_page = st.session_state.get("active_page", "🏠 Home")
 
+    cid_param = f"&cadet_id={current_student.id}" if (auth_role == "student" and current_student) else ""
+    tok_param = f"&teacher_token={AppStateManager.make_teacher_token()}" if auth_role == "teacher" else ""
+    brand_auth_param = cid_param or tok_param
+
     if auth_role == "student" and current_student:
         # Student view: strictly NO Teacher Portal
         dash_active = 'active' if active_page == '🛡️ Student Hub' else ''
@@ -21,9 +25,9 @@ def render_navbar(current_student: Optional[Student]) -> None:
         lead_active = 'active' if active_page == '🏆 Leaderboard' else ''
 
         nav_links_html = f"""
-        <a href="/?page=student_hub" onclick="window.location.href='/?page=student_hub'; return true;" class="nav-link {dash_active}">Dashboard</a>
-        <a href="/?page=home" onclick="window.location.href='/?page=home'; return true;" class="nav-link {cur_active}">Curriculum</a>
-        <a href="/?page=leaderboard" onclick="window.location.href='/?page=leaderboard'; return true;" class="nav-link {lead_active}">Leaderboard</a>
+        <a href="/?page=student_hub{cid_param}" class="nav-link {dash_active}">Dashboard</a>
+        <a href="/?page=home{cid_param}" class="nav-link {cur_active}">Curriculum</a>
+        <a href="/?page=leaderboard{cid_param}" class="nav-link {lead_active}">Leaderboard</a>
         """
 
         initials = html.escape(current_student.name[:2].upper()) if current_student.name else "ST"
@@ -32,14 +36,14 @@ def render_navbar(current_student: Optional[Student]) -> None:
         student_class = html.escape(current_student.class_name)
 
         nav_right_html = f"""
-        <a href="/?page=student_hub" onclick="window.location.href='/?page=student_hub'; return true;" class="student-avatar-pill">
+        <a href="/?page=student_hub{cid_param}" class="student-avatar-pill">
             <div class="avatar-circle">{initials}</div>
             <div style="display: flex; flex-direction: column;">
                 <span class="avatar-name">{student_display_name}</span>
                 <span class="avatar-meta">#{student_roll} &bull; {student_class}</span>
             </div>
         </a>
-        <a href="/?action=logout" onclick="window.location.href='/?action=logout'; return true;" class="logout-pill-btn" title="Sign Out">
+        <a href="/?action=logout" class="logout-pill-btn" title="Sign Out">
             <span class="material-symbols-outlined" style="font-size: 14px;">logout</span>
             <span>Sign Out</span>
         </a>
@@ -52,9 +56,9 @@ def render_navbar(current_student: Optional[Student]) -> None:
         teach_active = 'active' if active_page == '📊 Teacher Portal' else ''
 
         nav_links_html = f"""
-        <a href="/?page=home" onclick="window.location.href='/?page=home'; return true;" class="nav-link {cur_active}">Curriculum</a>
-        <a href="/?page=leaderboard" onclick="window.location.href='/?page=leaderboard'; return true;" class="nav-link {lead_active}">Leaderboard</a>
-        <a href="/?page=teacher" onclick="window.location.href='/?page=teacher'; return true;" class="nav-link {teach_active}">Teacher Portal</a>
+        <a href="/?page=home{tok_param}" class="nav-link {cur_active}">Curriculum</a>
+        <a href="/?page=leaderboard{tok_param}" class="nav-link {lead_active}">Leaderboard</a>
+        <a href="/?page=teacher{tok_param}" class="nav-link {teach_active}">Teacher Portal</a>
         """
 
         nav_right_html = f"""
@@ -65,7 +69,7 @@ def render_navbar(current_student: Optional[Student]) -> None:
                 <span class="avatar-meta" style="color: #34d399;">Authorized</span>
             </div>
         </div>
-        <a href="/?action=logout" onclick="window.location.href='/?action=logout'; return true;" class="logout-pill-btn" title="Log Out">
+        <a href="/?action=logout" class="logout-pill-btn" title="Log Out">
             <span class="material-symbols-outlined" style="font-size: 14px;">logout</span>
             <span>Log Out</span>
         </a>
@@ -77,17 +81,17 @@ def render_navbar(current_student: Optional[Student]) -> None:
         lead_active = 'active' if active_page == '🏆 Leaderboard' else ''
 
         nav_links_html = f"""
-        <a href="/?page=home" onclick="window.location.href='/?page=home'; return true;" class="nav-link {cur_active}">Curriculum</a>
-        <a href="/?page=leaderboard" onclick="window.location.href='/?page=leaderboard'; return true;" class="nav-link {lead_active}">Leaderboard</a>
+        <a href="/?page=home" class="nav-link {cur_active}">Curriculum</a>
+        <a href="/?page=leaderboard" class="nav-link {lead_active}">Leaderboard</a>
         """
 
         nav_right_html = f"""
         <div style="display: flex; align-items: center; gap: 8px;">
-            <a href="/?page=teacher_login" onclick="window.location.href='/?page=teacher_login'; return true;" class="btn-signin-teacher">
+            <a href="/?page=teacher_login" class="btn-signin-teacher">
                 <span class="material-symbols-outlined" style="font-size: 15px;">school</span>
                 <span>Teacher Portal</span>
             </a>
-            <a href="/?page=student_login" onclick="window.location.href='/?page=student_login'; return true;" class="btn-signin-student">
+            <a href="/?page=student_login" class="btn-signin-student">
                 <span class="material-symbols-outlined" style="font-size: 15px;">person</span>
                 <span>Student Sign-In</span>
             </a>
@@ -99,7 +103,7 @@ def render_navbar(current_student: Optional[Student]) -> None:
         <div class="fixed-navbar-inner">
             <!-- Left Branding: CYBERSHIELD + Glowing Signal Dot -->
             <div style="display: flex; align-items: center; gap: 32px;">
-                <a href="/?page=home" onclick="window.location.href='/?page=home'; return true;" class="brand-link">
+                <a href="/?page=home{brand_auth_param}" class="brand-link">
                     <div class="brand-icon">
                         <span class="material-symbols-outlined" style="font-size: 19px;">shield</span>
                     </div>
@@ -108,6 +112,7 @@ def render_navbar(current_student: Optional[Student]) -> None:
                         <div class="brand-status-dot"></div>
                     </div>
                 </a>
+
 
                 <!-- Clean Nav Tabs based on Role -->
                 <nav class="nav-links">

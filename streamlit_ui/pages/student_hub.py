@@ -317,30 +317,8 @@ def render_student_hub_page(all_students: List[Student], current_student: Option
                     border_color = 'rgba(232, 255, 71, 0.3)' if is_done else ('rgba(255, 107, 53, 0.3)' if has_att else 'rgba(255, 255, 255, 0.08)')
                     icon_color = '#e8ff47' if is_done else ('#ff6b35' if has_att else '#c4c4d8')
 
-                    if is_done:
-                        action_html = f"""
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; font-weight: 600;">Mastered</span>
-                        <a href="?page=quiz_arena&topic={topic['id']}" target="_self" class="topic-btn topic-btn-review">
-                            <span>Review</span> <span>&rarr;</span>
-                        </a>
-                        """
-                    elif has_att:
-                        action_html = f"""
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #ff6b35; font-weight: 600;">In Progress</span>
-                        <a href="?page=quiz_arena&topic={topic['id']}" target="_self" class="topic-btn topic-btn-retry">
-                            <span>Retry Quiz</span> <span>&rarr;</span>
-                        </a>
-                        """
-                    else:
-                        action_html = f"""
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #9898b8;">Available</span>
-                        <a href="?page=quiz_arena&topic={topic['id']}" target="_self" class="topic-btn topic-btn-start">
-                            <span>Start Quiz</span> <span>&rarr;</span>
-                        </a>
-                        """
-
                     card_markup = f"""
-                    <div class="student-topic-card" style="border-color: {border_color};">
+                    <div class="student-topic-card" style="border-color: {border_color}; margin-bottom: 8px;">
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
                                 {top_badge}
@@ -361,15 +339,19 @@ def render_student_hub_page(all_students: List[Student], current_student: Option
                                 <span class="material-symbols-outlined" style="font-size: 16px; color: {'#e8ff47' if is_done else '#9898b8'};">workspace_premium</span>
                             </div>
                         </div>
-                        <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.06); display: flex; align-items: center; justify-content: space-between;">
-                            {action_html}
-                        </div>
                     </div>
                     """
                     if hasattr(st, "html"):
                         st.html(card_markup)
                     else:
                         st.markdown(card_markup, unsafe_allow_html=True)
+
+                    btn_label = f"⚡ Review {topic['title']} →" if is_done else (f"🔄 Retry {topic['title']} →" if has_att else f"🚀 Start {topic['title']} Drill →")
+                    btn_type = "secondary" if is_done else "primary"
+                    if st.button(btn_label, key=f"btn_hub_drill_{topic['id']}", type=btn_type, use_container_width=True):
+                        AppStateManager.navigate_to("📝 Quiz Arena", topic_id=topic['id'])
+                        st.rerun()
+
 
     with dash_right_col:
         # Cyber Tip Box
