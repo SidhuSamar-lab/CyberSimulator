@@ -86,7 +86,7 @@ def render_certificate(current_student: Optional[Student], all_students: List[St
     with bar_left:
         render_html(f"""
         <div style="background: rgba(13, 13, 31, 0.9); border-radius: 16px; padding: 12px 18px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
-            <a href="?page=student_hub" target="_self" style="color: #c4c4d8; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+            <a href="?page=student_hub&cadet_id={current_student.id}" target="_self" style="color: #c4c4d8; text-decoration: none; display: flex; align-items: center; gap: 6px;">
                 <span class="material-symbols-outlined" style="font-size: 16px;">arrow_back</span>
                 <span>Dashboard</span>
             </a>

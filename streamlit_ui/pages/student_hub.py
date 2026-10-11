@@ -17,6 +17,9 @@ from streamlit_ui.styles import render_html
 def render_student_hub_page(all_students: List[Student], current_student: Optional[Student]) -> None:
     """Renders the Student Hub with telemetry progress and interactive topic filters."""
     if not current_student:
+        current_student = AppStateManager.resolve_current_student(all_students)
+
+    if not current_student:
         render_html("""
         <div style="margin-bottom: 24px; text-align: center;">
             <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 9999px; background: rgba(232, 255, 71, 0.1); border: 1px solid rgba(232, 255, 71, 0.25); color: #e8ff47; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; margin-bottom: 12px;">
@@ -194,7 +197,7 @@ def render_student_hub_page(all_students: List[Student], current_student: Option
                 </div>
 
                 <!-- Certificate Box Link -->
-                <a href="?page=certificate" target="_self" style="margin-top: 20px; padding: 14px; border-radius: 14px; background: #0d0d1f; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; text-decoration: none; transition: border-color 0.2s;">
+                <a href="?page=certificate&cadet_id={current_student.id}" target="_self" style="margin-top: 20px; padding: 14px; border-radius: 14px; background: #0d0d1f; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; text-decoration: none; transition: border-color 0.2s;">
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(232,255,71,0.15); border: 1px solid rgba(232,255,71,0.3); display: flex; align-items: center; justify-content: center; color: #e8ff47;">
                             <span class="material-symbols-outlined" style="font-size: 18px;">verified</span>

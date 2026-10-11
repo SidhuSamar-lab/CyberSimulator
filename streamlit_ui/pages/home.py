@@ -17,40 +17,7 @@ def render_home_page(current_student: Optional[Student]) -> None:
     total_quizzes_count = QuizAttempt.objects.count()
     auth_role = st.session_state.get("auth_role")
 
-    # Dynamic CTA Buttons based on Auth Role
-    if auth_role == "student" and current_student:
-        cta_buttons_html = """
-            <a href="?page=student_hub" target="_self" class="btn-primary">
-                <span>Open Dashboard</span>
-                <span>&rarr;</span>
-            </a>
-            <a href="?page=leaderboard" target="_self" class="btn-secondary">
-                <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">emoji_events</span>
-                <span>Leaderboard</span>
-            </a>
-        """
-    elif auth_role == "teacher":
-        cta_buttons_html = """
-            <a href="?page=teacher" target="_self" class="btn-primary">
-                <span>Teacher Portal</span>
-                <span>&rarr;</span>
-            </a>
-            <a href="?page=leaderboard" target="_self" class="btn-secondary">
-                <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">emoji_events</span>
-                <span>Leaderboard</span>
-            </a>
-        """
-    else:
-        cta_buttons_html = """
-            <a href="?page=student_login" target="_self" class="btn-primary">
-                <span>Start Learning (No Passwords)</span>
-                <span>&rarr;</span>
-            </a>
-            <a href="?page=leaderboard" target="_self" class="btn-secondary">
-                <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">emoji_events</span>
-                <span>Leaderboard</span>
-            </a>
-        """
+
 
     hero_html = f"""
     <section style="position: relative; z-index: 10; max-width: 1200px; padding: 20px 0 20px 0;">

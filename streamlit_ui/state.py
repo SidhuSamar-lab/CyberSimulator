@@ -73,6 +73,7 @@ class AppStateManager:
             "quiz_attempt_nonce": 0,
             "_internal_nav": False,
             "_nav_target": None,
+            "_just_logged_out": False,
         }
         for key, val in defaults.items():
             if key not in st.session_state:
@@ -87,7 +88,8 @@ class AppStateManager:
         # Check for logout action query parameter
         if st.query_params.get("action") == "logout":
             cls.logout()
-            st.query_params.clear()
+            if "action" in st.query_params:
+                del st.query_params["action"]
             st.rerun()
 
         # Restore session from query parameters on fresh connection / browser refresh
@@ -107,6 +109,12 @@ class AppStateManager:
                 st.session_state.auth_role = "teacher"
                 st.session_state.teacher_authenticated = True
                 st.session_state.current_student_id = None
+
+        # Always enforce active session in URL query params
+        if st.session_state.get("auth_role") == "student" and st.session_state.get("current_student_id"):
+            st.query_params["cadet_id"] = str(st.session_state.current_student_id)
+        elif st.session_state.get("auth_role") == "teacher":
+            st.query_params["teacher_token"] = cls.make_teacher_token()
 
         # If internal programmatic navigation was triggered, guard against stale client query params
         if st.session_state.get("_internal_nav"):
@@ -188,6 +196,7 @@ class AppStateManager:
         st.session_state.last_seen_qp_page = None
         st.session_state._internal_nav = False
         st.session_state._nav_target = None
+        st.session_state._just_logged_out = True
         if hasattr(st, "query_params"):
             if "cadet_id" in st.query_params:
                 del st.query_params["cadet_id"]
@@ -222,13 +231,24 @@ class AppStateManager:
 
     @classmethod
     def resolve_current_student(cls, all_students: List[Student]) -> Optional[Student]:
-        """Resolves the current student model instance from cached student list or direct query."""
-        if st.session_state.auth_role == "student" and st.session_state.current_student_id:
-            student = next((s for s in all_students if s.id == st.session_state.current_student_id), None)
+        """Resolves the current student model instance from cached student list, session, or query parameter."""
+        sid = st.session_state.get("current_student_id")
+        if not sid and hasattr(st, "query_params") and st.query_params.get("cadet_id"):
+            try:
+                sid = int(st.query_params.get("cadet_id"))
+            except (ValueError, TypeError):
+                sid = None
+
+        if sid:
+            student = next((s for s in all_students if s.id == sid), None)
             if not student:
                 try:
-                    student = Student.objects.filter(id=st.session_state.current_student_id).first()
+                    student = Student.objects.filter(id=sid).first()
                 except Exception:
                     student = None
-            return student
+            if student:
+                st.session_state.auth_role = "student"
+                st.session_state.current_student_id = student.id
+                st.session_state.teacher_authenticated = False
+                return student
         return None

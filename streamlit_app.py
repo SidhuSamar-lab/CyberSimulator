@@ -5,6 +5,7 @@ Streamlit Cloud deployment coordinator with modular pages, state management, and
 import os
 import sys
 from pathlib import Path
+from typing import Optional, List
 import streamlit as st
 
 # Configure page layout and metadata immediately before any other rendering
@@ -76,6 +77,41 @@ def bootstrap_cloud_backend() -> bool:
     return True
 
 
+def inject_client_session_sync(current_student: Optional[Student]) -> None:
+    """Injects client-side localStorage sync to persist cadet session across browser refreshes and page loads."""
+    auth_role = st.session_state.get("auth_role")
+    cadet_id_val = str(current_student.id) if (auth_role == "student" and current_student) else ""
+    teacher_tok_val = AppStateManager.make_teacher_token() if auth_role == "teacher" else ""
+    just_logged_out = "true" if st.session_state.get("_just_logged_out") else "false"
+
+    if st.session_state.get("_just_logged_out"):
+        st.session_state._just_logged_out = False
+
+    onerror_js = (
+        "try {"
+        "var P=new URLSearchParams(window.location.search);"
+        f"var J={just_logged_out};"
+        "if(P.get('action')==='logout'||J){"
+        "try{localStorage.removeItem('cybershield_cadet_id');localStorage.removeItem('cybershield_teacher_token');localStorage.removeItem('cybershield_auth_role');}catch(e){}"
+        "}else{"
+        f"var sC='{cadet_id_val}';"
+        f"var sT='{teacher_tok_val}';"
+        "if(sC){localStorage.setItem('cybershield_cadet_id',sC);localStorage.setItem('cybershield_auth_role','student');}"
+        "else if(sT){localStorage.setItem('cybershield_teacher_token',sT);localStorage.setItem('cybershield_auth_role','teacher');}"
+        "var cId=localStorage.getItem('cybershield_cadet_id');"
+        "var tTok=localStorage.getItem('cybershield_teacher_token');"
+        "var R=false;"
+        "if(cId&&!P.get('cadet_id')){P.set('cadet_id',cId);R=true;}"
+        "else if(tTok&&!P.get('teacher_token')){P.set('teacher_token',tTok);R=true;}"
+        "if(R){window.location.replace(window.location.pathname+'?'+P.toString());}"
+        "}"
+        "}catch(e){}"
+    )
+
+    markup = f'<img src="data:image/gif;base64,bad" style="display:none;" onerror="{onerror_js}" />'
+    st.markdown(markup, unsafe_allow_html=True)
+
+
 def main() -> None:
     """Main routing and layout loop for the Streamlit application."""
     # Ensure backend data initialization
@@ -103,6 +139,9 @@ def main() -> None:
     # Render fixed navigation header and sidebar controls
     render_navbar(current_student)
     render_sidebar_auth(all_students, current_student)
+
+    # Ensure browser localStorage session persistence across refreshes
+    inject_client_session_sync(current_student)
 
     # Route to active page component
     active_page = st.session_state.get("active_page", "🏠 Home")

@@ -18,15 +18,7 @@ def render_quiz_arena(current_student: Optional[Student], all_students: List[Stu
         current_student = all_students[0]
 
     if not current_student:
-        if st.session_state.get("current_student_id"):
-            current_student = Student.objects.filter(id=st.session_state.current_student_id).first()
-        elif hasattr(st, "query_params") and st.query_params.get("cadet_id"):
-            try:
-                current_student = Student.objects.filter(id=int(st.query_params.get("cadet_id"))).first()
-                if current_student:
-                    AppStateManager.set_student_session(current_student.id)
-            except Exception:
-                pass
+        current_student = AppStateManager.resolve_current_student(all_students)
 
     topic_id = st.session_state.active_quiz_topic_id or CYBER_TOPICS[0]['id']
     topic = get_topic_by_id(topic_id) or CYBER_TOPICS[0]
@@ -101,7 +93,7 @@ def _render_results_view(student: Student, topic: dict) -> None:
     render_html(f"""
     <div style="margin-bottom: 24px;">
         <nav style="display: flex; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #9898b8; margin-bottom: 12px; align-items: center;">
-            <a href="?page=student_hub" target="_self" style="color: #e8ff47; text-decoration: none;">Dashboard</a>
+            <a href="?page=student_hub&cadet_id={student.id}" target="_self" style="color: #e8ff47; text-decoration: none;">Dashboard</a>
             <span>/</span>
             <span style="color: #c4c4d8;">{html.escape(topic['title'])}</span>
             <span>/</span>
@@ -223,7 +215,7 @@ def _render_active_quiz_view(student: Student, topic: dict) -> None:
     <div style="margin-bottom: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
             <nav style="display: flex; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #9898b8; align-items: center;">
-                <a href="?page=student_hub" target="_self" style="color: #e8ff47; text-decoration: none;">Dashboard</a>
+                <a href="?page=student_hub&cadet_id={student.id}" target="_self" style="color: #e8ff47; text-decoration: none;">Dashboard</a>
                 <span>/</span>
                 <span style="color: #c4c4d8;">{html.escape(topic['title'])}</span>
                 <span>/</span>
