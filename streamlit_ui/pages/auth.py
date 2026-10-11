@@ -48,62 +48,41 @@ def render_student_signin(current_student: Optional[Student], all_students: List
                 </div>
             """, unsafe_allow_html=True)
 
-            tab_register, tab_quick = st.tabs(["➕ Register / Add New Student", "⚡ Existing Cadet Quick Sign-In"])
+            with st.form("student_login_form"):
+                std_name = st.text_input("Full Name", placeholder="e.g. Alex Chen", key="auth_reg_name")
+                class_options = ["8B", "7A", "8A", "9C", "Grade 9-A", "Grade 9-B", "Grade 10-A"]
+                class_labels = {
+                    "8B": "Grade 8 • Section B (Mr. Vance)",
+                    "7A": "Grade 7 • Section A (Ms. Alvarez)",
+                    "8A": "Grade 8 • Section A (Dr. Thorne)",
+                    "9C": "Grade 9 • Section C (Coach Ramirez)",
+                    "Grade 9-A": "Grade 9-A (STEM Track)",
+                    "Grade 9-B": "Grade 9-B (Digital Safety)",
+                    "Grade 10-A": "Grade 10-A (Cyber Defense)",
+                }
+                std_class = st.selectbox("Grade & Section", class_options, format_func=lambda x: class_labels.get(x, x), key="auth_reg_class")
+                std_roll = st.text_input("Class Roll Number", placeholder="e.g. 24", key="auth_reg_roll")
 
-            with tab_register:
-                with st.form("student_login_form"):
-                    std_name = st.text_input("Full Name", placeholder="e.g. Alex Chen", key="auth_reg_name")
-                    class_options = ["8B", "7A", "8A", "9C", "Grade 9-A", "Grade 9-B", "Grade 10-A"]
-                    class_labels = {
-                        "8B": "Grade 8 • Section B (Mr. Vance)",
-                        "7A": "Grade 7 • Section A (Ms. Alvarez)",
-                        "8A": "Grade 8 • Section A (Dr. Thorne)",
-                        "9C": "Grade 9 • Section C (Coach Ramirez)",
-                        "Grade 9-A": "Grade 9-A (STEM Track)",
-                        "Grade 9-B": "Grade 9-B (Digital Safety)",
-                        "Grade 10-A": "Grade 10-A (Cyber Defense)",
-                    }
-                    std_class = st.selectbox("Grade & Section", class_options, format_func=lambda x: class_labels.get(x, x), key="auth_reg_class")
-                    std_roll = st.text_input("Class Roll Number", placeholder="e.g. 24", key="auth_reg_roll")
+                submit_btn = st.form_submit_button("➕ Register & Start Drills (No Passwords) →", type="primary", use_container_width=True)
+                if submit_btn:
+                    if not std_name.strip():
+                        st.error("Please enter your name.")
+                    elif not std_roll.strip():
+                        st.error("Please enter your roll number.")
+                    else:
+                        student_obj, created = Student.objects.get_or_create(
+                            roll_number=std_roll.strip(),
+                            class_name=std_class.strip(),
+                            defaults={'name': std_name.strip()}
+                        )
+                        if not created and student_obj.name != std_name.strip():
+                            student_obj.name = std_name.strip()
+                            student_obj.save(update_fields=['name'])
 
-                    submit_btn = st.form_submit_button("➕ Register & Start Drills (No Passwords) →", type="primary", use_container_width=True)
-                    if submit_btn:
-                        if not std_name.strip():
-                            st.error("Please enter your name.")
-                        elif not std_roll.strip():
-                            st.error("Please enter your roll number.")
-                        else:
-                            student_obj, created = Student.objects.get_or_create(
-                                roll_number=std_roll.strip(),
-                                class_name=std_class.strip(),
-                                defaults={'name': std_name.strip()}
-                            )
-                            if not created and student_obj.name != std_name.strip():
-                                student_obj.name = std_name.strip()
-                                student_obj.save(update_fields=['name'])
-
-                            AppStateManager.set_student_session(student_obj.id)
-                            AppStateManager.navigate_to("🛡️ Student Hub")
-                            st.toast(f"Welcome, {student_obj.name}!")
-                            st.rerun()
-
-            with tab_quick:
-                if all_students:
-                    st.caption("Select an existing cadet profile enrolled in the academy:")
-                    student_options = {s.id: f"{s.name} ({s.class_name} • #{s.roll_number})" for s in all_students}
-                    selected_cadet_id = st.selectbox(
-                        "Select Enrolled Cadet:",
-                        list(student_options.keys()),
-                        format_func=lambda x: student_options[x],
-                        label_visibility="collapsed",
-                        key="auth_quick_cadet_select"
-                    )
-                    if st.button("Sign In as Selected Cadet →", key="btn_quick_cadet_login", type="primary", use_container_width=True):
-                        AppStateManager.set_student_session(selected_cadet_id)
+                        AppStateManager.set_student_session(student_obj.id)
                         AppStateManager.navigate_to("🛡️ Student Hub")
+                        st.toast(f"Welcome, {student_obj.name}!")
                         st.rerun()
-                else:
-                    st.info("No enrolled students found. Use the 'Register / Add New Student' tab to create your profile.")
 
             st.markdown("</div>", unsafe_allow_html=True)
 

@@ -25,71 +25,52 @@ def render_student_hub_page(all_students: List[Student], current_student: Option
             </div>
             <h1 style="font-size: 2.4rem; margin: 0 0 8px 0; font-family: 'Clash Display', sans-serif;">Student Dashboard Hub</h1>
             <p style="color: #9898b8; max-width: 580px; margin: 0 auto; font-size: 0.95rem;">
-                Select your enrolled cadet profile, register as a new student, or access the faculty portal.
+                Enter your student credentials to register or launch your cadet dashboard.
             </p>
         </div>
         """)
 
-        tab_existing, tab_new = st.tabs(["⚡ Select Enrolled Cadet", "➕ Register / Add New Student"])
+        st.markdown("""
+        <div style="background: #080812; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #e8ff47; text-transform: uppercase; margin-bottom: 12px;">
+                Enroll or Sign In Cadet (Passwordless)
+            </div>
+        """, unsafe_allow_html=True)
+        with st.form("form_hub_add_student"):
+            new_name = st.text_input("Cadet Full Name", placeholder="e.g. Alex Chen", key="input_hub_new_name")
+            class_choices = ["8B", "7A", "8A", "9C", "Grade 9-A", "Grade 9-B", "Grade 10-A"]
+            class_labels = {
+                "8B": "Grade 8 • Section B (Mr. Vance)",
+                "7A": "Grade 7 • Section A (Ms. Alvarez)",
+                "8A": "Grade 8 • Section A (Dr. Thorne)",
+                "9C": "Grade 9 • Section C (Coach Ramirez)",
+                "Grade 9-A": "Grade 9-A (STEM Track)",
+                "Grade 9-B": "Grade 9-B (Digital Safety)",
+                "Grade 10-A": "Grade 10-A (Cyber Defense)",
+            }
+            new_class = st.selectbox("Grade & Section", class_choices, format_func=lambda x: class_labels.get(x, x), key="input_hub_new_class")
+            new_roll = st.text_input("Class Roll Number", placeholder="e.g. 24", key="input_hub_new_roll")
+            submit_new_student = st.form_submit_button("➕ Register Cadet & Open Hub →", type="primary", use_container_width=True)
 
-        with tab_existing:
-            if all_students:
-                cadet_names = [f"{s.name} (#{s.roll_number} • {s.class_name})" for s in all_students]
-                col_sel, col_btn = st.columns([8, 4], vertical_alignment="center")
-                with col_sel:
-                    selected_cadet = st.selectbox("Select Enrolled Cadet to Activate:", cadet_names, index=0, key="sel_hub_cadet")
-                    chosen_idx = cadet_names.index(selected_cadet)
-                    picked_student = all_students[chosen_idx]
-                with col_btn:
-                    if st.button("🔑 Activate Cadet Hub", type="primary", use_container_width=True, key="btn_activate_hub_cadet"):
-                        AppStateManager.set_student_session(picked_student.id)
-                        st.toast(f"Active Cadet: {picked_student.name}")
-                        st.rerun()
-            else:
-                st.info("No enrolled students found. Use the 'Register New Student' tab to enroll.")
+            if submit_new_student:
+                if not new_name.strip():
+                    st.error("Please enter the student's name.")
+                elif not new_roll.strip():
+                    st.error("Please enter the roll number.")
+                else:
+                    student_obj, created = Student.objects.get_or_create(
+                        roll_number=new_roll.strip(),
+                        class_name=new_class.strip(),
+                        defaults={'name': new_name.strip()}
+                    )
+                    if not created and student_obj.name != new_name.strip():
+                        student_obj.name = new_name.strip()
+                        student_obj.save(update_fields=['name'])
 
-        with tab_new:
-            st.markdown("""
-            <div style="background: #080812; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 20px; margin-bottom: 16px;">
-                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #e8ff47; text-transform: uppercase; margin-bottom: 12px;">
-                    Enroll New Cadet (Passwordless)
-                </div>
-            """, unsafe_allow_html=True)
-            with st.form("form_hub_add_student"):
-                new_name = st.text_input("Cadet Full Name", placeholder="e.g. Alex Chen", key="input_hub_new_name")
-                class_choices = ["8B", "7A", "8A", "9C", "Grade 9-A", "Grade 9-B", "Grade 10-A"]
-                class_labels = {
-                    "8B": "Grade 8 • Section B (Mr. Vance)",
-                    "7A": "Grade 7 • Section A (Ms. Alvarez)",
-                    "8A": "Grade 8 • Section A (Dr. Thorne)",
-                    "9C": "Grade 9 • Section C (Coach Ramirez)",
-                    "Grade 9-A": "Grade 9-A (STEM Track)",
-                    "Grade 9-B": "Grade 9-B (Digital Safety)",
-                    "Grade 10-A": "Grade 10-A (Cyber Defense)",
-                }
-                new_class = st.selectbox("Grade & Section", class_choices, format_func=lambda x: class_labels.get(x, x), key="input_hub_new_class")
-                new_roll = st.text_input("Class Roll Number", placeholder="e.g. 24", key="input_hub_new_roll")
-                submit_new_student = st.form_submit_button("➕ Register Cadet & Open Hub →", type="primary", use_container_width=True)
-
-                if submit_new_student:
-                    if not new_name.strip():
-                        st.error("Please enter the student's name.")
-                    elif not new_roll.strip():
-                        st.error("Please enter the roll number.")
-                    else:
-                        student_obj, created = Student.objects.get_or_create(
-                            roll_number=new_roll.strip(),
-                            class_name=new_class.strip(),
-                            defaults={'name': new_name.strip()}
-                        )
-                        if not created and student_obj.name != new_name.strip():
-                            student_obj.name = new_name.strip()
-                            student_obj.save(update_fields=['name'])
-
-                        AppStateManager.set_student_session(student_obj.id)
-                        st.toast(f"🎉 Registered and activated cadet {student_obj.name}!")
-                        st.rerun()
-            st.markdown("</div>", unsafe_allow_html=True)
+                    AppStateManager.set_student_session(student_obj.id)
+                    st.toast(f"🎉 Registered and activated cadet {student_obj.name}!")
+                    st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
         # Faculty Teacher Sign-In Callout Card
         render_html("""
