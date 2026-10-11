@@ -75,12 +75,10 @@ def render_navbar(current_student: Optional[Student]) -> None:
         # Guest view: Curriculum, Leaderboard, Teacher Portal in primary nav (Audit Issue #1)
         cur_active = 'active' if active_page == '🏠 Home' else ''
         lead_active = 'active' if active_page == '🏆 Leaderboard' else ''
-        teach_active = 'active' if active_page in ['🎓 Teacher Sign-In', '📊 Teacher Portal'] else ''
 
         nav_links_html = f"""
         <a href="?page=home" target="_self" class="nav-link {cur_active}">Curriculum</a>
         <a href="?page=leaderboard" target="_self" class="nav-link {lead_active}">Leaderboard</a>
-        <a href="?page=teacher_login" target="_self" class="nav-link {teach_active}">Teacher Portal</a>
         """
 
         nav_right_html = f"""
