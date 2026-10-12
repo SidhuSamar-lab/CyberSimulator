@@ -102,7 +102,7 @@ def render_navbar(current_student: Optional[Student]) -> None:
     <header class="fixed-navbar">
         <div class="fixed-navbar-inner">
             <!-- Left Branding: CYBERSHIELD + Glowing Signal Dot -->
-            <div style="display: flex; align-items: center; gap: 32px;">
+            <div class="nav-brand-wrapper">
                 <a href="/?page=home{brand_auth_param}" class="brand-link">
                     <div class="brand-icon">
                         <span class="material-symbols-outlined" style="font-size: 19px;">shield</span>
@@ -112,13 +112,12 @@ def render_navbar(current_student: Optional[Student]) -> None:
                         <div class="brand-status-dot"></div>
                     </div>
                 </a>
-
-
-                <!-- Clean Nav Tabs based on Role -->
-                <nav class="nav-links">
-                    {nav_links_html}
-                </nav>
             </div>
+
+            <!-- Clean Nav Tabs based on Role -->
+            <nav class="nav-links">
+                {nav_links_html}
+            </nav>
 
             <!-- Right Controls -->
             <div class="nav-right">

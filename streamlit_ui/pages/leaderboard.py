@@ -134,20 +134,22 @@ def render_leaderboard(all_students: Optional[List[Student]] = None) -> None:
                 Top {len(ranked_students)} Students
             </span>
         </div>
-        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-            <thead>
-                <tr style="background: #080812; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #9898b8; text-transform: uppercase; letter-spacing: 0.1em;">
-                    <th style="padding: 14px 20px;">RANK</th>
-                    <th style="padding: 14px 20px;">STUDENT NAME</th>
-                    <th style="padding: 14px 20px;">CLASS & ROLL</th>
-                    <th style="padding: 14px 20px;">BADGES</th>
-                    <th style="padding: 14px 20px;">QUIZZES TAKEN</th>
-                    <th style="padding: 14px 20px; text-align: right;">TOTAL POINTS</th>
-                </tr>
-            </thead>
-            <tbody>
-                {''.join(table_rows)}
-            </tbody>
-        </table>
+        <div class="responsive-table-wrap">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="background: #080812; border-bottom: 1px solid rgba(255, 255, 255, 0.08); font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #9898b8; text-transform: uppercase; letter-spacing: 0.1em;">
+                        <th style="padding: 14px 20px;">RANK</th>
+                        <th style="padding: 14px 20px;">STUDENT NAME</th>
+                        <th style="padding: 14px 20px;">CLASS & ROLL</th>
+                        <th style="padding: 14px 20px;">BADGES</th>
+                        <th style="padding: 14px 20px;">QUIZZES TAKEN</th>
+                        <th style="padding: 14px 20px; text-align: right;">TOTAL POINTS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {''.join(table_rows)}
+                </tbody>
+            </table>
+        </div>
     </div>
     """)

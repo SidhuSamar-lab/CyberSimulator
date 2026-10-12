@@ -170,7 +170,7 @@ def render_certificate(current_student: Optional[Student], all_students: List[St
         </div>
 
         <!-- Achievement Metrics Grid (4 Stat Boxes) -->
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 700px; margin: 0 auto 32px auto; position: relative; z-index: 10; font-family: 'JetBrains Mono', monospace;">
+        <div class="cert-stats-grid">
             <div style="padding: 12px 8px; border-radius: 12px; background: #04040a; border: 1px solid rgba(255,255,255,0.06); text-align: center;">
                 <div style="font-size: 0.65rem; color: #9898b8; font-weight: 600; text-transform: uppercase;">STUDENT RANK</div>
                 <div style="font-weight: 700; font-size: 0.85rem; color: #e8ff47; font-family: 'Clash Display', sans-serif; margin-top: 4px;">{html.escape(current_student.rank_title)}</div>

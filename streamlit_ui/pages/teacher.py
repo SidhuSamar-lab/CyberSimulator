@@ -65,7 +65,7 @@ def render_teacher_portal(current_student: Optional[Student], all_students: List
 
     # 4 Top Metric Cards (1:1 with dashboard.html)
     render_html(f"""
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+    <div class="teacher-metrics-grid">
         <div class="nexus-card" style="margin: 0;">
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #9898b8;">TOTAL STUDENTS</div>
             <div style="font-size: 2.4rem; font-weight: 700; color: #ffffff; font-family: 'Clash Display', sans-serif; margin-top: 4px;">{total_students}</div>

@@ -155,7 +155,7 @@ def _render_results_view(student: Student, topic: dict) -> None:
                 <h3 style="font-size: 1.15rem; font-weight: 700; color: #ffffff; line-height: 1.4; margin: 0 0 14px 0;">
                     {html.escape(item.get('question_text', ''))}
                 </h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+                <div class="answer-comparison-grid">
                     <div style="background: #080812; border: 1px solid rgba(255,255,255,0.06); padding: 10px 12px; border-radius: 10px;">
                         <span style="color: #9898b8; font-size: 0.65rem; display: block; text-transform: uppercase;">Your Answer:</span>
                         <span style="color: {status_color}; font-weight: bold; font-size: 0.85rem; margin-top: 2px; display: block;">Option {html.escape(str(item.get('student_selected', '')))}</span>

@@ -57,7 +57,7 @@ def render_home_page(current_student: Optional[Student]) -> None:
                 AppStateManager.navigate_to("📊 Teacher Portal")
                 st.rerun()
         else:
-            if st.button("🚀 Start Learning (No Passwords) →", key="btn_hero_start_learning", type="primary", use_container_width=True):
+            if st.button("🚀 Start Learning →", key="btn_hero_start_learning", type="primary", use_container_width=True):
                 AppStateManager.navigate_to("🔑 Student Sign-In")
                 st.rerun()
 
@@ -78,14 +78,14 @@ def render_home_page(current_student: Optional[Student]) -> None:
 
     # Telemetry Stats Row
     stats_html = f"""
-    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; padding: 28px 0; border-top: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin: 30px 0 20px 0;">
+    <div class="stats-grid-4">
         <div>
             <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">8</div>
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Core Topics</div>
         </div>
         <div>
             <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">100%</div>
-            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Passwordless</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #e8ff47; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px;">Self-Paced</div>
         </div>
         <div>
             <div style="font-family: 'Clash Display', sans-serif; font-size: clamp(2.4rem, 4.5vw, 3.8rem); font-weight: 700; color: #ffffff; line-height: 1;">{total_quizzes_count}+</div>

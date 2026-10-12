@@ -298,10 +298,34 @@
             </div>
 
         </div>
+
+        <!-- Mobile Secondary Nav Tier -->
+        <nav class="md:hidden flex items-center justify-center gap-4 px-4 py-2 border-t border-white/5 bg-ink-950/95 overflow-x-auto text-xs font-mono">
+            {% if current_student %}
+            <a href="{% url 'student_dashboard' %}" class="py-1 px-2 whitespace-nowrap {% if request.resolver_match.url_name == 'student_dashboard' %}text-signal font-bold{% else %}text-mist-900 hover:text-white{% endif %}">
+                Dashboard
+            </a>
+            {% endif %}
+            <a href="{% url 'home' %}" class="py-1 px-2 whitespace-nowrap {% if request.resolver_match.url_name == 'home' %}text-signal font-bold{% else %}text-mist-900 hover:text-white{% endif %}">
+                Curriculum
+            </a>
+            <a href="{% url 'leaderboard_view' %}" class="py-1 px-2 whitespace-nowrap {% if request.resolver_match.url_name == 'leaderboard_view' %}text-signal font-bold{% else %}text-mist-900 hover:text-white{% endif %}">
+                Leaderboard
+            </a>
+            {% if user.is_authenticated and user.is_staff %}
+            <a href="{% url 'teacher_dashboard' %}" class="py-1 px-2 whitespace-nowrap {% if 'teacher' in request.path %}text-signal font-bold{% else %}text-mist-900 hover:text-white{% endif %}">
+                Teacher Portal
+            </a>
+            {% elif not current_student %}
+            <a href="{% url 'teacher_login' %}" class="py-1 px-2 whitespace-nowrap {% if 'teacher' in request.path %}text-signal font-bold{% else %}text-mist-900 hover:text-white{% endif %}">
+                Teacher Portal
+            </a>
+            {% endif %}
+        </nav>
     </header>
 
     <!-- Global Messages Toast -->
-    <div class="max-w-4xl mx-auto px-4 mt-20 w-full z-40">
+    <div class="max-w-4xl mx-auto px-4 mt-24 md:mt-20 w-full z-40">
         {% if messages %}
             {% for message in messages %}
                 <div class="mb-3 px-4 py-2.5 rounded-xl text-xs flex items-center justify-between border shadow-xl backdrop-blur-md
@@ -320,7 +344,7 @@
     </div>
 
     <!-- Main Content Canvas -->
-    <main class="w-full pt-16 bg-ink-950 min-h-screen text-mist-100 flex-grow relative">
+    <main class="w-full pt-24 md:pt-16 bg-ink-950 min-h-screen text-mist-100 flex-grow relative">
         {% block content %}{% endblock %}
     </main>
 

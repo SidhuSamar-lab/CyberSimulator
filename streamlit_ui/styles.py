@@ -88,12 +88,20 @@ NEXUS_STUDIO_CSS = '''
         visibility: hidden !important;
     }
 
-    /* Main Container Padding to clear fixed 64px header */
+    /* Main Container Padding to clear fixed header */
     .block-container {
         padding-top: 5rem !important;
         padding-bottom: 5rem !important;
         max-width: 1280px !important;
         margin: 0 auto !important;
+    }
+    @media (max-width: 768px) {
+        .block-container {
+            padding-top: 7.2rem !important;
+            padding-bottom: 7.5rem !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
     }
 
     /* Typography */
@@ -386,6 +394,76 @@ NEXUS_STUDIO_CSS = '''
     .teacher-circle {
         background: #10b981 !important;
         color: #04040a !important;
+    }
+
+    /* Two-Tier Responsive Mobile Navbar (<= 768px) */
+    @media (max-width: 768px) {
+        .fixed-navbar {
+            height: auto !important;
+            min-height: 96px !important;
+            padding: 8px 0 6px 0 !important;
+        }
+        .fixed-navbar-inner {
+            flex-wrap: wrap !important;
+            padding: 0 16px !important;
+            gap: 6px 10px !important;
+            justify-content: space-between !important;
+        }
+        .nav-brand-wrapper {
+            order: 1 !important;
+            flex: 0 0 auto !important;
+        }
+        .nav-brand-wrapper .brand-title {
+            font-size: 1rem !important;
+        }
+        .nav-right {
+            order: 2 !important;
+            flex: 0 0 auto !important;
+            gap: 6px !important;
+        }
+        .system-status-pill {
+            display: none !important;
+        }
+        .btn-signin-teacher, .btn-signin-student {
+            padding: 5px 10px !important;
+            font-size: 0.68rem !important;
+            letter-spacing: 0.02em !important;
+        }
+        .student-avatar-pill, .teacher-avatar-pill {
+            padding: 3px 8px 3px 3px !important;
+        }
+        .avatar-name {
+            font-size: 0.75rem !important;
+            max-width: 80px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        .avatar-meta {
+            display: none !important;
+        }
+        .logout-pill-btn {
+            padding: 4px 8px !important;
+            font-size: 0.68rem !important;
+        }
+        .nav-links {
+            order: 3 !important;
+            width: 100% !important;
+            flex: 1 1 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 16px !important;
+            padding: 6px 0 2px 0 !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        .nav-link {
+            font-size: 0.82rem !important;
+            padding: 4px 4px !important;
+            white-space: nowrap !important;
+        }
     }
 
     /* Buttons */
@@ -860,6 +938,114 @@ NEXUS_STUDIO_CSS = '''
     ::-webkit-scrollbar-thumb {
         background: #e8ff47;
         border-radius: 9999px;
+    }
+
+    /* Streamlit Auto-Stacking Columns on Mobile Viewports (<= 768px) */
+    @media (max-width: 768px) {
+        div[data-testid="stHorizontalBlock"] {
+            flex-direction: column !important;
+            gap: 14px !important;
+        }
+        div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+            width: 100% !important;
+            min-width: 100% !important;
+            flex: 1 1 100% !important;
+        }
+        /* Touch target minimum size on mobile */
+        .stButton > button,
+        div[data-testid="stFormSubmitButton"] > button {
+            min-height: 44px !important;
+            padding: 0.75rem 1.4rem !important;
+        }
+    }
+
+    /* Responsive 4-Column Stats Grid (Home Page) */
+    .stats-grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 32px;
+        padding: 28px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 30px 0 20px 0;
+    }
+    @media (max-width: 768px) {
+        .stats-grid-4 {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 20px 16px !important;
+            padding: 20px 0 !important;
+        }
+    }
+    @media (max-width: 480px) {
+        .stats-grid-4 {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 16px 12px !important;
+        }
+    }
+
+    /* Teacher Metrics Grid (4 Top Metric Cards) */
+    .teacher-metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    @media (max-width: 900px) {
+        .teacher-metrics-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 14px !important;
+        }
+    }
+    @media (max-width: 480px) {
+        .teacher-metrics-grid {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+        }
+    }
+
+    /* Certificate Stats Grid */
+    .cert-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        max-width: 700px;
+        margin: 0 auto 32px auto;
+        position: relative;
+        z-index: 10;
+        font-family: 'JetBrains Mono', monospace;
+    }
+    @media (max-width: 768px) {
+        .cert-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 10px !important;
+        }
+    }
+
+    /* Answer Comparison Grid in Quiz Arena */
+    .answer-comparison-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 14px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+    }
+    @media (max-width: 480px) {
+        .answer-comparison-grid {
+            grid-template-columns: 1fr !important;
+            gap: 8px !important;
+        }
+    }
+
+    /* Responsive Table Wrapper for Horizontally Scrolling Data Tables */
+    .responsive-table-wrap {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 0 0 20px 20px;
+    }
+    .responsive-table-wrap table {
+        min-width: 640px !important;
     }
 </style>
 '''
