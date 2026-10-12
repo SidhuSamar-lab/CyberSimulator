@@ -84,8 +84,12 @@ def render_student_signin(current_student: Optional[Student], all_students: List
 
             with st.form("student_signup_form"):
                 new_name = st.text_input("Full Name", placeholder="e.g. Alex Morgan", key="auth_signup_name")
-                class_options = ["Grade 7-A", "Grade 7-B", "Grade 8-A", "Grade 8-B", "Grade 9-A", "Grade 9-B", "Grade 10-A", "Grade 10-B", "8B", "7A", "8A", "9C"]
-                new_class = st.selectbox("Grade & Section", class_options, key="auth_signup_class")
+                class_options = [
+                    f"Class {c}-{s}"
+                    for c in range(6, 13)
+                    for s in ["A", "B", "C", "D"]
+                ]
+                new_class = st.selectbox("Class & Section", class_options, key="auth_signup_class")
                 new_roll = st.text_input("Class Roll Number", placeholder="e.g. 101 or 24", key="auth_signup_roll")
                 new_email = st.text_input("Student Email Address", placeholder="e.g. alex.morgan@school.edu", key="auth_signup_email")
                 

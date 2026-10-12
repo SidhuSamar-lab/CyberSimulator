@@ -38,6 +38,13 @@ class StudentLoginForm(forms.Form):
     )
 
 
+CLASS_OPTIONS = [
+    f"Class {c}-{s}"
+    for c in range(6, 13)
+    for s in ["A", "B", "C", "D"]
+]
+
+
 class StudentSignUpForm(forms.Form):
     """
     Student registration form requiring Name, Class, Roll Number, Email, and Password.
@@ -56,13 +63,14 @@ class StudentSignUpForm(forms.Form):
     class_name = forms.CharField(
         max_length=100,
         required=True,
-        widget=forms.TextInput(attrs={
-            'placeholder': 'e.g. Grade 9-A',
-            'class': INPUT_STYLE,
-            'autocomplete': 'off',
-            'id': 'class_name_input',
-        }),
-        label="Class / Grade / Section"
+        widget=forms.Select(
+            choices=[("", "Select Class & Section")] + [(c, c) for c in CLASS_OPTIONS],
+            attrs={
+                'class': INPUT_STYLE + " cursor-pointer",
+                'id': 'class_name_input',
+            }
+        ),
+        label="Class & Section"
     )
     roll_number = forms.CharField(
         max_length=50,
@@ -107,6 +115,14 @@ class StudentSignUpForm(forms.Form):
         }),
         label="Confirm Password"
     )
+
+    def clean_class_name(self):
+        val = self.cleaned_data.get('class_name', '').strip()
+        if val.startswith("Grade "):
+            val = "Class " + val[6:]
+        if val not in CLASS_OPTIONS:
+            raise forms.ValidationError("Please select a valid class from Class 6 to 12 (sections A, B, C, D).")
+        return val
 
     def clean_email(self):
         email = self.cleaned_data.get('email', '').strip().lower()

@@ -13,7 +13,7 @@ class QuizzesTests(TestCase):
         self.client = Client()
         self.student = Student.objects.create(
             name="Taylor Swift",
-            class_name="Grade 11-A",
+            class_name="Class 11-A",
             roll_number="13"
         )
         self.teacher = User.objects.create_user(
@@ -194,7 +194,7 @@ class QuizzesTests(TestCase):
 
     def test_leaderboard_view(self):
         # Create attempts for two students in different classes
-        student2 = Student.objects.create(name="Bill Gates", class_name="Grade 11-B", roll_number="42")
+        student2 = Student.objects.create(name="Bill Gates", class_name="Class 11-B", roll_number="42")
         QuizAttempt.objects.create(
             student=self.student,
             topic_id='phishing',
@@ -215,8 +215,8 @@ class QuizzesTests(TestCase):
         response = self.client.get('/leaderboard/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Classroom Leaderboard")
-        self.assertContains(response, "Grade 11-A")
-        self.assertContains(response, "Grade 11-B")
+        self.assertContains(response, "Class 11-A")
+        self.assertContains(response, "Class 11-B")
         self.assertContains(response, "Taylor Swift")
 
     def test_student_certificate_view(self):

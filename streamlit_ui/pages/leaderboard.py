@@ -23,7 +23,7 @@ def render_leaderboard(all_students: Optional[List[Student]] = None) -> None:
             Classroom Leaderboard
         </h1>
         <p style="color: #9898b8; max-width: 600px; margin: 0 auto; font-size: 0.95rem; line-height: 1.6;">
-            Compare class performance, celebrate student achievements, and track rankings across all grades.
+            Compare class performance, celebrate student achievements, and track rankings across all classes.
         </p>
     </div>
     """)

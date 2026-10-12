@@ -114,7 +114,12 @@ def render_teacher_portal(current_student: Optional[Student], all_students: List
             t_name = st.text_input("Student Full Name", placeholder="e.g. Maya Lin", key="tch_add_name")
             t_col1, t_col2 = st.columns(2)
             with t_col1:
-                t_class = st.text_input("Class / Section", value="Grade 9-A", placeholder="e.g. 8B or Grade 9-A", key="tch_add_class")
+                tch_class_options = [
+                    f"Class {c}-{s}"
+                    for c in range(6, 13)
+                    for s in ["A", "B", "C", "D"]
+                ]
+                t_class = st.selectbox("Class & Section", tch_class_options, key="tch_add_class")
             with t_col2:
                 t_roll = st.text_input("Roll Number", placeholder="e.g. 305", key="tch_add_roll")
             t_submit = st.form_submit_button("➕ Enroll Cadet into Academy", type="primary", use_container_width=True)

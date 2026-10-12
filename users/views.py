@@ -3,7 +3,13 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib import messages
 from django.views.decorators.cache import never_cache
 from .models import Student
-from .forms import StudentLoginForm, StudentSignUpForm, TeacherLoginForm, TeacherSignUpForm
+from .forms import (
+    StudentLoginForm,
+    StudentSignUpForm,
+    TeacherLoginForm,
+    TeacherSignUpForm,
+    CLASS_OPTIONS,
+)
 
 User = get_user_model()
 
@@ -87,7 +93,10 @@ def student_signup(request):
     else:
         form = StudentSignUpForm()
 
-    return render(request, 'users/student_signup.html', {'form': form})
+    return render(request, 'users/student_signup.html', {
+        'form': form,
+        'class_options': CLASS_OPTIONS,
+    })
 
 
 @never_cache

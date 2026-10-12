@@ -11,7 +11,7 @@ class StudentAuthTests(TestCase):
         self.client = Client()
         self.student = Student.objects.create(
             name="Alex Smith",
-            class_name="Grade 8-A",
+            class_name="Class 8-A",
             roll_number="42",
             email="alex.smith@school.edu"
         )
@@ -19,7 +19,7 @@ class StudentAuthTests(TestCase):
         self.student.save()
 
     def test_student_model_creation_and_password(self):
-        self.assertEqual(str(self.student), "Alex Smith (Grade 8-A - #42)")
+        self.assertEqual(str(self.student), "Alex Smith (Class 8-A - #42)")
         self.assertEqual(self.student.total_attempts, 0)
         self.assertEqual(self.student.average_score, 0.0)
         self.assertTrue(self.student.check_password("SecretPass123!"))
@@ -28,7 +28,7 @@ class StudentAuthTests(TestCase):
     def test_student_signup_success(self):
         response = self.client.post('/student/signup/', {
             'name': 'Jordan Lee',
-            'class_name': 'Grade 9-B',
+            'class_name': 'Class 9-B',
             'roll_number': '15',
             'email': 'jordan.lee@school.edu',
             'password': 'CadetPassword123!',
@@ -40,6 +40,7 @@ class StudentAuthTests(TestCase):
         student = Student.objects.get(email='jordan.lee@school.edu')
         self.assertEqual(student.name, 'Jordan Lee')
         self.assertEqual(student.roll_number, '15')
+        self.assertEqual(student.class_name, 'Class 9-B')
         self.assertTrue(student.check_password('CadetPassword123!'))
 
         # Verify session has student_id
@@ -49,7 +50,7 @@ class StudentAuthTests(TestCase):
     def test_student_signup_mismatched_password(self):
         response = self.client.post('/student/signup/', {
             'name': 'Sam Taylor',
-            'class_name': 'Grade 10-A',
+            'class_name': 'Class 10-A',
             'roll_number': '99',
             'email': 'sam.taylor@school.edu',
             'password': 'Password123!',
@@ -61,7 +62,7 @@ class StudentAuthTests(TestCase):
     def test_student_signup_duplicate_email(self):
         response = self.client.post('/student/signup/', {
             'name': 'Duplicate Person',
-            'class_name': 'Grade 8-A',
+            'class_name': 'Class 8-A',
             'roll_number': '77',
             'email': 'alex.smith@school.edu',  # Already belongs to self.student
             'password': 'SomePassword123!',

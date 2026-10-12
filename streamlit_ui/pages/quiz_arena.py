@@ -39,7 +39,12 @@ def render_quiz_arena(current_student: Optional[Student], all_students: List[Stu
         with st.container():
             with st.form("quick_quiz_cadet_form"):
                 qa_name = st.text_input("Full Name", placeholder="e.g. Alex Chen", key="qa_cadet_name")
-                qa_class = st.selectbox("Grade & Section", ["8B", "7A", "8A", "9C", "Grade 9-A", "Grade 9-B", "Grade 10-A"], key="qa_cadet_class")
+                qa_class_options = [
+                    f"Class {c}-{s}"
+                    for c in range(6, 13)
+                    for s in ["A", "B", "C", "D"]
+                ]
+                qa_class = st.selectbox("Class & Section", qa_class_options, key="qa_cadet_class")
                 qa_roll = st.text_input("Class Roll Number", placeholder="e.g. 24", key="qa_cadet_roll")
                 btn_start = st.form_submit_button(f"⚡ Start {topic['title']} Drill →", type="primary", use_container_width=True)
 

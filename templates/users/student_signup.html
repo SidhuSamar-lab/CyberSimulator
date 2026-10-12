@@ -84,30 +84,24 @@
                         </div>
                     </div>
 
-                    <!-- Input 2: Grade & Section -->
+                    <!-- Input 2: Class & Section -->
                     <div class="flex flex-col gap-1.5">
                         <div class="flex items-center justify-between">
-                            <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="class_name_input">Grade &amp; Section</label>
-                            <span class="text-[11px] font-mono text-mist-900">Homeroom Class</span>
+                            <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="class_name_input">Class &amp; Section</label>
+                            <span class="text-[11px] font-mono text-mist-900">Classes 6 to 12 &bull; Sections A, B, C, D</span>
                         </div>
                         <div class="relative flex items-center">
-                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">meeting_room</span>
-                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
-                                   id="class_name_input" 
-                                   name="class_name"
-                                   placeholder="e.g. Grade 9-A or 8B" 
-                                   required="" 
-                                   type="text"
-                                   value="{{ form.class_name.value|default:'' }}"/>
-                        </div>
-                        
-                        <!-- Quick Pills in Nexus Studio Style -->
-                        <div class="flex items-center gap-2 flex-wrap pt-1">
-                            <span class="text-xs font-mono text-mist-900 mr-1">Quick fill:</span>
-                            <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setClassField('Grade 7-A')" type="button">7-A</button>
-                            <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setClassField('Grade 8-A')" type="button">8-A</button>
-                            <button class="px-3 py-1 rounded-full border border-signal/60 bg-signal/15 text-signal text-xs font-mono font-bold transition shadow-sm cursor-pointer" onclick="setClassField('Grade 8-B')" type="button">8-B</button>
-                            <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setClassField('Grade 9-A')" type="button">9-A</button>
+                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none z-10">meeting_room</span>
+                            <select class="w-full h-12 pl-11 pr-10 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all appearance-none cursor-pointer" 
+                                    id="class_name_input" 
+                                    name="class_name"
+                                    required="">
+                                <option value="" disabled {% if not form.class_name.value %}selected{% endif %}>Select Class &amp; Section (Classes 6 to 12)</option>
+                                {% for opt in class_options %}
+                                <option value="{{ opt }}" {% if form.class_name.value == opt %}selected{% endif %}>{{ opt }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="material-symbols-outlined absolute right-3.5 text-mist-900 text-lg pointer-events-none">expand_more</span>
                         </div>
                     </div>
 

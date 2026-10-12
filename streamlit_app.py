@@ -65,12 +65,12 @@ def bootstrap_cloud_backend() -> bool:
     try:
         if Student.objects.count() == 0:
             Student.objects.bulk_create([
-                Student(name="Alex Morgan", class_name="Grade 9-A", roll_number="101"),
-                Student(name="Jordan Lee", class_name="Grade 9-A", roll_number="102"),
-                Student(name="Sam Taylor", class_name="Grade 9-A", roll_number="103"),
-                Student(name="Riley Patel", class_name="Grade 9-B", roll_number="201"),
-                Student(name="Casey Chen", class_name="Grade 9-B", roll_number="202"),
-                Student(name="Morgan Davis", class_name="Grade 10-A", roll_number="301"),
+                Student(name="Alex Morgan", class_name="Class 9-A", roll_number="101"),
+                Student(name="Jordan Lee", class_name="Class 9-A", roll_number="102"),
+                Student(name="Sam Taylor", class_name="Class 9-A", roll_number="103"),
+                Student(name="Riley Patel", class_name="Class 9-B", roll_number="201"),
+                Student(name="Casey Chen", class_name="Class 9-B", roll_number="202"),
+                Student(name="Morgan Davis", class_name="Class 10-A", roll_number="301"),
             ])
     except Exception:
         pass
