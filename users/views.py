@@ -57,30 +57,33 @@ def student_signup(request):
             email = form.cleaned_data['email'].strip().lower()
             password = form.cleaned_data['password']
 
-            # Check if student record exists without email/password (e.g. from existing roster)
-            student = Student.objects.filter(roll_number=roll_number, class_name=class_name).first()
-            if student and not student.email:
-                student.name = name
-                student.email = email
-                student.set_password(password)
-                student.save()
-            else:
-                student = Student.objects.create(
-                    name=name,
-                    class_name=class_name,
-                    roll_number=roll_number,
-                    email=email,
-                )
-                student.set_password(password)
-                student.save()
+            try:
+                # Check if student record exists without email/password (e.g. from existing roster)
+                student = Student.objects.filter(roll_number=roll_number, class_name=class_name).first()
+                if student and not student.email:
+                    student.name = name
+                    student.email = email
+                    student.set_password(password)
+                    student.save()
+                else:
+                    student = Student.objects.create(
+                        name=name,
+                        class_name=class_name,
+                        roll_number=roll_number,
+                        email=email,
+                    )
+                    student.set_password(password)
+                    student.save()
 
-            # Set student in session
-            request.session['student_id'] = student.id
-            request.session['student_name'] = student.name
-            messages.success(request, f"Welcome to CyberShield, Cadet {student.name}! Your account is active.")
-            response = redirect('student_dashboard')
-            response.set_cookie('cybershield_cadet_id', str(student.id), max_age=86400 * 30, samesite='Lax')
-            return response
+                # Set student in session
+                request.session['student_id'] = student.id
+                request.session['student_name'] = student.name
+                messages.success(request, f"Welcome to CyberShield, Cadet {student.name}! Your account is active.")
+                response = redirect('student_dashboard')
+                response.set_cookie('cybershield_cadet_id', str(student.id), max_age=86400 * 30, samesite='Lax')
+                return response
+            except Exception as e:
+                messages.error(request, f"Registration error: {e}")
     else:
         form = StudentSignUpForm()
 

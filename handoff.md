@@ -137,8 +137,8 @@ Defined in [`quizzes/topics.py`](file:///Users/sidhu/Downloads/University/Projec
 
 ### Core Data Models
 1. **`users.Student`:**
-   * Fields: `name` (CharField), `class_name` (CharField), `roll_number` (CharField), `created_at` (DateTimeField).
-   * Unique constraint: `unique_together = ('roll_number', 'class_name')`.
+   * Fields: `name` (CharField), `class_name` (CharField), `roll_number` (CharField), `email` (EmailField, unique), `password` (CharField, hashed), `created_at` (DateTimeField).
+   * Unique constraint: `email` (primary unique identifier; legacy `unique_together` constraint dropped via migration `0003`).
    * Helper properties: `total_score`, `quizzes_taken`, `average_percentage`, `rank_title`, `earned_badges`.
 2. **`quizzes.QuizAttempt`:**
    * Fields: `student` (FK to Student), `topic_id` (CharField), `score` (IntegerField), `total_questions` (IntegerField), `percentage` (FloatField), `completed_at` (DateTimeField).
@@ -204,6 +204,12 @@ During recent development and user testing on Streamlit Cloud, several subtle st
   * **Sentinel Clearance on Explicit Login:** When a student or teacher explicitly submits credentials, `_clear_sentinel = True` is set. The client JS actively clears `cybershield_logged_out` from `localStorage` and expires the sentinel cookie.
   * **Link Sanitization:** Added `stripAuthFromLinks()` to strip `cadet_id` and `teacher_token` from all in-DOM anchor tags when logged out.
   * **Django Cache Control:** Added `@never_cache` and `Cache-Control: no-cache, no-store, must-revalidate, private` headers to Django logout endpoints.
+
+### 5. `IntegrityError` Unique Constraint Removal on Student Registration
+* **Symptom:** User encountered `IntegrityError: duplicate key value violates unique constraint "users_student_roll_number_class_name_eccf25d3_uniq"` when attempting to register a student with an existing roll number/class combination under a new email.
+* **Solution:**
+  * Dropped the legacy `unique_together = ('roll_number', 'class_name')` constraint in migration `0003_alter_student_unique_together.py`. Now that students authenticate with unique emails and passwords, student identity is properly tied to their unique email address.
+  * Added defensive `try...except Exception as reg_err` blocks around student and teacher account creation in both Streamlit and Django views to gracefully present user-friendly error notifications instead of unhandled runtime exceptions.
 
 ---
 

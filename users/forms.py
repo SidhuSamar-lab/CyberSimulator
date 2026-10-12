@@ -122,15 +122,6 @@ class StudentSignUpForm(forms.Form):
         if password and confirm_password and password != confirm_password:
             self.add_error('confirm_password', "Passwords do not match.")
 
-        roll_number = cleaned_data.get('roll_number', '').strip()
-        class_name = cleaned_data.get('class_name', '').strip()
-        email = cleaned_data.get('email', '').strip()
-
-        if roll_number and class_name:
-            existing_student = Student.objects.filter(roll_number=roll_number, class_name=class_name).first()
-            if existing_student and existing_student.email and existing_student.email.lower() != email.lower():
-                self.add_error('roll_number', f"A student in {class_name} with roll number {roll_number} is already registered under a different email.")
-
         return cleaned_data
 
 

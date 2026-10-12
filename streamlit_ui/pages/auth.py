@@ -117,27 +117,30 @@ def render_student_signin(current_student: Optional[Student], all_students: List
                         clean_class = new_class.strip()
                         clean_email = new_email.strip().lower()
 
-                        existing_std = Student.objects.filter(roll_number=clean_roll, class_name=clean_class).first()
-                        if existing_std and not existing_std.email:
-                            existing_std.name = new_name.strip()
-                            existing_std.email = clean_email
-                            existing_std.set_password(new_pass)
-                            existing_std.save()
-                            student_obj = existing_std
-                        else:
-                            student_obj = Student.objects.create(
-                                name=new_name.strip(),
-                                class_name=clean_class,
-                                roll_number=clean_roll,
-                                email=clean_email,
-                            )
-                            student_obj.set_password(new_pass)
-                            student_obj.save()
+                        try:
+                            existing_std = Student.objects.filter(roll_number=clean_roll, class_name=clean_class).first()
+                            if existing_std and not existing_std.email:
+                                existing_std.name = new_name.strip()
+                                existing_std.email = clean_email
+                                existing_std.set_password(new_pass)
+                                existing_std.save()
+                                student_obj = existing_std
+                            else:
+                                student_obj = Student.objects.create(
+                                    name=new_name.strip(),
+                                    class_name=clean_class,
+                                    roll_number=clean_roll,
+                                    email=clean_email,
+                                )
+                                student_obj.set_password(new_pass)
+                                student_obj.save()
 
-                        AppStateManager.set_student_session(student_obj.id)
-                        AppStateManager.navigate_to("🛡️ Student Hub")
-                        st.toast(f"Welcome to CyberShield, {student_obj.name}!")
-                        st.rerun()
+                            AppStateManager.set_student_session(student_obj.id)
+                            AppStateManager.navigate_to("🛡️ Student Hub")
+                            st.toast(f"Welcome to CyberShield, {student_obj.name}!")
+                            st.rerun()
+                        except Exception as reg_err:
+                            st.error(f"Registration error: {reg_err}")
 
             st.markdown("</div>", unsafe_allow_html=True)
 
@@ -304,23 +307,26 @@ def render_teacher_signin(all_students: Optional[List[Student]] = None) -> None:
                     elif User.objects.filter(email__iexact=reg_email.strip().lower()).exists():
                         st.error("An account with this email address is already registered.")
                     else:
-                        parts = reg_name.strip().split(None, 1)
-                        first_name = parts[0] if parts else reg_name.strip()
-                        last_name = parts[1] if len(parts) > 1 else ""
+                        try:
+                            parts = reg_name.strip().split(None, 1)
+                            first_name = parts[0] if parts else reg_name.strip()
+                            last_name = parts[1] if len(parts) > 1 else ""
 
-                        user = User.objects.create_user(
-                            username=reg_username.strip(),
-                            email=reg_email.strip().lower(),
-                            password=reg_pass,
-                            first_name=first_name,
-                            last_name=last_name,
-                            is_staff=True,
-                        )
+                            user = User.objects.create_user(
+                                username=reg_username.strip(),
+                                email=reg_email.strip().lower(),
+                                password=reg_pass,
+                                first_name=first_name,
+                                last_name=last_name,
+                                is_staff=True,
+                            )
 
-                        AppStateManager.set_teacher_session()
-                        AppStateManager.navigate_to("📊 Teacher Portal")
-                        st.toast(f"Faculty registration verified! Welcome, {user.get_full_name() or user.username}!")
-                        st.rerun()
+                            AppStateManager.set_teacher_session()
+                            AppStateManager.navigate_to("📊 Teacher Portal")
+                            st.toast(f"Faculty registration verified! Welcome, {user.get_full_name() or user.username}!")
+                            st.rerun()
+                        except Exception as tch_err:
+                            st.error(f"Teacher registration error: {tch_err}")
 
             st.markdown("</div>", unsafe_allow_html=True)
 

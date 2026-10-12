@@ -27,7 +27,6 @@ class Student(models.Model):
 
     class Meta:
         ordering = ['class_name', 'roll_number', 'name']
-        unique_together = ('roll_number', 'class_name')
 
     def __str__(self):
         return f"{self.name} ({self.class_name} - #{self.roll_number})"
