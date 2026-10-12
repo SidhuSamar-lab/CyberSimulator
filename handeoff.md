@@ -160,15 +160,16 @@ Defined in [`quizzes/topics.py`](file:///Users/sidhu/Downloads/University/Projec
 
 ## 7. Authentication, Session Lifecycle & Security Architecture
 
-### Student Authentication (Passwordless & Frictionless)
-* **Design Philosophy:** Middle & high school students must not be blocked by forgotten passwords.
-* **Mechanism:** Students provide **Full Name**, **Class/Section** (e.g., Grade 9-A), and **Class Roll Number** (e.g., 103).
-* **Database Action:** Executes `Student.objects.get_or_create(roll_number=roll, class_name=class_name, defaults={'name': name})`. If the student exists, their existing profile and quiz history are loaded seamlessly.
-* **Security Decision:** Removed the "Existing Cadet Quick Sign-In" dropdown from login forms to prevent students from inadvertently hijacking or inspecting peers' records.
+### Student Authentication (Secure Email & Password Authentication)
+* **Design Philosophy:** Combines frictionless onboarding with credential security, supporting both new student self-registration and existing roster account activation.
+* **Student Sign-In:** Authenticates students via registered student email and password with `student.check_password(password)`.
+* **Student Sign-Up:** Enrolls students with **Full Name**, **Grade/Section**, **Class Roll Number**, **Student Email**, and **Password**. If a student record was pre-seeded or created without credentials, signing up seamlessly links and sets their password (`student.set_password()`).
+* **Security Decision:** Removed the obsolete "Existing Cadet Quick Sign-In" dropdown to prevent account hijacking and ensure strict individual accountability.
 
-### Teacher Authentication (Secure Access)
-* **Django Monolith:** Protected by Django's `auth_login()` with `user.is_staff` verification.
-* **Streamlit Cloud:** Protected by faculty access key verification with secure constant-time HMAC token comparison (`AppStateManager.verify_teacher_token()`).
+### Teacher Authentication & Gated Registration (Faculty Access Gate)
+* **Faculty Sign-In:** Authenticates teachers and administrators via username or institutional email and password, verified against `User.is_staff`.
+* **Mandatory School Authorization Code:** To strictly prevent students from creating teacher accounts, faculty registration enforces verification of the confidential **School Authorization Code** (`AppConfig.TEACHER_SCHOOL_CODE`). Accounts are created with `is_staff=True` only upon valid code submission.
+* **Streamlit Cloud Security:** Faculty sessions are protected with deterministic HMAC tokens (`AppStateManager.make_teacher_token()`) and verified in constant time (`verify_teacher_token()`).
 
 ---
 
@@ -342,10 +343,10 @@ CyberSimulator/
 ./.venv/bin/python manage.py test
 ```
 * **Test Isolation:** Automatically redirects `DATABASES['default']` to `:memory:` SQLite during test runs, preventing any pollution of Supabase Cloud PostgreSQL.
-* **Test Results:** **26 / 26 tests passing** (`Ran 26 tests in 60.077s — OK`).
+* **Test Results:** **33 / 33 tests passing** (`Ran 33 tests in 59.612s — OK`).
   * `users.tests.StudentModelTest` (4 tests): Unique constraints, score math, badge unlocks, rank titles.
-  * `users.tests.StudentAuthTest` (3 tests): Frictionless login, session flush on logout, redirects.
-  * `users.tests.TeacherAuthTest` (3 tests): Teacher authentication, access control, logout headers.
+  * `users.tests.StudentAuthTest` (6 tests): Student email/password login, student sign-up, session flush on logout, redirects.
+  * `users.tests.TeacherAuthTest` (7 tests): Teacher authentication, school authorization code gate, staff access control, logout headers.
   * `quizzes.tests.TopicTests` (3 tests): 8 threat vectors, topic retrieval, helper functions.
   * `quizzes.tests.QuizAttemptTest` (6 tests): Submissions, attempt questions, percentage calculations.
   * `quizzes.tests.AIServiceTest` (7 tests): Mocked Azure AI client, JSON schema validation, offline fallback bank.

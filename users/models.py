@@ -1,16 +1,29 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 
 class Student(models.Model):
     """
     Represents a student taking cybersecurity awareness quizzes.
-    Authentication is frictionless: uses name, roll_number, and class_name.
+    Authentication uses unique email and password credentials.
     """
     name = models.CharField(max_length=150, help_text="Full name of the student")
+    email = models.EmailField(max_length=254, unique=True, null=True, blank=True, help_text="Student email address for authentication")
+    password = models.CharField(max_length=128, blank=True, default='', help_text="Hashed password for student authentication")
     roll_number = models.CharField(max_length=50, help_text="Student roll number or ID")
     class_name = models.CharField(max_length=100, help_text="Class / Grade / Section (e.g., Grade 9-A)")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def set_password(self, raw_password: str) -> None:
+        """Hashes and sets the student's password using Django's cryptographically secure hashers."""
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password: str) -> bool:
+        """Verifies the raw password against the stored cryptographic hash."""
+        if not self.password:
+            return False
+        return check_password(raw_password, self.password)
 
     class Meta:
         ordering = ['class_name', 'roll_number', 'name']

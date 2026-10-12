@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Admissions Gate | CyberShield Threat Laboratory{% endblock %}
+{% block title %}Student Sign-In | CyberShield{% endblock %}
 
 {% block content %}
 <div class="min-h-[calc(100vh-5rem)] w-full flex items-center justify-center p-4 sm:p-8 relative overflow-hidden bg-ink-950">
@@ -11,12 +11,12 @@
     <div class="absolute inset-0 grid-lines pointer-events-none opacity-40"></div>
     <div class="grain absolute inset-0 pointer-events-none"></div>
 
-    <div class="relative z-10 w-full max-w-xl flex flex-col items-center">
+    <div class="relative z-10 w-full max-w-lg flex flex-col items-center">
         
         <!-- Header Pill Badge -->
         <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-ink-850/80 backdrop-blur-md mb-6 shadow-lg text-xs font-mono text-mist-700">
             <span class="w-2 h-2 rounded-full bg-signal animate-pulse-slow"></span>
-            <span>STUDENT ACCESS &bull; PASSWORDLESS SIGN-IN</span>
+            <span>STUDENT CADET PORTAL &bull; SECURE SIGN-IN</span>
         </div>
 
         <!-- Main Card Container in Nexus Studio Glass -->
@@ -30,180 +30,104 @@
                 <!-- Card Header -->
                 <div class="flex flex-col gap-2 border-b border-white/5 pb-6">
                     <div class="flex items-center justify-between flex-wrap gap-2">
-                        <h1 class="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                        <h1 class="font-display text-3xl font-bold text-white tracking-tight">
                             Student Sign-In
                         </h1>
                         <span class="inline-flex items-center gap-1.5 text-signal border border-signal/30 bg-signal/10 px-3 py-1 rounded-full text-xs font-mono tracking-wider font-semibold">
                             <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
-                            <span>PASSWORDLESS</span>
+                            <span>CADET LOGIN</span>
                         </span>
                     </div>
                     <p class="font-body text-mist-900 text-sm leading-relaxed">
-                        Enter your name, grade, and roll number to start your cybersecurity drills.
+                        Enter your registered student email and password to access your cybersecurity drills and progress.
                     </p>
                 </div>
 
+                {% if form.errors %}
+                <div class="p-4 rounded-xl bg-ember/10 border border-ember/30 text-xs text-ember font-body flex flex-col gap-1">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">error</span>
+                                <span>{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm">error</span>
+                            <span>{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
                 <!-- Form -->
-                <form method="POST" action="{% url 'student_login' %}" class="flex flex-col gap-5" id="studentSignInForm" onsubmit="handleStudentSignIn(event)">
+                <form method="POST" action="{% url 'student_login' %}" class="flex flex-col gap-5" id="studentSignInForm">
                     {% csrf_token %}
 
-                    <!-- Input 1: Student Name -->
+                    <!-- Input 1: Student Email -->
                     <div class="flex flex-col gap-1.5">
-                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100 flex items-center justify-between" for="studentName">
-                            <span>Full Name</span>
-                            <span class="text-[11px] font-mono text-mist-900 normal-case">First &amp; Last</span>
+                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100 flex items-center justify-between" for="student_email_input">
+                            <span>Student Email</span>
+                            <span class="text-[11px] font-mono text-mist-900 normal-case">Registered Email</span>
                         </label>
                         <div class="relative flex items-center">
-                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">person</span>
+                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">mail</span>
                             <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
-                                   id="studentName" 
-                                   name="name"
-                                   placeholder="e.g. Alex Chen" 
+                                   id="student_email_input" 
+                                   name="email"
+                                   placeholder="e.g. alex.morgan@school.edu" 
                                    required="" 
-                                   type="text"/>
+                                   type="email"
+                                   value="{{ form.email.value|default:'' }}"/>
                         </div>
                     </div>
 
-                    <!-- Input 2: Grade & Section -->
+                    <!-- Input 2: Password -->
                     <div class="flex flex-col gap-1.5">
                         <div class="flex items-center justify-between">
-                            <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="classroomSelect">Grade &amp; Section</label>
-                            <span class="text-[11px] font-mono text-mist-900">Homeroom</span>
+                            <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="student_password_input">Password</label>
+                            <span class="text-[11px] font-mono text-mist-900">Security Credential</span>
                         </div>
                         <div class="relative flex items-center">
-                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">meeting_room</span>
-                            <select class="w-full h-12 pl-11 pr-10 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white appearance-none focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all cursor-pointer font-medium" 
-                                    id="classroomSelect"
-                                    name="class_name">
-                                <option class="bg-ink-950 text-white" selected="" value="8B">Grade 8 &bull; Section B (Mr. Vance)</option>
-                                <option class="bg-ink-950 text-white" value="7A">Grade 7 &bull; Section A (Ms. Alvarez)</option>
-                                <option class="bg-ink-950 text-white" value="8A">Grade 8 &bull; Section A (Dr. Thorne)</option>
-                                <option class="bg-ink-950 text-white" value="9C">Grade 9 &bull; Section C (Coach Ramirez)</option>
-                            </select>
-                            <span class="material-symbols-outlined absolute right-3.5 text-mist-900 text-lg pointer-events-none">expand_more</span>
-                        </div>
-                        
-                        <!-- Quick Pills in Nexus Studio Style -->
-                        <div class="flex items-center gap-2 flex-wrap pt-1">
-                            <span class="text-xs font-mono text-mist-900 mr-1">Quick select:</span>
-                            <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setGradeSelect('7A')" type="button">7-A</button>
-                            <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setGradeSelect('8A')" type="button">8-A</button>
-                            <button class="px-3 py-1 rounded-full border border-signal/60 bg-signal/15 text-signal text-xs font-mono font-bold transition shadow-sm cursor-pointer" onclick="setGradeSelect('8B')" type="button">8-B</button>
-                            <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setGradeSelect('9C')" type="button">9-C</button>
-                        </div>
-                    </div>
-
-                    <!-- Input 3: Seat ID Roll Number -->
-                    <div class="flex flex-col gap-1.5">
-                        <div class="flex items-center justify-between">
-                            <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="rollNumber">Class Roll Number</label>
-                            <span class="text-[11px] font-mono text-mist-900">Assigned Number</span>
-                        </div>
-                        <div class="relative flex items-center">
-                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">tag</span>
-                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-mono text-base tracking-wider text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
-                                   id="rollNumber" 
-                                   name="roll_number"
-                                   max="60" 
-                                   min="1" 
-                                   placeholder="24" 
+                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">lock</span>
+                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
+                                   id="student_password_input" 
+                                   name="password"
+                                   placeholder="Enter your password" 
                                    required="" 
-                                   type="number"/>
+                                   type="password"/>
                         </div>
                     </div>
 
-                    <!-- Notice Box in Nexus Studio Ink -->
-                    <div class="bg-ink-950 border border-white/5 p-4 rounded-2xl flex items-start gap-3">
-                        <div class="w-7 h-7 rounded-lg bg-signal/15 text-signal flex items-center justify-center shrink-0 mt-0.5 border border-signal/30">
-                            <span class="material-symbols-outlined text-base">info</span>
-                        </div>
-                        <div class="flex flex-col gap-0.5">
-                            <p class="font-mono text-xs font-bold uppercase tracking-wider text-signal">No Password Required</p>
-                            <p class="font-body text-xs text-mist-700 leading-relaxed">
-                                Your quiz attempts, badges, and scores are tracked directly via your class roll number.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- CTA Button -->
-                    <button class="w-full h-14 bg-signal hover:bg-signal-dim text-ink-950 rounded-full font-display text-sm uppercase tracking-wider font-bold flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(232,255,71,0.25)] active:scale-[0.99] transition-all cursor-pointer group" id="signInBtn" type="submit">
-                        <span>Enter Dashboard</span>
-                        <span class="material-symbols-outlined text-xl transition-transform group-hover:translate-x-1 font-bold">arrow_forward</span>
+                    <!-- Submit Button -->
+                    <button type="submit" 
+                            id="btn-student-submit"
+                            class="w-full h-12 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-xs uppercase tracking-wider font-bold transition-all shadow-[0_0_20px_rgba(232,255,71,0.2)] flex items-center justify-center gap-2 cursor-pointer mt-2">
+                        <span>Sign In to Cadet Hub</span>
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
                     </button>
                 </form>
 
-                <!-- Divider -->
-                <div class="relative flex items-center justify-center my-1">
-                    <div class="w-full h-[1px] bg-white/10"></div>
-                    <span class="absolute bg-ink-900 px-3 font-mono text-[10px] uppercase tracking-[0.2em] text-mist-900 font-semibold">Teacher Access</span>
-                </div>
-
-                <!-- Secondary Links -->
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-                    <button class="inline-flex items-center gap-1.5 font-body text-xs text-mist-900 hover:text-signal transition cursor-pointer" onclick="toggleHelpModal()" type="button">
-                        <span class="material-symbols-outlined text-sm text-signal">help</span>
-                        <span>Forgotten seat or roll number?</span>
-                    </button>
-                    <div class="inline-flex items-center gap-2">
-                        <span class="font-mono text-[11px] text-mist-900">Educators:</span>
-                        <a href="{% url 'teacher_login' %}" class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 hover:border-signal/50 hover:text-signal transition inline-flex items-center gap-1.5 text-mist-700 font-mono text-xs">
-                            <span class="material-symbols-outlined text-xs">school</span>
-                            <span>Teacher Portal &rarr;</span>
+                <!-- Sign Up Callout -->
+                <div class="pt-4 text-center border-t border-white/5 flex flex-col gap-3 font-mono text-xs">
+                    <div class="text-mist-700">
+                        New Cadet? 
+                        <a href="{% url 'student_signup' %}" class="text-signal hover:underline font-bold transition-colors ml-1">
+                            Create an Account (Sign Up) &rarr;
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'teacher_login' %}" class="text-mist-900 hover:text-white transition-colors">
+                            &larr; Switch to Teacher Portal
                         </a>
                     </div>
                 </div>
 
             </div>
-
-            <!-- Footer Badge -->
-            <div class="bg-ink-950 border-t border-white/5 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-signal"></span>
-                    <span class="font-mono text-xs uppercase tracking-wider text-mist-700 font-semibold">Classroom Safe Mode Active</span>
-                </div>
-                <p class="font-mono text-xs text-mist-900">
-                    COPPA &amp; FERPA Aligned &bull; Student Privacy Protected
-                </p>
-            </div>
-
-        </div>
-
-        <!-- Help Modal -->
-        <div class="hidden w-full mt-4 p-5 rounded-2xl bg-ink-900 border border-signal/40 shadow-2xl" id="rollHelpModal">
-            <div class="flex items-start justify-between">
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-signal text-xl">badge</span>
-                    <h4 class="font-display text-base font-bold text-white">Find Your Roll Number</h4>
-                </div>
-                <button class="text-mist-900 hover:text-white transition cursor-pointer" onclick="toggleHelpModal()" type="button">
-                    <span class="material-symbols-outlined text-lg">close</span>
-                </button>
-            </div>
-            <p class="font-body text-xs text-mist-700 mt-2 leading-relaxed">
-                Your roll number is your assigned classroom seat number or student ID. Ask your teacher if unsure.
-            </p>
         </div>
 
     </div>
-
 </div>
-
-<script>
-    function setGradeSelect(val) {
-        const select = document.getElementById('classroomSelect');
-        if (select) select.value = val;
-    }
-
-    function toggleHelpModal() {
-        const modal = document.getElementById('rollHelpModal');
-        if (modal) modal.classList.toggle('hidden');
-    }
-
-    function handleStudentSignIn(event) {
-        const btn = document.getElementById('signInBtn');
-        if (btn) {
-            btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-lg">sync</span><span>Signing In...</span>`;
-        }
-    }
-</script>
 {% endblock %}

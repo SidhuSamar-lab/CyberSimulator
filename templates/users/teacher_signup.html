@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %}Faculty Teacher Registration | CyberShield{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-5rem)] w-full flex items-center justify-center p-4 sm:p-8 relative overflow-hidden bg-ink-950 text-mist-100">
+    
+    <!-- Background Glow & Grid Lines -->
+    <div class="absolute top-1/4 -right-20 w-[500px] h-[500px] bg-emerald/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute bottom-10 -left-20 w-[500px] h-[500px] bg-ember/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute inset-0 grid-lines pointer-events-none opacity-40"></div>
+    <div class="grain absolute inset-0 pointer-events-none"></div>
+
+    <div class="relative z-10 w-full max-w-lg flex flex-col items-center">
+        
+        <header class="w-full flex flex-col items-center text-center mb-6">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-ink-900 mb-3 shadow-lg border border-white/10 text-xs font-mono text-emerald">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse-slow"></span>
+                <span>FACULTY ACCREDITATION &bull; TEACHER ENROLLMENT</span>
+            </div>
+            <div class="flex items-center gap-3 justify-center mb-2">
+                <div class="w-10 h-10 rounded-xl bg-ink-900 border border-emerald/30 flex items-center justify-center text-emerald shadow-lg">
+                    <span class="material-symbols-outlined text-xl">verified_user</span>
+                </div>
+                <div class="text-left">
+                    <h1 class="font-display text-xl font-bold text-white tracking-tight leading-none">Register as Teacher</h1>
+                    <p class="font-mono text-[10px] uppercase tracking-wider text-mist-900 mt-0.5">Faculty Verification Gate</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="w-full bg-ink-900/90 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/10">
+            <div class="h-1 w-full bg-gradient-to-r from-emerald via-emerald-light to-signal"></div>
+            
+            <div class="p-6 sm:p-8 flex flex-col gap-6">
+                
+                <!-- Mandatory Catch Security Alert -->
+                <div class="p-4 rounded-2xl bg-ink-950 border border-emerald/30 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald/15 border border-emerald/30 flex items-center justify-center text-emerald shrink-0 mt-0.5">
+                        <span class="material-symbols-outlined text-base">lock</span>
+                    </div>
+                    <div class="flex flex-col gap-0.5 text-left">
+                        <div class="font-mono text-xs font-bold text-emerald uppercase tracking-wider">Mandatory School Authorization</div>
+                        <p class="text-xs text-mist-700 leading-relaxed">
+                            Registration is restricted to authorized faculty. You must provide your institution's secret <strong>School Authorization Code</strong>. Students cannot create teacher accounts.
+                        </p>
+                    </div>
+                </div>
+
+                {% if form.errors %}
+                <div class="p-4 rounded-xl bg-ember/10 border border-ember/30 text-xs text-ember font-body flex flex-col gap-1">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">error</span>
+                                <span><strong>{{ field.label }}:</strong> {{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm">error</span>
+                            <span>{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{% url 'teacher_signup' %}" class="flex flex-col gap-5" id="teacher-signup-form">
+                    {% csrf_token %}
+
+                    <!-- Input 1: Full Name -->
+                    <div class="flex flex-col gap-1.5">
+                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="teacher_signup_name_input">Full Name</label>
+                        <div class="relative flex items-center">
+                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">person</span>
+                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-emerald focus:ring-1 focus:ring-emerald transition-all" 
+                                   id="teacher_signup_name_input" 
+                                   name="name" 
+                                   placeholder="e.g. Sarah Jenkins" 
+                                   required="" 
+                                   type="text"
+                                   value="{{ form.name.value|default:'' }}"/>
+                        </div>
+                    </div>
+
+                    <!-- Input 2: Institutional Email -->
+                    <div class="flex flex-col gap-1.5">
+                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="teacher_signup_email_input">Institutional Email</label>
+                        <div class="relative flex items-center">
+                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">mail</span>
+                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-emerald focus:ring-1 focus:ring-emerald transition-all" 
+                                   id="teacher_signup_email_input" 
+                                   name="email" 
+                                   placeholder="e.g. s.jenkins@school.edu" 
+                                   required="" 
+                                   type="email"
+                                   value="{{ form.email.value|default:'' }}"/>
+                        </div>
+                    </div>
+
+                    <!-- Input 3: Desired Username -->
+                    <div class="flex flex-col gap-1.5">
+                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="teacher_signup_username_input">Teacher Username</label>
+                        <div class="relative flex items-center">
+                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">badge</span>
+                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-emerald focus:ring-1 focus:ring-emerald transition-all" 
+                                   id="teacher_signup_username_input" 
+                                   name="username" 
+                                   placeholder="e.g. prof_jenkins" 
+                                   required="" 
+                                   type="text"
+                                   value="{{ form.username.value|default:'' }}"/>
+                        </div>
+                    </div>
+
+                    <!-- Input 4 & 5: Passwords -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="teacher_signup_pass_input">Password</label>
+                            <div class="relative flex items-center">
+                                <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">lock</span>
+                                <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-emerald focus:ring-1 focus:ring-emerald transition-all" 
+                                       id="teacher_signup_pass_input" 
+                                       name="password" 
+                                       placeholder="Min 6 chars" 
+                                       required="" 
+                                       type="password"/>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="teacher_signup_confirm_pass_input">Confirm Password</label>
+                            <div class="relative flex items-center">
+                                <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">lock_reset</span>
+                                <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-emerald focus:ring-1 focus:ring-emerald transition-all" 
+                                       id="teacher_signup_confirm_pass_input" 
+                                       name="confirm_password" 
+                                       placeholder="Repeat password" 
+                                       required="" 
+                                       type="password"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MANDATORY CATCH: School Authorization Code -->
+                    <div class="flex flex-col gap-1.5 p-3.5 rounded-2xl bg-emerald/5 border border-emerald/30">
+                        <div class="flex items-center justify-between">
+                            <label class="font-mono text-xs uppercase tracking-wider font-bold text-emerald flex items-center gap-1.5" for="teacher_school_code_input">
+                                <span class="material-symbols-outlined text-sm">key</span>
+                                <span>School Authorization Code (Mandatory)</span>
+                            </label>
+                            <span class="text-[10px] font-mono text-emerald bg-emerald/15 px-2 py-0.5 rounded-full border border-emerald/30 font-bold">REQUIRED</span>
+                        </div>
+                        <div class="relative flex items-center">
+                            <span class="material-symbols-outlined absolute left-3.5 text-emerald text-lg pointer-events-none">security</span>
+                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-emerald/50 rounded-xl font-mono text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-emerald focus:ring-2 focus:ring-emerald/20 transition-all tracking-wider" 
+                                   id="teacher_school_code_input" 
+                                   name="school_code" 
+                                   placeholder="Enter official teacher school code" 
+                                   required="" 
+                                   autocomplete="off"
+                                   type="text"/>
+                        </div>
+                        <p class="text-[11px] text-mist-700 font-mono mt-1">
+                            Contact your school IT administration if you do not have your school's faculty verification code.
+                        </p>
+                    </div>
+
+                    <button type="submit" 
+                            id="btn-teacher-signup-submit"
+                            class="w-full h-12 rounded-full bg-emerald hover:bg-emerald-light text-ink-950 font-display text-xs uppercase tracking-wider font-bold transition-all shadow-[0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-center gap-2 cursor-pointer mt-1">
+                        <span>Verify Code &amp; Register Faculty Account</span>
+                        <span class="material-symbols-outlined text-base">verified</span>
+                    </button>
+                </form>
+
+                <div class="pt-4 border-t border-white/5 flex flex-col gap-3 text-center font-mono text-xs">
+                    <div class="text-mist-700">
+                        Already have a teacher account?
+                        <a href="{% url 'teacher_login' %}" class="text-emerald hover:underline font-bold transition-colors ml-1">
+                            Sign In Here &rarr;
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'student_login' %}" class="text-mist-900 hover:text-signal transition-colors">
+                            &larr; Switch to Student Sign-In
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

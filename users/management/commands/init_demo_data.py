@@ -39,24 +39,33 @@ class Command(BaseCommand):
 
         # 2. Create sample students
         students_data = [
-            {"name": "Alex Morgan", "class_name": "Grade 9-A", "roll_number": "101"},
-            {"name": "Jordan Lee", "class_name": "Grade 9-A", "roll_number": "102"},
-            {"name": "Sam Taylor", "class_name": "Grade 9-A", "roll_number": "103"},
-            {"name": "Riley Patel", "class_name": "Grade 9-B", "roll_number": "201"},
-            {"name": "Casey Chen", "class_name": "Grade 9-B", "roll_number": "202"},
-            {"name": "Morgan Davis", "class_name": "Grade 10-A", "roll_number": "301"},
+            {"name": "Alex Morgan", "class_name": "Grade 9-A", "roll_number": "101", "email": "alex.morgan@school.edu"},
+            {"name": "Jordan Lee", "class_name": "Grade 9-A", "roll_number": "102", "email": "jordan.lee@school.edu"},
+            {"name": "Sam Taylor", "class_name": "Grade 9-A", "roll_number": "103", "email": "sam.taylor@school.edu"},
+            {"name": "Riley Patel", "class_name": "Grade 9-B", "roll_number": "201", "email": "riley.patel@school.edu"},
+            {"name": "Casey Chen", "class_name": "Grade 9-B", "roll_number": "202", "email": "casey.chen@school.edu"},
+            {"name": "Morgan Davis", "class_name": "Grade 10-A", "roll_number": "301", "email": "morgan.davis@school.edu"},
         ]
 
         created_students = []
         for s_data in students_data:
-            student, _ = Student.objects.get_or_create(
+            student, created = Student.objects.get_or_create(
                 roll_number=s_data["roll_number"],
                 class_name=s_data["class_name"],
-                defaults={"name": s_data["name"]}
+                defaults={
+                    "name": s_data["name"],
+                    "email": s_data["email"],
+                }
             )
+            # Ensure email and password exist
+            if not student.email:
+                student.email = s_data["email"]
+            if not student.password:
+                student.set_password("CadetPass123!")
+            student.save()
             created_students.append(student)
 
-        self.stdout.write(self.style.SUCCESS(f"Populated {len(created_students)} students."))
+        self.stdout.write(self.style.SUCCESS(f"Populated {len(created_students)} students with email & password authentication."))
 
         # 3. Seed sample quiz attempts for demo data
         if QuizAttempt.objects.count() == 0:

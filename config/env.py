@@ -73,8 +73,9 @@ class AppConfig:
     AZURE_AI_DEPLOYMENT_NAME = get_env_str('AZURE_AI_DEPLOYMENT_NAME', 'gpt-5')
     AZURE_AI_API_VERSION = get_env_str('AZURE_AI_API_VERSION', 'v1')
     
-    # Faculty Teacher Access Key
+    # Faculty Teacher Access Key & School Registration Code
     TEACHER_ACCESS_KEY = get_env_str('TEACHER_ACCESS_KEY', 'TeacherPass123!')
+    TEACHER_SCHOOL_CODE = get_env_str('TEACHER_SCHOOL_CODE', 'CYBER-TEACHER-2026')
 
     # CSRF Trusted Origins
     CSRF_TRUSTED_ORIGINS = get_env_list('CSRF_TRUSTED_ORIGINS', [

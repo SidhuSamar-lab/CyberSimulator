@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Cadet Registration | CyberShield{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-5rem)] w-full flex items-center justify-center p-4 sm:p-8 relative overflow-hidden bg-ink-950">
+    
+    <!-- Background Nexus Studio Glow & Grid -->
+    <div class="absolute top-1/4 -left-20 w-[500px] h-[500px] bg-signal/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute bottom-10 -right-20 w-[500px] h-[500px] bg-ember/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute inset-0 grid-lines pointer-events-none opacity-40"></div>
+    <div class="grain absolute inset-0 pointer-events-none"></div>
+
+    <div class="relative z-10 w-full max-w-xl flex flex-col items-center">
+        
+        <!-- Header Pill Badge -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-ink-850/80 backdrop-blur-md mb-6 shadow-lg text-xs font-mono text-mist-700">
+            <span class="w-2 h-2 rounded-full bg-signal animate-pulse-slow"></span>
+            <span>CADET RECRUITMENT &bull; NEW STUDENT REGISTRATION</span>
+        </div>
+
+        <!-- Main Card Container in Nexus Studio Glass -->
+        <div class="w-full bg-ink-900/90 backdrop-blur-xl rounded-3xl border border-white/10 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] overflow-hidden">
+            
+            <!-- Electric Lime Top Foil Stripe -->
+            <div class="h-1 w-full bg-gradient-to-r from-signal via-signal-dim to-signal shadow-sm"></div>
+
+            <div class="p-6 sm:p-10 flex flex-col gap-6">
+                
+                <!-- Card Header -->
+                <div class="flex flex-col gap-2 border-b border-white/5 pb-6">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <h1 class="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                            Create Cadet Account
+                        </h1>
+                        <span class="inline-flex items-center gap-1.5 text-signal border border-signal/30 bg-signal/10 px-3 py-1 rounded-full text-xs font-mono tracking-wider font-semibold">
+                            <span class="w-1.5 h-1.5 rounded-full bg-signal"></span>
+                            <span>STUDENT SIGN-UP</span>
+                        </span>
+                    </div>
+                    <p class="font-body text-mist-900 text-sm leading-relaxed">
+                        Register with your school email and create a password to embark on interactive cybersecurity drills and earn defense badges.
+                    </p>
+                </div>
+
+                {% if form.errors %}
+                <div class="p-4 rounded-xl bg-ember/10 border border-ember/30 text-xs text-ember font-body flex flex-col gap-1">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">error</span>
+                                <span><strong>{{ field.label }}:</strong> {{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm">error</span>
+                            <span>{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Form -->
+                <form method="POST" action="{% url 'student_signup' %}" class="flex flex-col gap-5" id="studentSignUpForm">
+                    {% csrf_token %}
+
+                    <!-- Input 1: Student Name -->
+                    <div class="flex flex-col gap-1.5">
+                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100 flex items-center justify-between" for="student_name_input">
+                            <span>Full Name</span>
+                            <span class="text-[11px] font-mono text-mist-900 normal-case">First &amp; Last</span>
+                        </label>
+                        <div class="relative flex items-center">
+                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">person</span>
+                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
+                                   id="student_name_input" 
+                                   name="name"
+                                   placeholder="e.g. Alex Morgan" 
+                                   required="" 
+                                   type="text"
+                                   value="{{ form.name.value|default:'' }}"/>
+                        </div>
+                    </div>
+
+                    <!-- Input 2: Grade & Section -->
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex items-center justify-between">
+                            <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="class_name_input">Grade &amp; Section</label>
+                            <span class="text-[11px] font-mono text-mist-900">Homeroom Class</span>
+                        </div>
+                        <div class="relative flex items-center">
+                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">meeting_room</span>
+                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
+                                   id="class_name_input" 
+                                   name="class_name"
+                                   placeholder="e.g. Grade 9-A or 8B" 
+                                   required="" 
+                                   type="text"
+                                   value="{{ form.class_name.value|default:'' }}"/>
+                        </div>
+                        
+                        <!-- Quick Pills in Nexus Studio Style -->
+                        <div class="flex items-center gap-2 flex-wrap pt-1">
+                            <span class="text-xs font-mono text-mist-900 mr-1">Quick fill:</span>
+                            <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setClassField('Grade 7-A')" type="button">7-A</button>
+                            <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setClassField('Grade 8-A')" type="button">8-A</button>
+                            <button class="px-3 py-1 rounded-full border border-signal/60 bg-signal/15 text-signal text-xs font-mono font-bold transition shadow-sm cursor-pointer" onclick="setClassField('Grade 8-B')" type="button">8-B</button>
+                            <button class="px-3 py-1 rounded-full border border-white/10 bg-ink-950 text-mist-700 text-xs font-mono hover:border-signal/50 hover:text-signal transition cursor-pointer" onclick="setClassField('Grade 9-A')" type="button">9-A</button>
+                        </div>
+                    </div>
+
+                    <!-- Input 3: Roll Number -->
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex items-center justify-between">
+                            <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="roll_number_input">Class Roll Number</label>
+                            <span class="text-[11px] font-mono text-mist-900">Student ID / Roll</span>
+                        </div>
+                        <div class="relative flex items-center">
+                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">tag</span>
+                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
+                                   id="roll_number_input" 
+                                   name="roll_number"
+                                   placeholder="e.g. 101 or 24" 
+                                   required="" 
+                                   type="text"
+                                   value="{{ form.roll_number.value|default:'' }}"/>
+                        </div>
+                    </div>
+
+                    <!-- Input 4: Email Address -->
+                    <div class="flex flex-col gap-1.5">
+                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100 flex items-center justify-between" for="student_signup_email_input">
+                            <span>Email Address</span>
+                            <span class="text-[11px] font-mono text-mist-900 normal-case">Unique Login Email</span>
+                        </label>
+                        <div class="relative flex items-center">
+                            <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">mail</span>
+                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
+                                   id="student_signup_email_input" 
+                                   name="email"
+                                   placeholder="e.g. alex.morgan@school.edu" 
+                                   required="" 
+                                   type="email"
+                                   value="{{ form.email.value|default:'' }}"/>
+                        </div>
+                    </div>
+
+                    <!-- Input 5 & 6: Password & Confirm Password -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="student_signup_password_input">Create Password</label>
+                            <div class="relative flex items-center">
+                                <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">lock</span>
+                                <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
+                                       id="student_signup_password_input" 
+                                       name="password"
+                                       placeholder="Min 6 characters" 
+                                       required="" 
+                                       type="password"/>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="student_signup_confirm_password_input">Confirm Password</label>
+                            <div class="relative flex items-center">
+                                <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">lock_reset</span>
+                                <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
+                                       id="student_signup_confirm_password_input" 
+                                       name="confirm_password"
+                                       placeholder="Re-enter password" 
+                                       required="" 
+                                       type="password"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" 
+                            id="btn-student-signup-submit"
+                            class="w-full h-12 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-xs uppercase tracking-wider font-bold transition-all shadow-[0_0_20px_rgba(232,255,71,0.2)] flex items-center justify-center gap-2 cursor-pointer mt-2">
+                        <span>Initialize Cadet Account &amp; Start Drills</span>
+                        <span class="material-symbols-outlined text-base">arrow_forward</span>
+                    </button>
+                </form>
+
+                <!-- Login & Teacher Switch -->
+                <div class="pt-4 text-center border-t border-white/5 flex flex-col gap-3 font-mono text-xs">
+                    <div class="text-mist-700">
+                        Already have a cadet account? 
+                        <a href="{% url 'student_login' %}" class="text-signal hover:underline font-bold transition-colors ml-1">
+                            Sign In Here &rarr;
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'teacher_login' %}" class="text-mist-900 hover:text-white transition-colors">
+                            &larr; Switch to Teacher Portal
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function setClassField(val) {
+    const input = document.getElementById('class_name_input');
+    if (input) {
+        input.value = val;
+    }
+}
+</script>
+{% endblock %}

@@ -6,20 +6,20 @@
 <div class="min-h-[calc(100vh-5rem)] w-full flex items-center justify-center p-4 sm:p-8 relative overflow-hidden bg-ink-950 text-mist-100">
     
     <!-- Background Glow & Grid Lines (Nexus Studio Signature) -->
-    <div class="absolute top-1/4 -right-20 w-[500px] h-[500px] bg-signal/10 rounded-full blur-[140px] pointer-events-none"></div>
-    <div class="absolute bottom-10 -left-20 w-[500px] h-[500px] bg-ember/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute top-1/4 -right-20 w-[500px] h-[500px] bg-emerald/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute bottom-10 -left-20 w-[500px] h-[500px] bg-signal/10 rounded-full blur-[140px] pointer-events-none"></div>
     <div class="absolute inset-0 grid-lines pointer-events-none opacity-40"></div>
     <div class="grain absolute inset-0 pointer-events-none"></div>
 
     <div class="relative z-10 w-full max-w-md flex flex-col items-center">
         
         <header class="w-full flex flex-col items-center text-center mb-6">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-ink-900 mb-3 shadow-lg border border-white/10 text-xs font-mono text-signal">
-                <span class="w-1.5 h-1.5 rounded-full bg-signal animate-pulse-slow"></span>
-                <span>TEACHER PORTAL</span>
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-ink-900 mb-3 shadow-lg border border-white/10 text-xs font-mono text-emerald">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse-slow"></span>
+                <span>TEACHER PORTAL &bull; FACULTY AUTHENTICATION</span>
             </div>
             <div class="flex items-center gap-3 justify-center mb-2">
-                <div class="w-10 h-10 rounded-xl bg-ink-900 border border-signal/30 flex items-center justify-center text-signal shadow-lg">
+                <div class="w-10 h-10 rounded-xl bg-ink-900 border border-emerald/30 flex items-center justify-center text-emerald shadow-lg">
                     <span class="material-symbols-outlined text-xl">school</span>
                 </div>
                 <div class="text-left">
@@ -30,7 +30,7 @@
         </header>
 
         <div class="w-full bg-ink-900/90 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/10">
-            <div class="h-1 w-full bg-gradient-to-r from-signal via-signal-dim to-signal"></div>
+            <div class="h-1 w-full bg-gradient-to-r from-emerald via-emerald-light to-signal"></div>
             
             <div class="p-6 sm:p-8 flex flex-col gap-6">
                 <div class="flex flex-col gap-1 border-b border-white/5 pb-4">
@@ -40,29 +40,49 @@
                     </p>
                 </div>
 
+                {% if form.errors %}
+                <div class="p-4 rounded-xl bg-ember/10 border border-ember/30 text-xs text-ember font-body flex flex-col gap-1">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">error</span>
+                                <span>{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm">error</span>
+                            <span>{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
                 <form method="POST" action="{% url 'teacher_login' %}" class="flex flex-col gap-5" id="teacher-login-form">
                     {% csrf_token %}
 
                     <div class="flex flex-col gap-1.5">
-                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="id_username">Teacher Username</label>
+                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="teacher_user_input">Teacher Username or Email</label>
                         <div class="relative flex items-center">
                             <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">badge</span>
-                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
-                                   id="id_username" 
-                                   name="username" 
-                                   placeholder="Username" 
+                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-emerald focus:ring-1 focus:ring-emerald transition-all" 
+                                   id="teacher_user_input" 
+                                   name="username_or_email" 
+                                   placeholder="Username or Email" 
                                    required="" 
                                    autofocus 
-                                   type="text"/>
+                                   type="text"
+                                   value="{{ form.username_or_email.value|default:'' }}"/>
                         </div>
                     </div>
 
                     <div class="flex flex-col gap-1.5">
-                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="id_password">Password</label>
+                        <label class="font-mono text-xs uppercase tracking-wider font-semibold text-mist-100" for="teacher_password_input">Password</label>
                         <div class="relative flex items-center">
                             <span class="material-symbols-outlined absolute left-3.5 text-mist-900 text-lg pointer-events-none">lock</span>
-                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-signal focus:ring-1 focus:ring-signal transition-all" 
-                                   id="id_password" 
+                            <input class="w-full h-12 pl-11 pr-4 bg-ink-950 border border-white/10 rounded-xl font-body text-sm text-white placeholder:text-mist-900 focus:outline-none focus:border-emerald focus:ring-1 focus:ring-emerald transition-all" 
+                                   id="teacher_password_input" 
                                    name="password" 
                                    placeholder="Password"
                                    required="" 
@@ -72,17 +92,26 @@
 
                     <button type="submit" 
                             id="btn-teacher-submit"
-                            class="w-full h-12 rounded-full bg-signal hover:bg-signal-dim text-ink-950 font-display text-xs uppercase tracking-wider font-bold transition-all shadow-[0_0_20px_rgba(232,255,71,0.2)] flex items-center justify-center gap-2 cursor-pointer mt-1">
-                        <span>Sign In to Portal</span>
+                            class="w-full h-12 rounded-full bg-emerald hover:bg-emerald-light text-ink-950 font-display text-xs uppercase tracking-wider font-bold transition-all shadow-[0_0_20px_rgba(16,185,129,0.25)] flex items-center justify-center gap-2 cursor-pointer mt-1">
+                        <span>Sign In to Teacher Portal</span>
                         <span class="material-symbols-outlined text-base">arrow_forward</span>
                     </button>
                 </form>
 
-                <div class="pt-2 text-center border-t border-white/5 font-mono">
-                    <a href="{% url 'student_login' %}" class="text-xs text-mist-700 hover:text-signal transition-colors">
-                        &larr; Switch to Student Sign-In
-                    </a>
+                <div class="pt-4 border-t border-white/5 flex flex-col gap-3 text-center font-mono text-xs">
+                    <div class="text-mist-700">
+                        New Faculty Instructor?
+                        <a href="{% url 'teacher_signup' %}" class="text-emerald hover:underline font-bold transition-colors ml-1">
+                            Register with School Code &rarr;
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'student_login' %}" class="text-mist-900 hover:text-signal transition-colors">
+                            &larr; Switch to Student Sign-In
+                        </a>
+                    </div>
                 </div>
+
             </div>
         </div>
 
