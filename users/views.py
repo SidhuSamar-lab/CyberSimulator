@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
+from django.views.decorators.cache import never_cache
 from .models import Student
 from .forms import StudentLoginForm
 
 
+@never_cache
 def student_login(request):
     """
     Handles frictionless student login.
@@ -44,13 +46,21 @@ def student_login(request):
     return render(request, 'users/student_login.html', {'form': form})
 
 
+@never_cache
 def student_logout(request):
     """Clears and flushes student session completely."""
     request.session.flush()
     messages.info(request, "You have exited your student session.")
-    return redirect('home')
+    response = redirect('home')
+    response.delete_cookie('cybershield_cadet_id')
+    response.delete_cookie('sessionid')
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate, private'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response
 
 
+@never_cache
 def teacher_login(request):
     """
     Secure username/password login for teachers and administrators.
@@ -74,9 +84,16 @@ def teacher_login(request):
     return render(request, 'users/teacher_login.html', {'form': form})
 
 
+@never_cache
 def teacher_logout(request):
     """Logs out the teacher and flushes session completely."""
     auth_logout(request)
     request.session.flush()
     messages.info(request, "You have been logged out of the teacher portal.")
-    return redirect('home')
+    response = redirect('home')
+    response.delete_cookie('cybershield_teacher_token')
+    response.delete_cookie('sessionid')
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate, private'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response

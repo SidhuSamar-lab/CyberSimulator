@@ -83,12 +83,16 @@ import streamlit.components.v1 as components
 def inject_client_session_sync(current_student: Optional[Student]) -> None:
     """Injects client-side cookie and localStorage synchronization to persist cadet session across all reloads and page changes, or purge on logout."""
     auth_role = st.session_state.get("auth_role")
-    is_logged_out = "true" if (st.session_state.get("_logged_out") or st.session_state.get("_just_logged_out")) else "false"
-    cadet_id_val = str(current_student.id) if (auth_role == "student" and current_student and not st.session_state.get("_logged_out")) else ""
-    cadet_roll_val = str(current_student.roll_number) if (auth_role == "student" and current_student and not st.session_state.get("_logged_out")) else ""
-    cadet_class_val = str(current_student.class_name) if (auth_role == "student" and current_student and not st.session_state.get("_logged_out")) else ""
-    cadet_name_val = str(current_student.name) if (auth_role == "student" and current_student and not st.session_state.get("_logged_out")) else ""
-    teacher_tok_val = AppStateManager.make_teacher_token() if (auth_role == "teacher" and not st.session_state.get("_logged_out")) else ""
+    is_logged_out = "true" if AppStateManager.is_logged_out() else "false"
+    clear_sentinel = "true" if st.session_state.get("_clear_sentinel") else "false"
+    if st.session_state.get("_clear_sentinel"):
+        st.session_state._clear_sentinel = False
+
+    cadet_id_val = str(current_student.id) if (auth_role == "student" and current_student and not AppStateManager.is_logged_out()) else ""
+    cadet_roll_val = str(current_student.roll_number) if (auth_role == "student" and current_student and not AppStateManager.is_logged_out()) else ""
+    cadet_class_val = str(current_student.class_name) if (auth_role == "student" and current_student and not AppStateManager.is_logged_out()) else ""
+    cadet_name_val = str(current_student.name) if (auth_role == "student" and current_student and not AppStateManager.is_logged_out()) else ""
+    teacher_tok_val = AppStateManager.make_teacher_token() if (auth_role == "teacher" and not AppStateManager.is_logged_out()) else ""
 
     if st.session_state.get("_just_logged_out"):
         st.session_state._just_logged_out = False
@@ -107,9 +111,32 @@ def inject_client_session_sync(current_student: Optional[Student]) -> None:
             }}
 
             var pLoc = pWin.location;
+            var isHttps = (pLoc.protocol === 'https:' || window.location.protocol === 'https:');
+            var secureFlag = isHttps ? '; Secure' : '';
+
             var params = new URLSearchParams(pLoc.search);
             var action = params.get('action');
-            var isLoggedOut = {is_logged_out};
+            var serverLoggedOut = {is_logged_out};
+            var clearSentinel = {clear_sentinel};
+
+            // Detect client-side persistent logout sentinel
+            var clientLoggedOut = false;
+            try {{
+                if (pWin.localStorage.getItem('cybershield_logged_out') === '1' ||
+                    window.localStorage.getItem('cybershield_logged_out') === '1') {{
+                    clientLoggedOut = true;
+                }}
+            }} catch(e) {{}}
+            if (!clientLoggedOut) {{
+                try {{
+                    var ckAll = (pWin.document.cookie || "") + "; " + (document.cookie || "");
+                    if (ckAll.indexOf('cybershield_logged_out=1') !== -1) {{
+                        clientLoggedOut = true;
+                    }}
+                }} catch(e) {{}}
+            }}
+
+            var isLoggedOut = serverLoggedOut || clientLoggedOut || (action === 'logout');
 
             function clearSession() {{
                 var keys = [
@@ -127,30 +154,83 @@ def inject_client_session_sync(current_student: Optional[Student]) -> None:
                     try {{ pWin.sessionStorage.removeItem(k); }} catch(e) {{}}
                     try {{ window.sessionStorage.removeItem(k); }} catch(e) {{}}
 
-                    var paths = ['/', pLoc.pathname, window.location.pathname, ''];
-                    var domains = ['', '.' + pLoc.hostname, pLoc.hostname, '.' + window.location.hostname, window.location.hostname];
-                    for (var p = 0; p < paths.length; p++) {{
-                        for (var d = 0; d < domains.length; d++) {{
-                            var exp = k + '=; path=' + paths[p] + (domains[d] ? '; domain=' + domains[d] : '') + '; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; SameSite=Lax;';
-                            try {{ pWin.document.cookie = exp; }} catch(e) {{}}
-                            try {{ document.cookie = exp; }} catch(e) {{}}
-                            try {{ window.document.cookie = exp; }} catch(e) {{}}
-                        }}
+                    var exps = [
+                        k + '=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; SameSite=Lax;' + secureFlag,
+                        k + '=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; SameSite=Lax;',
+                        k + '=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0;'
+                    ];
+                    for (var e = 0; e < exps.length; e++) {{
+                        try {{ pWin.document.cookie = exps[e]; }} catch(err) {{}}
+                        try {{ document.cookie = exps[e]; }} catch(err) {{}}
                     }}
                 }}
+
+                // Persist the logged-out sentinel
+                try {{ pWin.localStorage.setItem('cybershield_logged_out', '1'); }} catch(e) {{}}
+                try {{ window.localStorage.setItem('cybershield_logged_out', '1'); }} catch(e) {{}}
+                var sentCookie = "cybershield_logged_out=1; path=/; max-age=2592000; SameSite=Lax;" + secureFlag;
+                try {{ pWin.document.cookie = sentCookie; }} catch(e) {{}}
+                try {{ document.cookie = sentCookie; }} catch(e) {{}}
             }}
 
-            if (action === 'logout' || isLoggedOut) {{
+            function stripAuthFromLinks() {{
+                try {{
+                    var links = pWin.document.querySelectorAll('a[href]');
+                    for (var i = 0; i < links.length; i++) {{
+                        var a = links[i];
+                        var href = a.getAttribute('href');
+                        if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) continue;
+                        try {{
+                            var u = new URL(href, pLoc.origin);
+                            var mod = false;
+                            if (u.searchParams.has('cadet_id')) {{
+                                u.searchParams.delete('cadet_id');
+                                mod = true;
+                            }}
+                            if (u.searchParams.has('teacher_token')) {{
+                                u.searchParams.delete('teacher_token');
+                                mod = true;
+                            }}
+                            if (mod) {{
+                                a.setAttribute('href', u.pathname + u.search);
+                            }}
+                        }} catch(err) {{}}
+                    }}
+                }} catch(err) {{}}
+            }}
+
+            if (isLoggedOut && !clearSentinel) {{
                 clearSession();
                 var changed = false;
                 if (params.has('action')) {{ params.delete('action'); changed = true; }}
                 if (params.has('cadet_id')) {{ params.delete('cadet_id'); changed = true; }}
                 if (params.has('teacher_token')) {{ params.delete('teacher_token'); changed = true; }}
+                if (params.get('page') === 'student_hub' || params.get('page') === 'quiz_arena' || params.get('page') === 'teacher') {{
+                    params.set('page', 'home');
+                    changed = true;
+                }}
                 if (changed) {{
                     var cleanUrl = pLoc.pathname + (params.toString() ? '?' + params.toString() : '');
-                    pLoc.replace(cleanUrl);
+                    if (pLoc.search !== (params.toString() ? '?' + params.toString() : '')) {{
+                        pLoc.replace(cleanUrl);
+                    }}
                 }}
+                stripAuthFromLinks();
                 return;
+            }}
+
+            if (clearSentinel) {{
+                try {{ pWin.localStorage.removeItem('cybershield_logged_out'); }} catch(e) {{}}
+                try {{ window.localStorage.removeItem('cybershield_logged_out'); }} catch(e) {{}}
+                var expSent = [
+                    "cybershield_logged_out=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; SameSite=Lax;" + secureFlag,
+                    "cybershield_logged_out=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; SameSite=Lax;",
+                    "cybershield_logged_out=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0;"
+                ];
+                for (var e = 0; e < expSent.length; e++) {{
+                    try {{ pWin.document.cookie = expSent[e]; }} catch(e) {{}}
+                    try {{ document.cookie = expSent[e]; }} catch(e) {{}}
+                }}
             }}
 
             var sCadet = "{cadet_id_val}";
@@ -169,7 +249,7 @@ def inject_client_session_sync(current_student: Optional[Student]) -> None:
                     pWin.localStorage.setItem('cybershield_auth_role', 'student');
                 }} catch(e) {{}}
 
-                var maxAge = "; path=/; max-age=2592000; SameSite=Lax";
+                var maxAge = "; path=/; max-age=2592000; SameSite=Lax" + secureFlag;
                 try {{ pWin.document.cookie = "cybershield_cadet_id=" + encodeURIComponent(sCadet) + maxAge; }} catch(e) {{}}
                 try {{ pWin.document.cookie = "cybershield_cadet_roll=" + encodeURIComponent(sRoll) + maxAge; }} catch(e) {{}}
                 try {{ pWin.document.cookie = "cybershield_cadet_class=" + encodeURIComponent(sClass) + maxAge; }} catch(e) {{}}
@@ -183,12 +263,12 @@ def inject_client_session_sync(current_student: Optional[Student]) -> None:
                     pWin.localStorage.setItem('cybershield_teacher_token', sTeach);
                     pWin.localStorage.setItem('cybershield_auth_role', 'teacher');
                 }} catch(e) {{}}
-                var tStr = "cybershield_teacher_token=" + encodeURIComponent(sTeach) + "; path=/; max-age=2592000; SameSite=Lax";
+                var tStr = "cybershield_teacher_token=" + encodeURIComponent(sTeach) + "; path=/; max-age=2592000; SameSite=Lax" + secureFlag;
                 try {{ pWin.document.cookie = tStr; }} catch(e) {{}}
                 try {{ document.cookie = tStr; }} catch(e) {{}}
             }}
 
-            // Read credentials from localStorage if URL lacks them
+            // Read credentials from localStorage if URL lacks them and user is NOT logged out
             var cId = null;
             var tTok = null;
             try {{
@@ -213,11 +293,11 @@ def inject_client_session_sync(current_student: Optional[Student]) -> None:
 
             // Ensure cookies stay valid in both parent and document
             if (cId) {{
-                var cStr = "cybershield_cadet_id=" + encodeURIComponent(cId) + "; path=/; max-age=2592000; SameSite=Lax";
+                var cStr = "cybershield_cadet_id=" + encodeURIComponent(cId) + "; path=/; max-age=2592000; SameSite=Lax" + secureFlag;
                 try {{ pWin.document.cookie = cStr; }} catch(e) {{}}
                 try {{ document.cookie = cStr; }} catch(e) {{}}
             }} else if (tTok) {{
-                var tStr = "cybershield_teacher_token=" + encodeURIComponent(tTok) + "; path=/; max-age=2592000; SameSite=Lax";
+                var tStr = "cybershield_teacher_token=" + encodeURIComponent(tTok) + "; path=/; max-age=2592000; SameSite=Lax" + secureFlag;
                 try {{ pWin.document.cookie = tStr; }} catch(e) {{}}
                 try {{ document.cookie = tStr; }} catch(e) {{}}
             }}

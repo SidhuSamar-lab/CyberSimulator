@@ -58,8 +58,20 @@ class AppStateManager:
         return hmac.compare_digest(str(token), expected)
 
     @classmethod
+    def is_logged_out(cls) -> bool:
+        """Returns True if the user has explicitly terminated their session or has an active logout sentinel."""
+        if st.session_state.get("_logged_out"):
+            return True
+        sentinel = cls.get_cookie("cybershield_logged_out")
+        if sentinel in ("1", "true", "yes"):
+            st.session_state._logged_out = True
+            return True
+        return False
+
+    @classmethod
     def initialize(cls) -> None:
         """Initializes all session state keys with deterministic default values."""
+        is_sentinel_logged_out = cls.get_cookie("cybershield_logged_out") in ("1", "true", "yes")
         defaults = {
             "active_page": "🏠 Home",
             "auth_role": None,  # None (Guest), 'student', or 'teacher'
@@ -74,7 +86,8 @@ class AppStateManager:
             "_internal_nav": False,
             "_nav_target": None,
             "_just_logged_out": False,
-            "_logged_out": False,
+            "_logged_out": is_sentinel_logged_out,
+            "_clear_sentinel": False,
         }
         for key, val in defaults.items():
             if key not in st.session_state:
@@ -117,8 +130,8 @@ class AppStateManager:
                 del st.query_params["action"]
             return
 
-        # If user explicitly logged out, DO NOT resurrect from cookies or query params
-        if st.session_state.get("_logged_out"):
+        # If user explicitly logged out or has a logout sentinel, DO NOT resurrect from cookies or query params
+        if cls.is_logged_out():
             if hasattr(st, "query_params"):
                 if "cadet_id" in st.query_params:
                     del st.query_params["cadet_id"]
@@ -217,6 +230,7 @@ class AppStateManager:
         """Sets authenticated student session and persists query parameter."""
         st.session_state._logged_out = False
         st.session_state._just_logged_out = False
+        st.session_state._clear_sentinel = True
         st.session_state.auth_role = "student"
         st.session_state.current_student_id = student_id
         st.session_state.teacher_authenticated = False
@@ -230,6 +244,7 @@ class AppStateManager:
         """Sets authenticated faculty educator session and persists query parameter."""
         st.session_state._logged_out = False
         st.session_state._just_logged_out = False
+        st.session_state._clear_sentinel = True
         st.session_state.auth_role = "teacher"
         st.session_state.teacher_authenticated = True
         st.session_state.current_student_id = None
@@ -243,6 +258,7 @@ class AppStateManager:
         """Flushes and deletes all authentication and session state atomically."""
         st.session_state._logged_out = True
         st.session_state._just_logged_out = True
+        st.session_state._clear_sentinel = False
 
         keys_to_delete = [
             "auth_role",
@@ -298,7 +314,7 @@ class AppStateManager:
     @classmethod
     def resolve_current_student(cls, all_students: List[Student]) -> Optional[Student]:
         """Resolves the current student model instance from cached student list, session, query param, or cookies."""
-        if st.session_state.get("_logged_out"):
+        if cls.is_logged_out():
             return None
 
         sid = st.session_state.get("current_student_id")
