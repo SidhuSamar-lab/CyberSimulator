@@ -45,10 +45,8 @@ def student_login(request):
 
 
 def student_logout(request):
-    """Clears student session."""
-    request.session.pop('student_id', None)
-    request.session.pop('student_name', None)
-    request.session.pop('active_quiz', None)
+    """Clears and flushes student session completely."""
+    request.session.flush()
     messages.info(request, "You have exited your student session.")
     return redirect('home')
 
@@ -77,7 +75,8 @@ def teacher_login(request):
 
 
 def teacher_logout(request):
-    """Logs out the teacher."""
+    """Logs out the teacher and flushes session completely."""
     auth_logout(request)
+    request.session.flush()
     messages.info(request, "You have been logged out of the teacher portal.")
     return redirect('home')

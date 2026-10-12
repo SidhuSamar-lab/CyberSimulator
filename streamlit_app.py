@@ -81,14 +81,14 @@ import streamlit.components.v1 as components
 
 
 def inject_client_session_sync(current_student: Optional[Student]) -> None:
-    """Injects client-side cookie and localStorage synchronization to persist cadet session across all reloads and page changes."""
+    """Injects client-side cookie and localStorage synchronization to persist cadet session across all reloads and page changes, or purge on logout."""
     auth_role = st.session_state.get("auth_role")
-    cadet_id_val = str(current_student.id) if (auth_role == "student" and current_student) else ""
-    cadet_roll_val = str(current_student.roll_number) if (auth_role == "student" and current_student) else ""
-    cadet_class_val = str(current_student.class_name) if (auth_role == "student" and current_student) else ""
-    cadet_name_val = str(current_student.name) if (auth_role == "student" and current_student) else ""
-    teacher_tok_val = AppStateManager.make_teacher_token() if auth_role == "teacher" else ""
-    just_logged_out = "true" if st.session_state.get("_just_logged_out") else "false"
+    is_logged_out = "true" if (st.session_state.get("_logged_out") or st.session_state.get("_just_logged_out")) else "false"
+    cadet_id_val = str(current_student.id) if (auth_role == "student" and current_student and not st.session_state.get("_logged_out")) else ""
+    cadet_roll_val = str(current_student.roll_number) if (auth_role == "student" and current_student and not st.session_state.get("_logged_out")) else ""
+    cadet_class_val = str(current_student.class_name) if (auth_role == "student" and current_student and not st.session_state.get("_logged_out")) else ""
+    cadet_name_val = str(current_student.name) if (auth_role == "student" and current_student and not st.session_state.get("_logged_out")) else ""
+    teacher_tok_val = AppStateManager.make_teacher_token() if (auth_role == "teacher" and not st.session_state.get("_logged_out")) else ""
 
     if st.session_state.get("_just_logged_out"):
         st.session_state._just_logged_out = False
@@ -109,7 +109,7 @@ def inject_client_session_sync(current_student: Optional[Student]) -> None:
             var pLoc = pWin.location;
             var params = new URLSearchParams(pLoc.search);
             var action = params.get('action');
-            var justLoggedOut = {just_logged_out};
+            var isLoggedOut = {is_logged_out};
 
             function clearSession() {{
                 var keys = [
@@ -121,16 +121,35 @@ def inject_client_session_sync(current_student: Optional[Student]) -> None:
                     'cybershield_auth_role'
                 ];
                 for (var i = 0; i < keys.length; i++) {{
-                    try {{ pWin.localStorage.removeItem(keys[i]); }} catch(e) {{}}
-                    try {{ window.localStorage.removeItem(keys[i]); }} catch(e) {{}}
-                    var exp = "=; path=/; max-age=0; SameSite=Lax";
-                    try {{ pWin.document.cookie = keys[i] + exp; }} catch(e) {{}}
-                    try {{ document.cookie = keys[i] + exp; }} catch(e) {{}}
+                    var k = keys[i];
+                    try {{ pWin.localStorage.removeItem(k); }} catch(e) {{}}
+                    try {{ window.localStorage.removeItem(k); }} catch(e) {{}}
+                    try {{ pWin.sessionStorage.removeItem(k); }} catch(e) {{}}
+                    try {{ window.sessionStorage.removeItem(k); }} catch(e) {{}}
+
+                    var paths = ['/', pLoc.pathname, window.location.pathname, ''];
+                    var domains = ['', '.' + pLoc.hostname, pLoc.hostname, '.' + window.location.hostname, window.location.hostname];
+                    for (var p = 0; p < paths.length; p++) {{
+                        for (var d = 0; d < domains.length; d++) {{
+                            var exp = k + '=; path=' + paths[p] + (domains[d] ? '; domain=' + domains[d] : '') + '; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; SameSite=Lax;';
+                            try {{ pWin.document.cookie = exp; }} catch(e) {{}}
+                            try {{ document.cookie = exp; }} catch(e) {{}}
+                            try {{ window.document.cookie = exp; }} catch(e) {{}}
+                        }}
+                    }}
                 }}
             }}
 
-            if (action === 'logout' || justLoggedOut) {{
+            if (action === 'logout' || isLoggedOut) {{
                 clearSession();
+                var changed = false;
+                if (params.has('action')) {{ params.delete('action'); changed = true; }}
+                if (params.has('cadet_id')) {{ params.delete('cadet_id'); changed = true; }}
+                if (params.has('teacher_token')) {{ params.delete('teacher_token'); changed = true; }}
+                if (changed) {{
+                    var cleanUrl = pLoc.pathname + (params.toString() ? '?' + params.toString() : '');
+                    pLoc.replace(cleanUrl);
+                }}
                 return;
             }}
 
