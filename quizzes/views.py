@@ -567,6 +567,7 @@ def student_certificate(request):
     """
     Generates a personalized, print-ready Certificate of Cyber Mastery.
     Features cryptographic verification hash, seal, student rank, and badge counts.
+    Enforces 100% curriculum completion requirement (all 8 topics mastered).
     """
     student_id = request.session.get('student_id')
     if not student_id:
@@ -578,6 +579,15 @@ def student_certificate(request):
             return redirect('student_login')
     else:
         student = get_object_or_404(Student, id=student_id)
+
+    from quizzes.services.analytics_service import AnalyticsService
+    progress_data = AnalyticsService.get_student_curriculum_progress(student)
+    if progress_data['completion_percentage'] < 100 or progress_data['completed_count'] < progress_data['total_topics']:
+        messages.warning(
+            request,
+            f"Certificate Locked: You must achieve 100% course progress (all {progress_data['total_topics']} topics mastered) to earn your Certificate of Mastery. Current progress: {progress_data['completed_count']}/{progress_data['total_topics']} topics."
+        )
+        return redirect('student_dashboard')
 
     earned_badges = student.get_earned_badges()
     badges_unlocked = sum(1 for b in earned_badges if b['earned'])
@@ -603,9 +613,11 @@ def student_certificate(request):
 def student_certificate_pdf(request):
     """
     Exports the official Certificate of Cyber Mastery as a downloadable PDF file.
+    Enforces 100% curriculum completion requirement (all 8 topics mastered).
     """
     from django.http import HttpResponse
     from .pdf_service import generate_certificate_pdf
+    from quizzes.services.analytics_service import AnalyticsService
 
     student_id = request.session.get('student_id')
     if not student_id:
@@ -617,6 +629,14 @@ def student_certificate_pdf(request):
             return redirect('student_login')
     else:
         student = get_object_or_404(Student, id=student_id)
+
+    progress_data = AnalyticsService.get_student_curriculum_progress(student)
+    if progress_data['completion_percentage'] < 100 or progress_data['completed_count'] < progress_data['total_topics']:
+        messages.warning(
+            request,
+            f"Certificate Locked: You must achieve 100% course progress to download your Certificate of Mastery."
+        )
+        return redirect('student_dashboard')
 
     earned_badges = student.get_earned_badges()
     badges_unlocked = sum(1 for b in earned_badges if b['earned'])

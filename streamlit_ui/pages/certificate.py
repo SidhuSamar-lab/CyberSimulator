@@ -9,32 +9,15 @@ import streamlit as st
 from users.models import Student
 from quizzes.topics import get_topic_by_id
 from quizzes.pdf_service import generate_certificate_pdf
+from quizzes.services.analytics_service import AnalyticsService
 from streamlit_ui.styles import render_html
 from streamlit_ui.state import AppStateManager
 
 
 def render_certificate(current_student: Optional[Student], all_students: List[Student]) -> None:
-    """Renders the official Certificate of Cyber Mastery and PDF download button."""
-    if not current_student and all_students:
-        # Instant preview registry for testing & auditing (no login roadblock)
-        cadet_labels = [f"{s.name} (#{s.roll_number} • {s.class_name})" for s in all_students]
-        sel_col1, sel_col2 = st.columns([8, 4], vertical_alignment="center")
-        with sel_col1:
-            chosen_cadet_str = st.selectbox(
-                "Certificate Registry Cadet Preview:",
-                cadet_labels,
-                index=0,
-                key="sel_preview_cadet_cert"
-            )
-            chosen_idx = cadet_labels.index(chosen_cadet_str)
-            current_student = all_students[chosen_idx]
-        with sel_col2:
-            if st.button("🔑 Sign In as Cadet", key="btn_signin_as_preview_cadet", type="primary", use_container_width=True):
-                AppStateManager.set_student_session(current_student.id)
-                st.rerun()
-
+    """Renders the official Certificate of Cyber Mastery and PDF download button (unlocked at 100% completion)."""
     if not current_student:
-        st.info("Please sign in as a student cadet to view and download your Certificate.")
+        st.info("Please sign in as a student cadet to view and download your Certificate of Cyber Mastery.")
         col_cf1, col_cf2, col_cf3 = st.columns(3)
         with col_cf1:
             if st.button("🔑 Sign In as Student", key="btn_cert_require_login", type="primary", use_container_width=True):
@@ -46,6 +29,52 @@ def render_certificate(current_student: Optional[Student], all_students: List[St
                 st.rerun()
         with col_cf3:
             if st.button("← Back to Curriculum", key="btn_cert_back_home", type="secondary", use_container_width=True):
+                AppStateManager.navigate_to("🏠 Home")
+                st.rerun()
+        return
+
+    # Enforce 100% course completion requirement
+    progress_data = AnalyticsService.get_student_curriculum_progress(current_student)
+    is_unlocked = (
+        progress_data["completion_percentage"] >= 100
+        and progress_data["completed_count"] >= progress_data["total_topics"]
+        and progress_data["total_topics"] > 0
+    )
+
+    if not is_unlocked:
+        render_html(f"""
+        <div style="max-width: 680px; margin: 30px auto; background: #080814; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 36px 32px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.8);">
+            <div style="width: 64px; height: 64px; border-radius: 18px; background: rgba(255, 107, 53, 0.12); border: 1px solid rgba(255, 107, 53, 0.4); display: flex; align-items: center; justify-content: center; color: #ff6b35; margin: 0 auto 20px auto;">
+                <span class="material-symbols-outlined" style="font-size: 32px;">lock</span>
+            </div>
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px; border-radius: 9999px; background: rgba(255, 107, 53, 0.1); border: 1px solid rgba(255, 107, 53, 0.3); color: #ff6b35; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; text-transform: uppercase; margin-bottom: 12px;">
+                <span>Requirement Not Met &bull; 100% Progress Required</span>
+            </div>
+            <h2 style="font-family: 'Clash Display', sans-serif; font-size: 1.8rem; font-weight: 700; color: #ffffff; margin: 0 0 12px 0;">
+                Certificate of Cyber Mastery is Locked
+            </h2>
+            <p style="color: #9898b8; font-size: 0.95rem; line-height: 1.6; max-width: 520px; margin: 0 auto 24px auto;">
+                Cadet <strong style="color: #ffffff;">{html.escape(current_student.name)}</strong>, the official certificate is awarded exclusively upon mastering all {progress_data['total_topics']} cybersecurity drill modules.
+            </p>
+            
+            <div style="background: #04040a; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 18px 24px; max-width: 460px; margin: 0 auto 28px auto; text-align: left;">
+                <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; margin-bottom: 8px;">
+                    <span style="color: #9898b8;">Curriculum Completion</span>
+                    <span style="color: #e8ff47; font-weight: 700;">{progress_data['completion_percentage']}% ({progress_data['completed_count']}/{progress_data['total_topics']} Topics)</span>
+                </div>
+                <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.06); border-radius: 9999px; overflow: hidden;">
+                    <div style="width: {progress_data['completion_percentage']}%; height: 100%; background: #e8ff47; border-radius: 9999px;"></div>
+                </div>
+            </div>
+        </div>
+        """)
+        c_btn1, c_btn2 = st.columns(2)
+        with c_btn1:
+            if st.button("🛡️ Return to Student Hub & Continue Drills →", key="btn_cert_locked_hub", type="primary", use_container_width=True):
+                AppStateManager.navigate_to("🛡️ Student Hub")
+                st.rerun()
+        with c_btn2:
+            if st.button("← Curriculum Directory", key="btn_cert_locked_curriculum", type="secondary", use_container_width=True):
                 AppStateManager.navigate_to("🏠 Home")
                 st.rerun()
         return

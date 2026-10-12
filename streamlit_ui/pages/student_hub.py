@@ -116,11 +116,49 @@ def render_student_hub_page(all_students: List[Student], current_student: Option
     pending_count = progress_data["pending_count"]
     topics_with_progress = progress_data["topics"]
 
+    is_cert_unlocked = (completion_percentage >= 100 and completed_count == total_topics and total_topics > 0)
+    if is_cert_unlocked:
+        cert_box_html = f"""
+        <a href="?page=certificate&cadet_id={current_student.id}" target="_self" style="margin-top: 20px; padding: 14px; border-radius: 14px; background: rgba(232, 255, 71, 0.08); border: 1px solid rgba(232,255,71,0.5); display: flex; align-items: center; justify-content: space-between; text-decoration: none; transition: all 0.2s; box-shadow: 0 0 16px rgba(232,255,71,0.12);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(232,255,71,0.2); border: 1px solid #e8ff47; display: flex; align-items: center; justify-content: center; color: #e8ff47;">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">verified</span>
+                </div>
+                <div>
+                    <div style="font-weight: 700; color: #ffffff; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+                        <span>Certificate of Mastery</span>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: #000; background: #e8ff47; padding: 1px 6px; border-radius: 9999px; font-weight: 700;">UNLOCKED</span>
+                    </div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: #e8ff47;">View and print your certificate</div>
+                </div>
+            </div>
+            <span class="material-symbols-outlined" style="color: #e8ff47; font-size: 18px;">arrow_forward</span>
+        </a>
+        """
+    else:
+        cert_box_html = f"""
+        <div style="margin-top: 20px; padding: 14px; border-radius: 14px; background: #060610; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; opacity: 0.85;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: #666680;">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">lock</span>
+                </div>
+                <div>
+                    <div style="font-weight: 700; color: #9898b8; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+                        <span>Certificate of Mastery</span>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: #666680; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 9999px;">LOCKED</span>
+                    </div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: #666680;">Requires 100% completion ({completed_count}/{total_topics} topics)</div>
+                </div>
+            </div>
+            <span class="material-symbols-outlined" style="color: #444455; font-size: 18px;">lock</span>
+        </div>
+        """
+
     # 1. Hero Student Overview Banner (1:1 with student_dashboard.html)
     hero_card_html = f"""
     <div class="nexus-card-active" style="margin-bottom: 32px;">
         <div style="display: flex; justify-content: space-between; align-items: stretch; flex-wrap: wrap; gap: 28px;">
-            <!-- Left Column: Greeting & Telemetry HUD -->
+            <!-- Left Column: Greeting & Status -->
             <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
                     <!-- Badges Row -->
@@ -138,33 +176,12 @@ def render_student_hub_page(all_students: List[Student], current_student: Option
                     <h1 style="font-size: clamp(2.4rem, 4vw, 3.2rem); margin: 4px 0 10px 0; font-weight: 700; line-height: 1.1;">
                         Welcome back, {html.escape(current_student.name)}
                     </h1>
-                    <p style="color: #9898b8; font-size: 1rem; margin: 0 0 20px 0; max-width: 600px; line-height: 1.6;">
+                    <p style="color: #9898b8; font-size: 1rem; margin: 0 0 14px 0; max-width: 600px; line-height: 1.6;">
                         Practice cybersecurity scenarios and build strong online safety habits. You have mastered <strong style="color: #ffffff;">{completed_count}</strong> of {total_topics} topics.
                     </p>
-                </div>
-
-                <!-- Telemetry Inset Box -->
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; background: #080812; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 14px 18px;">
-                    <div>
-                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #9898b8; text-transform: uppercase;">CURRENT RANK</div>
-                        <div style="font-family: 'Clash Display', sans-serif; font-weight: 700; color: #ffffff; font-size: 1rem; margin-top: 4px; display: flex; align-items: center; gap: 6px;">
-                            <span class="material-symbols-outlined" style="font-size: 18px; color: #e8ff47;">shield</span>
-                            <span>{html.escape(current_student.rank_title)}</span>
-                        </div>
-                    </div>
-                    <div style="border-left: 1px solid rgba(255,255,255,0.06); padding-left: 14px;">
-                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #9898b8; text-transform: uppercase;">PRACTICE STREAK</div>
-                        <div style="font-family: 'Clash Display', sans-serif; font-weight: 700; color: #ff6b35; font-size: 1rem; margin-top: 4px; display: flex; align-items: center; gap: 6px;">
-                            <span class="material-symbols-outlined" style="font-size: 18px; color: #ff6b35;">local_fire_department</span>
-                            <span>4 Days Active</span>
-                        </div>
-                    </div>
-                    <div style="border-left: 1px solid rgba(255,255,255,0.06); padding-left: 14px;">
-                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #9898b8; text-transform: uppercase;">CLASS STANDING</div>
-                        <div style="font-family: 'Clash Display', sans-serif; font-weight: 700; color: #ffffff; font-size: 1rem; margin-top: 4px; display: flex; align-items: center; gap: 6px;">
-                            <span class="material-symbols-outlined" style="font-size: 18px; color: #e8ff47;">workspace_premium</span>
-                            <span>Top Honor Roll</span>
-                        </div>
+                    <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 10px; background: #080814; border: 1px solid rgba(255,255,255,0.06); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #9898b8;">
+                        <span class="material-symbols-outlined" style="font-size: 16px; color: #e8ff47;">verified_user</span>
+                        <span>Complete all {total_topics} topics to unlock your official Certificate of Cyber Mastery.</span>
                     </div>
                 </div>
             </div>
@@ -196,19 +213,8 @@ def render_student_hub_page(all_students: List[Student], current_student: Option
                     </div>
                 </div>
 
-                <!-- Certificate Box Link -->
-                <a href="?page=certificate&cadet_id={current_student.id}" target="_self" style="margin-top: 20px; padding: 14px; border-radius: 14px; background: #0d0d1f; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; text-decoration: none; transition: border-color 0.2s;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(232,255,71,0.15); border: 1px solid rgba(232,255,71,0.3); display: flex; align-items: center; justify-content: center; color: #e8ff47;">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">verified</span>
-                        </div>
-                        <div>
-                            <div style="font-weight: 700; color: #ffffff; font-size: 0.85rem;">Certificate of Mastery</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: #9898b8;">View and print your certificate</div>
-                        </div>
-                    </div>
-                    <span class="material-symbols-outlined" style="color: #e8ff47; font-size: 18px;">arrow_forward</span>
-                </a>
+                <!-- Certificate Status Box -->
+                {cert_box_html}
             </div>
         </div>
     </div>

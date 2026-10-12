@@ -211,6 +211,13 @@ During recent development and user testing on Streamlit Cloud, several subtle st
   * Dropped the legacy `unique_together = ('roll_number', 'class_name')` constraint in migration `0003_alter_student_unique_together.py`. Now that students authenticate with unique emails and passwords, student identity is properly tied to their unique email address.
   * Added defensive `try...except Exception as reg_err` blocks around student and teacher account creation in both Streamlit and Django views to gracefully present user-friendly error notifications instead of unhandled runtime exceptions.
 
+### 6. Certificate Gating (100% Progress Requirement) & Telemetry Cleanup
+* **Symptom:** Newly signed-up students with 0 quiz attempts could immediately view and download a Certificate of Cyber Mastery, and the student dashboard displayed hardcoded placeholder telemetry ("CURRENT RANK Digital Cadet", "PRACTICE STREAK 4 Days Active", "CLASS STANDING Top Honor Roll").
+* **Solution:**
+  * **Removed Fake Telemetry Box:** Removed the hardcoded inset box from both `streamlit_ui/pages/student_hub.py` and `templates/quizzes/student_dashboard.html`.
+  * **Strict 100% Completion Gate:** Gated both Streamlit (`render_certificate`) and Django (`student_certificate`, `student_certificate_pdf`) behind `completion_percentage >= 100` and `completed_count == total_topics`.
+  * **Interactive Locked State:** When under 100% progress, students see a locked status indicator on their dashboard and a high-aesthetic locked banner on the certificate page prompting them to complete all 8 topic modules.
+
 ---
 
 ## 9. Teacher & Educator Console Specifications

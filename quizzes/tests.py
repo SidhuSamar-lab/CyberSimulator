@@ -220,18 +220,42 @@ class QuizzesTests(TestCase):
         self.assertContains(response, "Taylor Swift")
 
     def test_student_certificate_view(self):
-        # Unauthenticated redirects to student login
+        # 1. Unauthenticated redirects to student login
         response = self.client.get('/student/certificate/')
         self.assertRedirects(response, '/student/login/')
 
-        # With student session
+        # 2. With student session but < 100% progress -> redirects to student dashboard (locked)
         session = self.client.session
         session['student_id'] = self.student.id
         session.save()
 
         response = self.client.get('/student/certificate/')
+        self.assertRedirects(response, '/dashboard/')
+
+        response_pdf = self.client.get('/student/certificate/pdf/')
+        self.assertRedirects(response_pdf, '/dashboard/')
+
+        # 3. Simulate 100% curriculum completion (all 8 topics mastered)
+        from .models import QuizAttempt
+        from .topics import CYBER_TOPICS
+        for topic in CYBER_TOPICS:
+            QuizAttempt.objects.create(
+                student=self.student,
+                topic_id=topic['id'],
+                topic_title=topic['title'],
+                score=3,
+                total_questions=3,
+            )
+
+        # 4. Verified unlocked certificate view
+        response = self.client.get('/student/certificate/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Certificate of Cyber Mastery")
         self.assertContains(response, "Taylor Swift")
         self.assertContains(response, "CS-CERT-")
+
+        # 5. Verified unlocked PDF download
+        response_pdf = self.client.get('/student/certificate/pdf/')
+        self.assertEqual(response_pdf.status_code, 200)
+        self.assertEqual(response_pdf['Content-Type'], 'application/pdf')
 
